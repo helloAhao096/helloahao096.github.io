@@ -18,10 +18,10 @@
                 <div class="resume-info--layout-sub">手机：13013636500</div>
                 <div>邮箱：helloahao@icloud.com</div>
             </div>
-            <div>个人博客：helloahao096.github.io/helloahao/</div>
-            <div>城市：江苏省 无锡市</div>
+            <div>个人博客：https://blog.mapin.net/</div>
+            <div>籍贯：江苏省 无锡市</div>
             <div>民族：汉族</div>
-            <div>年龄：24岁</div>
+            <div>年龄：25岁</div>
             <div>性别：男</div>
         </div>
         <div class="resume-info-right">
@@ -61,7 +61,7 @@
                             无锡天思团创科技有限公司
                         </b>
                         <div>
-                            &nbsp;- angular开发工程师
+                            &nbsp;- python开发工程师
                         </div>
                     </div>
                     <div>
@@ -130,52 +130,24 @@
 
 <!--                    </li>-->
 <!--                </ul>-->
+                <br>
                 <div style="display: flex; justify-content: space-between">
 
-                <h3>
-                    <li>
-                        无人机信号检测与干扰系统
-                    </li>
-                </h3>
-
-                    <div>2024.1 ～ 2024.4</div>
+                    <h3>
+                        <li> Neumix (ERP平台)</li>
+                    </h3>
+                    <div>2021.9 ～ 2022.12</div>
                 </div>
-
                 <br>
-                <p>
-                    项目介绍：嗅探Wi-Fi信号和信息，判断是否黑飞无人机，读取白名单信息，比较发现，发送干扰帧影响、击落无人机
-                </p>
-                <p>技术栈：python3/fastapi/asyncio/SQLAlchemy/SQLite/swagger</p>
-                <p>责任描述：</p>
+                <p>技术栈：python3/fastapi/jwt/redis/mysql/swagger/SQLAlchemy</p>
+                <p>责任描述：负责用户的登录逻辑设计，auth鉴权验证，无感refresh token</p>
                 <ol>
-                    <li>使用scapy模块通过Wi-Fi天线反侦测和扫描附近的Wi-Fi信息</li>
-                    <li>使用fastapi框架，通过async_engine配合SQLAlchemy生成数据库所需要的表模型</li>
-                    <li>使用fastapi的async特性与前端进行异步的接口通信，在接口请求的同时使用websocket模块将侦测到的无人机信息实时返回给前端</li>
-                    <li>通过fastapi的add_exception_handler对所有的异常进行封装，将错误信息记录到日志中</li>
+                    <li>完成python的jwt-auth功能，生成jwt-token，摒弃传统cookie方式，优化用户登录逻辑</li>
+                    <li>使用fastapi对知识图谱平台的基本功能接口进行增删改查等功能</li>
+                    <li>生成shell脚本指令，根据用户在前端选择的需求，一键训练识别模型</li>
+                    <li>维护公司linux服务器，安装和配置多个服务器架构，docker和再生龙，快速启动，部署服务</li>
                 </ol>
 
-                <br>
-                <div style="display: flex; justify-content: space-between">
-
-                <h3>
-                    <li>
-                        特警总队全频全向天线信号侦测
-                    </li>
-                </h3>
-                    <div>2023.12 ～ 至今</div>
-
-                    </div>
-                <br>
-                <p>
-                    项目介绍：用于检测和监测2.4GHz和5.8GHz信号的系统，能够实时多线程启动检测板块，并且接收并展示信号的声波波形图。
-                </p>
-                <p>技术栈：python3/fastapi/pyhackrf/asyncio/threading/websocket</p>
-                <p>责任描述：</p>
-                <ol>
-                    <li>异步启动hackrf one设备检测周围环境的2.4Ghz/5.8Ghz信号，接收信号声波波形图</li>
-                    <li>通过串口天线设备监测到的异常报警信息通过websocket长链接，实时发送给前端</li>
-                    <li>使用fastapi、websocket、串口设备、网口设备，来收集监测数据，通过socket实时传输给前端，绘制出波形数据，并且将监测数据存入PostgreSQL数据库，确保数据的持久化存储。</li>
-                </ol>
                 <br>
 <!--                <ul style="margin-left: 1rem">-->
 <!--                    <li>-->
@@ -185,20 +157,54 @@
 <!--                </ul>-->
                 <div style="display: flex; justify-content: space-between">
 
-                <h3>
-                   <li> Neumix (知识图谱平台)</li>
-                </h3>
-                    <div>2021.9 ～ 2022.12</div>
+                    <h3>
+                        <li>
+                            无人机信号检测与干扰系统
+                        </li>
+                    </h3>
+
+                    <div>2024.1 ～ 2024.12</div>
                 </div>
+
                 <br>
-                <p>技术栈：python3/fastapi/jwt/redis/mysql/swagger/SQLAlchemy</p>
+                <p>
+                    项目介绍：嗅探Wi-Fi信号和信息/MAC地址，判断是否黑飞无人机，读取白名单信息，比较发现，发送干扰帧影响、击落无人机
+                </p>
+                <p>技术栈：python3/fastapi/SQLAlchemy/SQLite/docker</p>
                 <p>责任描述：</p>
                 <ol>
-                    <li>使用fastapi对知识图谱平台的基本功能接口进行增删改查等功能</li>
-                    <li>与数据库交互，存储和修改数据</li>
-                    <li>生成shell脚本指令，一键训练识别模型</li>
-                    <li>编写dockerFile，将项目打包成docker镜像，使用shell脚本一键部署到公司的多个服务器上</li>
+                    <li>确定技术选型，从0搭建fastapi/kaliOS/hackrf的项目基础架构</li>
+                    <li>设计项目的docker功能，编写dockerFile，docker-compose，linux脚本，节省开发心智</li>
+                    <li>贯彻restFul接口设计规范，对接口的参数验证和错误catch，日志记录有完整的理解</li>
+                    <li>使用docker进行项目的部署，使其具有一步搭建，任意使用的稳定，可靠，快速的能力</li>
+                    <li>使用scapy模块通过Wi-Fi天线反侦测和扫描附近的Wi-Fi信息。配合异步代码架构，提升扫描速度</li>
+                    <!--                    <li>通过fastapi的add_exception_handler对所有的异常进行封装，将错误信息记录到日志中</li>-->
                 </ol>
+
+
+                <br>
+                <div style="display: flex; justify-content: space-between">
+                    <h3>
+                        <li>
+                            北京特警总队全频全向天线信号侦测
+                        </li>
+                    </h3>
+                    <div>2023.12 ～ 至今</div>
+
+                </div>
+                <br>
+                <p>
+                    项目介绍：用于检测和监测2.4GHz和5.8GHz信号的系统，能够实时多线程启动检测板块，并且接收并展示信号的声波波形图。
+                </p>
+                <p>技术栈：python3/fastapi/pyhackrf/asyncio/threading/websocket</p>
+                <p>责任描述：</p>
+                <ol>
+                    <li>设计项目数据库SQLite结构，思考各个表的参数关联配合</li>
+                    <li>异步启动hackrf one设备检测周围环境的2.4Ghz/5.8Ghz信号，接收信号声波波形图</li>
+                    <li>通过串口天线设备监测到的异常报警信息通过websocket长链接，实时发送给前端</li>
+                    <li>使用fastapi、websocket、串口设备、网口设备，来收集监测数据，通过socket实时传输给前端，绘制出波形数据，并且将监测数据存入sqlLite数据库，确保数据的持久化存储。</li>
+                </ol>
+
             </div>
 
             <div class="resume-skill">
@@ -223,11 +229,16 @@
 
             </div>
                 <ul>
-                    <li>基本技能：python3/fastapi/django/asyncio/SQLAlchemy/swagger</li>
-                    <li>数据库：MySQL/PgSQL/SQLite/Redis</li>
+                    <li>基本技能：python3/fastapi/django/asyncio/SQLAlchemy/swagger/docker/linux</li>
+                    <li>数据库：SQLite/MySQL/PgSQL//Redis</li>
                     <li>版本管理工具：Git/SVN</li>
                 </ul>
-                <div>熟练掌握fastapi框架的使用，配合后端数据库SQLAlchemy/pydantic进行数据处理，验证，用户jwt权限校验</div>
+                <ol>
+                <li>熟练掌握python/fastapi框架的使用，配合SQLAlchemy/pydantic能够适配多种数据库开发，进行数据处理，验证，用户jwt权限校验</li>
+                <li>理解并且操作过域名的购买，CDN解析，服务器部署配置，对开发一套前后端分离的项目，并且部署至域名，进行CDN优化，有完整的理解</li>
+                <li>熟悉项目的生产化部署，敏捷开发迭代。</li>
+                <li>善于理解思考需求，将任务拆分至最小单元，一步一步分析解析</li>
+                </ol>
                 <br>
 <!--                -->
 <!--                <ul>-->
@@ -237,7 +248,19 @@
 <!--                    <li>模块化/标准化机器人通用组件，根据业务需求创建出不同的组合，打包成docker镜像进行微服务运行</li>-->
 <!--                    <li>搭建harbor镜像容器仓库，制作docker镜像，编写shell一键部署脚本文件</li>-->
 <!--                </ul>-->
+                <div class="introduce">
+                    <b>Linux</b>
+                </div>
+                <ul>
+                    <li>基本技能：linux命令/环境配置安装/shell/docker/harbor/cuda</li>
 
+                </ul>
+                <ol>
+                    <li>熟练掌握服务器的系统环境安装与配置</li>
+                    <li>熟悉linux服务器的网络/防火墙/端口的网络配置</li>
+                    <li>擅长编写shell脚本和制作docker镜像来帮助开发和部署中简化统一部署流程，减少重复劳动，并且避免人为因素变量出错</li>
+                </ol>
+                <br>
                 <div class="introduce">
                     <b>前端开发</b>
                 </div>
@@ -248,24 +271,15 @@
                 </ul>
 
                 <div>熟练使用vue3的基础框架，配套vue3生态的setup语法，pinia，vue-router，使用第三方组件，开发基础的前端网页代码</div>
-
                 <br>
-                <div class="introduce">
-                    <b>Linux</b>
-                </div>
-                <ul>
-                    <li>基本技能：linux命令/环境配置安装/shell/docker/harbor/cuda</li>
-                    <li>熟练掌握服务器的环境安装与配置，擅长编写shell脚本和制作docker镜像来简化统一部署流程，减少和控制出错的步骤</li>
-                </ul>
-                <br>
-                <div class="introduce">
-                    <b>编程习惯</b>
-                </div>
-                <ul>
-                    <li>后端接口遵守RESTful API规范，对代码的变量命名和代码可维护性有严格的要求，力争写出优美的代码</li>
-                    <li>熟练使用google搜索和查阅资料</li>
-                    <li>擅长使用openAI的ChatGPT等人工智能辅助编程工具，加快掌握新知识的学习速度</li>
-                </ul>
+<!--                <div class="introduce">-->
+<!--                    <b>编程习惯</b>-->
+<!--                </div>-->
+<!--                <ul>-->
+<!--                    <li>后端接口遵守RESTful API规范，对代码的变量命名和代码可维护性有严格的要求，力争写出优美的代码</li>-->
+<!--                    <li>熟练使用google搜索和查阅资料</li>-->
+<!--                    <li>擅长使用openAI的ChatGPT等人工智能辅助编程工具，加快掌握新知识的学习速度</li>-->
+<!--                </ul>-->
             </div>
                 <br>
 
