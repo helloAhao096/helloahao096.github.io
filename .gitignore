@@ -18,7 +18,6 @@ lib/
 # IDE setting files
 .idea
 .vscode
-/pnpm-lock.yaml
 
 # Obsidian configuration
 .obsidian/
