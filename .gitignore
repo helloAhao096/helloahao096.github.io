@@ -19,3 +19,6 @@ lib/
 .idea
 .vscode
 /pnpm-lock.yaml
+
+# Obsidian configuration
+.obsidian/

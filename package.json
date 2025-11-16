@@ -15,7 +15,7 @@
     "lottie-web": "^5.10.0",
     "markdown-it": "^13.0.1",
     "sass": "^1.62.1",
-    "vitepress": "1.0.0-rc.24"
+    "vitepress": "1.6.4"
   },
   "scripts": {
     "docs:dev": "vitepress dev docs",

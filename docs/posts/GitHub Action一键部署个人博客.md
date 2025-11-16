@@ -93,9 +93,14 @@ jobs:
 ---
 ## 踩坑总结
 搭建博客全部踩坑经历，血泪史记录一下
-1. ``package-lock.json``记得上传到代码仓库，不然github action无法构建项目
+1. **Lock 文件记得上传到代码仓库**，不然github action无法构建项目
    
-   平时做项目的时候，只会关注``package.json``，下意识的以为``package-lock.json``是不需要的，但是github action需要这个文件构建项目
+   根据使用的包管理器，需要上传对应的 lock 文件：
+   - 使用 npm：需要上传 ``package-lock.json``
+   - 使用 pnpm：需要上传 ``pnpm-lock.yaml``
+   - 使用 yarn：需要上传 ``yarn.lock``
+   
+   平时做项目的时候，只会关注``package.json``，下意识的以为 lock 文件是不需要的，但是 github action 需要这个文件来确保依赖版本的一致性
    ![img.png](../public/image/package-lock.png)
 2. 生成的gh-pages分支要开读写权限，不然生成的代码push不上去
 
