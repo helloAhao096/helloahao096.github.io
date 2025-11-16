@@ -13,8 +13,7 @@ jobs:
         with:
           fetch-depth: 0
       - uses: pnpm/action-setup@v4
-        with:
-          version: 9.15.3
+        # 不指定 version，自动从 package.json 的 packageManager 字段读取
       - uses: actions/setup-node@v4
         with:
           node-version: 20
