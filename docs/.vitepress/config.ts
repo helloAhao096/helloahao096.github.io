@@ -7,8 +7,8 @@ async function config() {
         lang: "en-US",
         title: "Ahao",
         base:"/",
-        description: "Home of Ahao",
-        appearance: 'dark',
+        description: "Home of QianFan",
+        appearance: true, // 启用主题切换，支持明暗主题切换和自动跟随系统主题
         // editLinks: true,
         // SEO优化配置  配置 网页 head 标签
         head: [
@@ -18,7 +18,7 @@ async function config() {
             ["meta", {property: "og:title", content: "Home",},],
             ["meta", {property: "og:description", content: "Home of Ahao",},],
         ],
-        // cleanUrls: "with-subfolders",
+        cleanUrls: "with-subfolders", // 启用 clean URLs，去掉 .html 后缀
         lastUpdated: true,
         // https://juejin.cn/post/7042206108458909727
         themeConfig: {
@@ -45,13 +45,13 @@ async function config() {
                     text: "📃Archives",
                     link: "/archives",
                 },
-                {
-                    text: '🛠️custom',
-                    items: [
-                        {text:'待施工',link:''}
+                // {
+                //     text: '🛠️custom',
+                //     items: [
+                //         {text:'待施工',link:''}
                         // {text: '个人简历', link: 'pathname:///resume/index.html'},
-                    ]
-                },
+                    // ]
+                // },
                 // {
                 //     text: "🔥RSS",
                 //     link: "https://clark-cui.top/feed.xml",
