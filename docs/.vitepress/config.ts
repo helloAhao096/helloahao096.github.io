@@ -1,13 +1,13 @@
-import {getPosts, getPostLength} from "./theme/serverUtils";
+import {getPosts, getPostLength} from "./theme/utils/posts";
 // import {buildBlogRSS} from "./theme/rss";
 
 
 async function config() {
     return {
-        lang: "en-US",
+        lang: "zh-CN",
         title: "Ahao",
         base:"/",
-        description: "Home of QianFan",
+        description: "Home of Ahao",
         appearance: true, // 启用主题切换，支持明暗主题切换和自动跟随系统主题
         // editLinks: true,
         // SEO优化配置  配置 网页 head 标签
@@ -34,28 +34,21 @@ async function config() {
             // search: true,
             nav: [
                 {
-                    text: "🏡Blogs",
+                    text: "🏡 首页",
                     link: "/",
                 },
                 {
-                    text: "🔖Tags",
-                    link: "/tags",
+                    text: "📸 照片",
+                    link: "/gallery",
                 },
                 {
-                    text: "📃Archives",
-                    link: "/archives",
+                    text: "🛠️ 工具箱",
+                    link: "/tools",
                 },
-                // {
-                //     text: '🛠️custom',
-                //     items: [
-                //         {text:'待施工',link:''}
-                        // {text: '个人简历', link: 'pathname:///resume/index.html'},
-                    // ]
-                // },
-                // {
-                //     text: "🔥RSS",
-                //     link: "https://clark-cui.top/feed.xml",
-                // },
+                {
+                    text: "👤 关于",
+                    link: "/about",
+                },
             ],
             socialLinks: [
                 {icon: "github", link: "https://github.com/helloAhao096"},

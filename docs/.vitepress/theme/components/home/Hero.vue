@@ -1,9 +1,13 @@
 <template>
-  <div class="pic"></div>
+  <div class="hero">
+    <div class="pic"></div>
+  </div>
 </template>
+
 <script lang="ts" setup>
 import { onMounted } from "vue";
 import lottie from "lottie-web";
+
 onMounted(() => {
   // storage lottie
   const svgContainer = document.getElementById("svgContainer");
@@ -26,9 +30,31 @@ onMounted(() => {
   });
 });
 </script>
+
 <style scoped>
-.pic {
+.hero {
   text-align: center;
   height: 300px;
+  margin-bottom: 2rem;
+}
+
+.pic {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 移动端适配 */
+@media (max-width: 640px) {
+  .hero {
+    height: 200px;
+    margin-bottom: 1.5rem;
+  }
+  
+  #svgContainer {
+    width: 200px !important;
+  }
 }
 </style>
+

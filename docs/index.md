@@ -1,4 +1,6 @@
 ---
-layout: home
-title: home
+layout: page
+title: 首页
 ---
+
+<Home/>

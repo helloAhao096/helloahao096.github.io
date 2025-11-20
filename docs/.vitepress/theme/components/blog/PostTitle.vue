@@ -23,12 +23,11 @@
   </div>
 
   <div class="tag-box">
-    <a class="tag"
-       href="../tags"
-       @click="toggleTag(tag)"
-       v-for="tag in frontmatter.tags">
+    <span class="tag"
+       v-for="tag in frontmatter.tags"
+       :key="tag">
       {{ tag }}
-    </a>
+    </span>
   </div>
 
   <div class="date">🕒 Published at: {{ publishDate }}</div>
@@ -39,25 +38,11 @@
 import { useData } from "vitepress";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
-import {useTagStore} from "../../store";
+import type { PageData } from "../../types";
 
-const emits = defineEmits(["changeTag"])
-type pageData = {
-  description: string;
-  title: string;
-  frontmatter: object;
-  headers: object[];
-  lastUpdated: number;
-  relativePath: string;
-};
-const pageData: pageData = useData().page.value;
+const pageData: PageData = useData().page.value;
 const { title, description, lastUpdated, frontmatter } = pageData;
 dayjs.extend(relativeTime);
-
-function toggleTag(tag: string) {
-  useTagStore().setTag(tag)
-}
-
 
 // 计算发布时间
 const publishDate = dayjs().to(dayjs(frontmatter.date || Date.now()));
@@ -98,6 +83,7 @@ const publishDate = dayjs().to(dayjs(frontmatter.date || Date.now()));
   border: 4px solid var(--vp-c-border);
   color: var(--vp-c-brand-light);
   overflow-y: auto;
+  display: inline-block;
 }
 
 

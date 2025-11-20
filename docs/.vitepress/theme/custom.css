@@ -1,46 +1,100 @@
-@import url("https://cdn.jsdelivr.net/npm/lxgw-wenkai-lite-webfont@1.6.0/style.min.css");
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Noto+Sans+SC:wght@400;500;600&display=swap");
+
 :root {
-  --vp-c-brand: #a27b5c;
-  --vp-c-brand-light: #a27b5c;
-  --vp-c-brand-dark: #a27b5c;
-  --vp-c-border: #3f4e4f;
-  --vp-c-hover: #212121;
-  --vp-c-bg: #faf6f1;
-  --vp-c-bg-alpha-with-backdrop: rgba(250, 246, 241, 0.7);
+  /* brand palette */
+  --color-primary: #08cb00;
+  --color-primary-hover: #06a300;
+  --color-primary-muted: #b5f6ac;
+  --color-accent: #253900;
 
-  --vp-font-family-base: "LXGW WenKai Lite", "Inter var experimental",
-    "Inter var", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
-    Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
-  --vp-font-family-mono: "LXGW WenKai Mono Lite", ui-monospace, SFMono-Regular,
-    "SF Mono", Menlo, Monaco, Consolas, "Liberation Mono", "Courier New",
-    monospace;
+  /* neutrals / background */
+  --color-bg: #f7f9f4;
+  --color-surface: #ffffff;
+  --color-border: rgba(37, 57, 0, 0.15);
+  --color-overlay: rgba(8, 203, 0, 0.08);
+
+  /* text */
+  --color-text: #0b1400;
+  --color-text-soft: rgba(11, 20, 0, 0.7);
+  --color-text-muted: rgba(11, 20, 0, 0.5);
+
+  /* typography */
+  --font-sans: "Noto Sans SC", "Inter", -apple-system, BlinkMacSystemFont,
+    "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: "JetBrains Mono", "Fira Code", SFMono-Regular, Menlo, Monaco,
+    Consolas, "Liberation Mono", "Courier New", monospace;
+
+  /* radius & shadow */
+  --radius-card: 18px;
+  --radius-pill: 999px;
+  --shadow-card: 0 18px 35px rgba(8, 203, 0, 0.12);
+
+  /* VitePress overrides */
+  --vp-c-brand: var(--color-primary);
+  --vp-c-brand-light: var(--color-primary-muted);
+  --vp-c-brand-dark: var(--color-primary-hover);
+  --vp-c-bg: var(--color-bg);
+  --vp-c-bg-soft: var(--color-surface);
+  --vp-c-text: var(--color-text);
+  --vp-font-family-base: var(--font-sans);
+  --vp-font-family-mono: var(--font-mono); 
 }
-/*css dark 定义 修改相对应变量即可修改*/
+
 .dark {
-  --vp-c-brand: #a27b5c;
-  --vp-c-brand-light: #a27b5c;
-  --vp-c-brand-dark: #a27b5c;
+  --color-primary: #66ff5a;
+  --color-primary-hover: #9cff90;
+  --color-primary-muted: rgba(8, 203, 0, 0.35);
+  --color-accent: #e0ffc5;
 
-  --vp-c-bg: #2c3639;
+  --color-bg: #0e1503;
+  --color-surface: #172207;
+  --color-border: rgba(238, 238, 238, 0.12);
+  --color-overlay: rgba(8, 203, 0, 0.18);
 
-  --vp-c-border: #faf6f1;
+  --color-text: #eeeeee;
+  --color-text-soft: rgba(238, 238, 238, 0.8);
+  --color-text-muted: rgba(238, 238, 238, 0.6);
 
-  --vp-c-text: white;
+  --shadow-card: 0 18px 35px rgba(2, 40, 0, 0.55);
 
-  --vp-c-hover: #ffffff;
-  --vp-c-bg-alpha-with-backdrop: rgba(44, 54, 57, 0.7);
+  --vp-c-brand: var(--color-primary);
+  --vp-c-brand-light: var(--color-primary-hover);
+  --vp-c-brand-dark: #08cb00;
+  --vp-c-bg: var(--color-bg);
+  --vp-c-bg-soft: var(--color-surface);
+  --vp-c-text: var(--color-text);
 }
 
 #app {
   min-height: 100vh;
   position: relative;
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-sans);
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .theme {
-  background-color: var(--vp-c-bg);
+  background-color: var(--color-bg);
 }
 
-.vp-doc h2 {
-  margin-top: 0;
+.vp-doc {
+  color: var(--color-text);
+}
+
+.vp-doc h2,
+.vp-doc h3,
+.vp-doc h4 {
+  margin-top: 2.5rem;
+  color: var(--color-text);
   border-top: none;
+}
+
+.vp-doc a {
+  color: var(--color-primary);
+  font-weight: 500;
+}
+
+.vp-doc a:hover {
+  color: var(--color-primary-hover);
 }
