@@ -36,18 +36,22 @@ async function config() {
                 {
                     text: "🏡 首页",
                     link: "/",
+                    activeMatch: "^/$",
                 },
                 {
                     text: "📸 照片",
                     link: "/gallery",
+                    activeMatch: "^/gallery",
                 },
                 {
                     text: "🛠️ 工具箱",
                     link: "/tools",
+                    activeMatch: "^/tools",
                 },
                 {
                     text: "👤 关于",
                     link: "/about",
+                    activeMatch: "^/about",
                 },
             ],
             socialLinks: [
@@ -63,6 +67,13 @@ async function config() {
             ],
         },
         // buildEnd: buildBlogRSS,
+        // 开发服务器配置，允许局域网访问
+        vite: {
+            server: {
+                host: '0.0.0.0', // 允许局域网访问
+                port: 5173, // 指定端口
+            },
+        },
     };
 }
 

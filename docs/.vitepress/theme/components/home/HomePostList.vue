@@ -1,6 +1,6 @@
 <template>
   <div class="home-post-list">
-    <h2 class="section-title">Recent Posts</h2>
+    <!-- <h2 class="section-title">Recent Posts</h2> -->
     <PostList :posts="posts" :page-size="pageSize" />
   </div>
 </template>
@@ -8,7 +8,7 @@
 <script lang="ts" setup>
 import { computed } from "vue";
 import { useData } from "vitepress";
-import PostList from "../blog/PostList.vue";
+import PostList from "../post/PostList.vue";
 import type { Post } from "../../types";
 
 const { theme } = useData();
@@ -30,24 +30,10 @@ const pageSize = computed(() => {
   margin-top: 2rem;
 }
 
-.section-title {
-  font-size: 1.75rem;
-  font-weight: 600;
-  color: var(--color-text);
-  margin-bottom: 2rem;
-  text-align: center;
-  font-family: var(--font-sans);
-}
-
 /* 移动端适配 */
 @media (max-width: 640px) {
   .home-post-list {
     margin-top: 1.5rem;
-  }
-  
-  .section-title {
-    font-size: 1.5rem;
-    margin-bottom: 1.5rem;
   }
 }
 </style>

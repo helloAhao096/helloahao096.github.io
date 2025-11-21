@@ -15,7 +15,6 @@
   max-width: 1280px;
   margin: 0 auto;
   padding: 1.5rem 1rem;
-  min-height: calc(100vh - 200px);
 }
 
 /* 平板适配 */

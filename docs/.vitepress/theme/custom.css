@@ -8,7 +8,7 @@
   --color-accent: #253900;
 
   /* neutrals / background */
-  --color-bg: #f7f9f4;
+  --color-bg: #ffffff;
   --color-surface: #ffffff;
   --color-border: rgba(37, 57, 0, 0.15);
   --color-overlay: rgba(8, 203, 0, 0.08);
@@ -17,6 +17,7 @@
   --color-text: #0b1400;
   --color-text-soft: rgba(11, 20, 0, 0.7);
   --color-text-muted: rgba(11, 20, 0, 0.5);
+  --color-text-gray: rgba(11, 20, 0, 0.6);
 
   /* typography */
   --font-sans: "Noto Sans SC", "Inter", -apple-system, BlinkMacSystemFont,
@@ -37,7 +38,16 @@
   --vp-c-bg-soft: var(--color-surface);
   --vp-c-text: var(--color-text);
   --vp-font-family-base: var(--font-sans);
-  --vp-font-family-mono: var(--font-mono); 
+  --vp-font-family-mono: var(--font-mono);
+  
+  /* 导航栏文本颜色 - 使用 VitePress 默认变量 */
+  /* 这些变量会被 VitePress 自动应用到导航栏 */
+  --vp-c-text-1: var(--color-text-gray);
+  --vp-c-text-2: var(--color-text-gray);
+  --vp-c-text-3: var(--color-text-gray);
+  
+  /* 导航栏激活状态颜色 - 使用品牌色 */
+  /* VitePress 会自动将 --vp-c-brand 应用到激活的导航项 */ 
 }
 
 .dark {
@@ -54,6 +64,7 @@
   --color-text: #eeeeee;
   --color-text-soft: rgba(238, 238, 238, 0.8);
   --color-text-muted: rgba(238, 238, 238, 0.6);
+  --color-text-gray: rgba(238, 238, 238, 0.65);
 
   --shadow-card: 0 18px 35px rgba(2, 40, 0, 0.55);
 
@@ -65,9 +76,35 @@
   --vp-c-text: var(--color-text);
 }
 
+/* 全局滚动条处理 - 隐藏滚动条但保持滚动功能 */
+html {
+  /* Firefox */
+  scrollbar-width: none;
+  /* IE 和 Edge */
+  -ms-overflow-style: none;
+}
+
+/* Chrome, Safari, Edge */
+html::-webkit-scrollbar {
+  display: none;
+}
+
+body {
+  /* Firefox */
+  scrollbar-width: none;
+  /* IE 和 Edge */
+  -ms-overflow-style: none;
+}
+
+/* Chrome, Safari, Edge */
+body::-webkit-scrollbar {
+  display: none;
+}
+
 #app {
   min-height: 100vh;
-  position: relative;
+  display: flex;
+  flex-direction: column;
   background-color: var(--color-bg);
   color: var(--color-text);
   font-family: var(--font-sans);
@@ -97,4 +134,47 @@
 
 .vp-doc a:hover {
   color: var(--color-primary-hover);
+}
+
+/* ============================================
+   导航栏样式定制
+   ============================================ */
+
+/* 
+ * 方法一：优先使用 CSS 变量（推荐）
+ * VitePress 会自动应用这些变量到导航栏
+ * 如果变量不生效，再使用方法二（CSS 覆盖）
+ */
+
+/* 方法二：CSS 覆盖默认样式（备用方案） */
+/* 导航栏链接默认样式 - 使用文本灰色 */
+.VPNavBar a,
+.VPNavBarMenu a,
+.VPNavBarMenuLink {
+  color: var(--color-text-gray) !important;
+  transition: color 0.3s ease;
+}
+
+/* 激活的导航栏链接 - 使用主色 */
+.VPNavBar a.active,
+.VPNavBarMenu a.active,
+.VPNavBarMenuLink.active,
+.VPNavBar a[aria-current="page"],
+.VPNavBarMenu a[aria-current="page"],
+.VPNavBarMenuLink[aria-current="page"] {
+  color: var(--color-primary) !important;
+}
+
+/* 移动端侧边栏菜单链接 */
+.VPNavScreen a,
+.VPNavScreenMenuLink {
+  color: var(--color-text-gray) !important;
+  transition: color 0.3s ease;
+}
+
+.VPNavScreen a.active,
+.VPNavScreenMenuLink.active,
+.VPNavScreen a[aria-current="page"],
+.VPNavScreenMenuLink[aria-current="page"] {
+  color: var(--color-primary) !important;
 }
