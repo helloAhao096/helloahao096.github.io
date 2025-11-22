@@ -19,7 +19,7 @@ export interface PageData {
     title: string;
     slug: string;
   }>;
-  lastUpdated: number;
+  lastUpdated?: number;
   relativePath: string;
 }
 

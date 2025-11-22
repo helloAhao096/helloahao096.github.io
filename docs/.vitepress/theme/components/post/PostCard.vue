@@ -69,7 +69,6 @@ const postTags = computed(() => {
   min-width: 0;
   font-family: var(--font-sans);
   transition: text-shadow 0.3s ease;
-  position: relative;
 }
 
 /* 只在支持 hover 的设备上应用 hover 效果（移动端不触发） */
@@ -105,13 +104,14 @@ const postTags = computed(() => {
 .post-tags {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.5rem;
   justify-content: flex-end;
+  row-gap: 0.4rem;
 }
 
 .post-tag {
   display: inline-block;
   padding: 0.2rem 0.6rem;
+  margin-right: 0.5rem;
   font-size: 0.8rem;
   font-family: var(--font-mono);
   color: var(--color-text-gray);
@@ -121,12 +121,18 @@ const postTags = computed(() => {
   line-height: 1.5;
 }
 
+.post-tag:last-child {
+  margin-right: 0;
+  padding-right: 0;
+}
+
 /* 移动端适配 */
 @media (max-width: 640px) {
   .post-card {
     flex-direction: column;
     padding: 0.875rem 1rem;
     gap: 0.75rem;
+    align-items: stretch;
   }
   
   .post-title {
@@ -137,23 +143,25 @@ const postTags = computed(() => {
   
   .post-right {
     width: 100%;
-    align-items: flex-start;
+    align-items: flex-end;
+    text-align: right;
     gap: 0.25rem;
     min-width: auto;
   }
   
   .post-date {
     font-size: 0.8rem;
-    text-align: left;
+    text-align: right;
   }
   
   .post-tags {
-    justify-content: flex-start;
+    row-gap: 0.3rem;
   }
   
   .post-tag {
     font-size: 0.75rem;
     padding: 0.15rem 0.5rem;
+    margin-right: 0.4rem;
   }
 }
 </style>

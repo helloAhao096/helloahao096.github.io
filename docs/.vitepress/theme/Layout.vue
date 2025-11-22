@@ -4,14 +4,15 @@
       <!--  文章标题 小结  -->
       <template #doc-before>
         <!--  文章标题    -->
-        <PostTitle v-if="!isAboutPage"/>
+        <PostTitle />
         <!--   段落小结   -->
-        <PostCategory v-if="!isAboutPage"/>
+        <PostCategory />
       </template>
 
       <!--  github评论   -->
       <template #doc-after>
-        <Comments v-if="!isAboutPage" />
+        <PostPager />
+        <Comments />
       </template>
     </Layout>
 
@@ -21,23 +22,16 @@
   </div>
 </template>
 <script lang="ts" setup>
-import { computed } from "vue";
-import { useData } from "vitepress";
 import DefaultTheme from "vitepress/theme";
 
 import Footer from "./components/layout/Footer.vue";
 import Comments from "./components/plugin/Comments.vue";
-import PostCategory from "./components/post/PostCategory.vue";
 import PostTitle from "./components/post/PostTitle.vue";
+import PostCategory from "./components/post/PostCategory.vue";
+import PostPager from "./components/post/PostPager.vue";
 import MouseEvent from "./components/effect/MouseEvent.vue";
 
 const {Layout} = DefaultTheme;
-const { page } = useData();
-
-// 检测是否是 about 页面
-const isAboutPage = computed(() => {
-  return page.value.relativePath === "about.md";
-});
 </script>
 <style scoped>
 .layout-wrapper {

@@ -5,18 +5,18 @@ import {getPosts, getPostLength} from "./theme/utils/posts";
 async function config() {
     return {
         lang: "zh-CN",
-        title: "Ahao",
+        title: "QianFan",
         base:"/",
-        description: "Home of Ahao",
+        description: "Home of QianFan",
         appearance: true, // 启用主题切换，支持明暗主题切换和自动跟随系统主题
         // editLinks: true,
         // SEO优化配置  配置 网页 head 标签
         head: [
             ["link", {rel: "icon", type: "image/svg", href: "/horse.svg",},],
             ['meta', {name: 'referrer', content: 'no-referrer-when-downgrade'}],
-            ["meta", {name: "author", content: "Ahao",},],
+            ["meta", {name: "author", content: "QianFan",},],
             ["meta", {property: "og:title", content: "Home",},],
-            ["meta", {property: "og:description", content: "Home of Ahao",},],
+            ["meta", {property: "og:description", content: "Home of QianFan",},],
         ],
         cleanUrls: "with-subfolders", // 启用 clean URLs，去掉 .html 后缀
         lastUpdated: true,
@@ -24,6 +24,9 @@ async function config() {
         themeConfig: {
             // repo: "clark-cui/homeSite",
             logo: "/horse.svg",
+            lastUpdated: {
+                text: "最后更新时间",
+            },
             // 项目
             // docsDir: "/",
             // docsBranch: "master",

@@ -1,97 +1,199 @@
 <template>
-  <h1 class="title">{{ title }}</h1>
+  <section class="post-title">
+    <h1 class="title">{{ title }}</h1>
 
-  <div class="tags">
-    <svg
-        t="1641783753540"
-        class="fas-icon"
-        viewBox="0 0 1024 1024"
-        version="1.1"
-        xmlns="http://www.w3.org/2000/svg"
-        p-id="1254"
-        :style="{
-          width: '20px',
-        }"
+    <blockquote v-if="description" class="description">
+      <p class="description-text">{{ description }}</p>
+    </blockquote>
+
+    <section
+      v-if="publishDate || tags.length"
+      class="meta-block"
     >
-      <path
-          d="M995.126867 592.38l-360.08 360.08a53.333333 53.333333 0 0 1-71.333334 3.68l356.22-356.22a64 64 0 0 0 0-90.506667L495.8402 85.333333h45.573333a52.986667 52.986667 0 0 1 37.713334 15.62l416 416a53.4 53.4 0 0 1 0 75.426667z m-128 0l-360.08 360.08a53.333333 53.333333 0 0 1-75.426667 0l-416-416A52.986667 52.986667 0 0 1 0.0002 498.746667V138.666667a53.393333 53.393333 0 0 1 53.333333-53.333334h360.08a52.986667 52.986667 0 0 1 37.713334 15.62l416 416a53.4 53.4 0 0 1 0 75.426667zM341.333533 341.333333a85.333333 85.333333 0 1 0-85.333333 85.333334 85.426667 85.426667 0 0 0 85.333333-85.333334z"
-          fill="var(--vp-c-brand)"
-          p-id="1255"
-      ></path>
-    </svg>
-    Tags:
-  </div>
+      <div v-if="publishDate" class="meta-row">
+        <span class="meta-leading">
+          <span class="meta-emoji" aria-hidden="true">🗓️</span>
+          <span class="meta-label">发布时间</span>
+        </span>
+        <span class="meta-value">{{ publishDate }}</span>
+      </div>
 
-  <div class="tag-box">
-    <span class="tag"
-       v-for="tag in frontmatter.tags"
-       :key="tag">
-      {{ tag }}
-    </span>
-  </div>
-
-  <div class="date">🕒 Published at: {{ publishDate }}</div>
-
-<!--   <div class="description">{{ description }}</div>-->
+      <div v-if="tags.length" class="meta-row meta-row-tags">
+        <span class="meta-leading">
+          <span class="meta-emoji" aria-hidden="true">🏷️</span>
+          <span class="meta-label">标签</span>
+        </span>
+        <div class="meta-value">
+          <span
+            v-for="tag in tags"
+            :key="tag"
+            class="meta-tag"
+          >
+            {{ tag }}
+          </span>
+        </div>
+      </div>
+    </section>
+  </section>
 </template>
 <script lang="ts" setup>
+import { computed } from "vue";
 import { useData } from "vitepress";
 import dayjs from "dayjs";
-import relativeTime from "dayjs/plugin/relativeTime";
 import type { PageData } from "../../types";
 
 const pageData: PageData = useData().page.value;
-const { title, description, lastUpdated, frontmatter } = pageData;
-dayjs.extend(relativeTime);
+const { title, description, frontmatter } = pageData;
 
-// 计算发布时间
-const publishDate = dayjs().to(dayjs(frontmatter.date || Date.now()));
+// 计算发布时间（YYYY-MM-DD HH:mm:ss），若格式异常则回退原始值
+const publishDate = computed(() => {
+  const source = frontmatter?.date;
+  if (!source) {
+    return "";
+  }
+  const date = dayjs(source);
+  return date.isValid() ? date.format("YYYY-MM-DD HH:mm:ss") : String(source);
+});
+
+// 规范化标签数据，兼容 string / array
+const tags = computed(() => {
+  const raw = frontmatter?.tags;
+  if (Array.isArray(raw)) {
+    return raw;
+  }
+  if (typeof raw === "string") {
+    return raw
+      .split(",")
+      .map((tag) => tag.trim())
+      .filter(Boolean);
+  }
+  return [];
+});
 </script>
 <style scoped>
 .title {
-  color: var(--vp-c-text-1);
+  color: var(--color-primary);
+  font-weight: 500;
+  font-size: 2.4rem;
+  margin: 0.35em 0 0.25em;
+  line-height: 1.25;
+  font-family: var(--font-sans);
+  text-transform: none;
+  text-shadow: 0 0 18px rgba(8, 203, 0, 0.12);
+}
+
+.meta-block {
+  margin-bottom: 1.5rem;
+  padding: 1rem 0 1.15rem;
+  border-bottom: 1px solid var(--color-border);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.65rem;
+}
+
+.meta-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  color: var(--color-text-gray);
+}
+
+.meta-leading {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex-shrink: 0;
+}
+
+.meta-emoji {
+  font-size: 1rem;
+  line-height: 1;
+}
+
+.meta-label {
+  color: var(--color-text-gray);
+  letter-spacing: 0.04em;
+}
+
+.meta-value {
+  color: var(--color-primary);
   font-weight: 600;
-  font-size: 2.25em;
-  margin-top: 0.3em;
-  margin-bottom: 0.3em;
-  line-height: 1.3;
-  font-family: Dosis, ui-sans-serif, system-ui, -apple-system,
-    BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans",
-    sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol",
-    "Noto Color Emoji";
-}
-.fas-icon {
-  /*width: 1rem;*/
-  /*height: 1rem;*/
+  letter-spacing: 0.05em;
 }
 
-.tags {
-  margin: 1rem 0 ;
-  display: inline-block;
-
+.meta-row-tags .meta-value {
+  display: flex;
+  gap: 0.35rem;
+  flex-wrap: wrap;
 }
 
-.tag-box {
-  display: inline-block;
+.meta-tag {
+  padding: 0.1rem 0.5rem;
+  border-radius: 999px;
+  border: 1px solid rgba(8, 203, 0, 0.2);
+  font-size: 0.75rem;
+  color: var(--color-primary);
+  background: rgba(8, 203, 0, 0.08);
 }
 
-.tag {
-  margin: 0 1rem;
-  padding: 0 0.2rem;
-  background: var(--vp-c-bg);
-  box-shadow: 6px 6px var(--vp-c-brand);
-  border: 4px solid var(--vp-c-border);
-  color: var(--vp-c-brand-light);
-  overflow-y: auto;
-  display: inline-block;
+.description {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.95rem;
+  margin-top: 1.25rem;
+  padding: 1rem 1.25rem;
+  border-left: 3px solid var(--color-primary);
+  background: rgba(8, 203, 0, 0.06);
+  border-radius: 0 12px 12px 0;
+  font-family: var(--font-sans);
 }
 
+.description-text {
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.75;
+  color: var(--color-text);
+  opacity: 0.9;
+}
 
-.date {
-  font-size: 0.875rem;
-  line-height: 1.25rem;
-  margin-bottom: 1em;
-  padding-bottom: 1em;
-  border-bottom: 1px dashed #c7c7c7;
+:global(.dark) .description {
+  background: rgba(8, 203, 0, 0.16);
+}
+
+:global(.dark) .meta-block {
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+:global(.dark) .meta-tag {
+  background: rgba(8, 203, 0, 0.2);
+  border-color: rgba(8, 203, 0, 0.4);
+  color: var(--color-bg);
+}
+
+@media (max-width: 640px) {
+  .post-title {
+    margin-bottom: 2rem;
+  }
+
+  .title {
+    font-size: 1.75rem;
+  }
+
+  .meta-block {
+    padding: 0.85rem 0 1rem;
+  }
+
+  .meta-row {
+    align-items: flex-start;
+    gap: 0.45rem;
+  }
+
+  .meta-row-tags .meta-value {
+    flex: 1 1 auto;
+  }
 }
 </style>
