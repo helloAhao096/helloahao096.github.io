@@ -1,3 +1,4 @@
+import {resolve} from "node:path";
 import {getPosts, getPostLength} from "./theme/utils/posts";
 // import {buildBlogRSS} from "./theme/rss";
 
@@ -12,7 +13,7 @@ async function config() {
         // editLinks: true,
         // SEO优化配置  配置 网页 head 标签
         head: [
-            ["link", {rel: "icon", type: "image/jpg", href: "/QianFan.JPG",},],
+            ["link", {rel: "icon", type: "image/jpg", href: "/QianFan.jpg",},],
             ['meta', {name: 'referrer', content: 'no-referrer-when-downgrade'}],
             ["meta", {name: "author", content: "QianFan",},],
             ["meta", {property: "og:title", content: "Home",},],
@@ -24,7 +25,7 @@ async function config() {
         // https://juejin.cn/post/7042206108458909727
         themeConfig: {
             // repo: "clark-cui/homeSite",
-            logo: "/QianFan.JPG",
+            logo: "/QianFan.jpg",
             lastUpdated: {
                 text: "最后更新时间",
             },
@@ -78,6 +79,7 @@ async function config() {
         // buildEnd: buildBlogRSS,
         // 开发服务器配置，允许局域网访问
         vite: {
+            publicDir: resolve(__dirname, "../public"),
             server: {
                 host: '0.0.0.0', // 允许局域网访问
                 port: 5173, // 指定端口

@@ -6,9 +6,14 @@
 
 <script lang="ts" setup>
 import { onMounted } from "vue";
-import lottie from "lottie-web";
 
-onMounted(() => {
+onMounted(async () => {
+  if (typeof window === "undefined") {
+    return;
+  }
+
+  const { default: lottie } = await import("lottie-web");
+
   // storage lottie
   const svgContainer = document.getElementById("svgContainer");
   if (svgContainer) {

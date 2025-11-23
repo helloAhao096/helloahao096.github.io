@@ -5,7 +5,7 @@ outline: deep
 
 # 关于我
 
-<img src="./QianFan.JPG" alt="头像" class="about-avatar" />
+<img src="/QianFan.jpg" alt="头像" class="about-avatar" />
 
 Hi，互联网上的朋友，欢迎你来到这里，我是千帆
 
