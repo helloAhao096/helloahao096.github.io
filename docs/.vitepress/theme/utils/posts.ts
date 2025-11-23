@@ -35,7 +35,12 @@ async function getPostMDFilePaths(): Promise<string[]> {
   let paths = await globby(["**.md"], {
     ignore: ["node_modules", "README.md"],
   });
-  return paths.filter((item) => item.includes("posts/"));
+  return paths.filter((item) => {
+    if (!item.includes("posts/")) {
+      return false;
+    }
+    return !item.endsWith("posts/index.md");
+  });
 }
 
 export async function getPostLength(): Promise<number> {

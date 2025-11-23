@@ -12,18 +12,19 @@ async function config() {
         // editLinks: true,
         // SEO优化配置  配置 网页 head 标签
         head: [
-            ["link", {rel: "icon", type: "image/svg", href: "/horse.svg",},],
+            ["link", {rel: "icon", type: "image/jpg", href: "/QianFan.JPG",},],
             ['meta', {name: 'referrer', content: 'no-referrer-when-downgrade'}],
             ["meta", {name: "author", content: "QianFan",},],
             ["meta", {property: "og:title", content: "Home",},],
             ["meta", {property: "og:description", content: "Home of QianFan",},],
+
         ],
         cleanUrls: "with-subfolders", // 启用 clean URLs，去掉 .html 后缀
         lastUpdated: true,
         // https://juejin.cn/post/7042206108458909727
         themeConfig: {
             // repo: "clark-cui/homeSite",
-            logo: "/horse.svg",
+            logo: "/QianFan.JPG",
             lastUpdated: {
                 text: "最后更新时间",
             },
@@ -42,15 +43,20 @@ async function config() {
                     activeMatch: "^/$",
                 },
                 {
-                    text: "📸 照片",
-                    link: "/gallery",
-                    activeMatch: "^/gallery",
+                    text: "📚 博客",
+                    link: "/posts/",
+                    activeMatch: "^/posts/",
                 },
-                {
-                    text: "🛠️ 工具箱",
-                    link: "/tools",
-                    activeMatch: "^/tools",
-                },
+                // {
+                //     text: "📸 照片",
+                //     link: "/gallery",
+                //     activeMatch: "^/gallery",
+                // },
+                // {
+                //     text: "🛠️ 工具箱",
+                //     link: "/tools",
+                //     activeMatch: "^/tools",
+                // },
                 {
                     text: "👤 关于",
                     link: "/about",
