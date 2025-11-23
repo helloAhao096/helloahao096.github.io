@@ -6,9 +6,9 @@
         <span class="greeting-main">{{ displayText }}</span>
         <span class="greeting-cursor" :class="{ 'greeting-cursor--blink': isPlaying }">_</span>
       </p>
-      <p class="greeting-subtitle">
+      <!-- <p class="greeting-subtitle">
         {{ subtitleText }}
-      </p>
+      </p> -->
     </div>
   </div>
 </template>
@@ -20,7 +20,7 @@ import { onBeforeUnmount, onMounted, ref } from 'vue';
 const greetingText = "Hello, I'm QianFan";
 // const subtitleText = 'Welcome to my digital space';
 const randomChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+-=[]{}<>?/\\|~';
-const CYCLE_DURATION = 5000; // 5秒一个循环
+const CYCLE_DURATION = 10000; // 5秒一个循环
 
 // 状态
 const displayText = ref('');
@@ -86,26 +86,17 @@ const animateText = (
 };
 
 /**
- * 播放一个循环：随机文字 -> greetingText
+ * 播放一个循环：仅围绕 greetingText 进行随机揭示
  * @param cycleStartTime 循环开始时间戳
  */
 const playCycle = async (cycleStartTime: number) => {
   isPlaying.value = true;
 
-  // 生成并播放随机文字
-  const randomText = generateRandomText();
-  await new Promise<void>((resolve) => {
-    animateText(randomText, 0.2, () => {
-      setTimeout(resolve, 800); // 随机文字显示后停留800ms
-    });
-  });
-
-  // 播放问候语
   await new Promise<void>((resolve) => {
     animateText(greetingText, 0.2, () => {
-      // 计算已用时间，确保总时长不超过5秒
+      // 计算已用时间，确保总时长不超过设定周期
       const elapsed = Date.now() - cycleStartTime;
-      const remaining = Math.max(0, CYCLE_DURATION - elapsed - 500);
+      const remaining = Math.max(0, CYCLE_DURATION - elapsed);
       setTimeout(resolve, remaining);
     });
   });
