@@ -11,9 +11,9 @@ Hi，互联网上的朋友，欢迎你来到这里，我是千帆
 
 00后，江苏无锡，ISTJ
 
-长期主义，买好一点，买少一点。
-
 在人生的长河中，给自己留一点回忆
+
+"trying to be consistently not stupid, instead of trying to be very intelligent."
 
 ---
 
