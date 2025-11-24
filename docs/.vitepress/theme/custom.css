@@ -222,7 +222,8 @@ body::-webkit-scrollbar {
   gap: 1rem;
 }
 
-.link-hub a {
+.vp-doc .link-item,
+.link-item {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
@@ -230,14 +231,16 @@ body::-webkit-scrollbar {
   border: 1px solid var(--color-border);
   border-radius: 999px;
   font-weight: 500;
-  color: var(--color-text);
+  color: var(--color-text) !important;
+  text-decoration: none !important;
   transition: border-color 0.2s ease, transform 0.2s ease, color 0.2s ease;
 }
 
-.link-hub a:hover {
+.vp-doc .link-item:hover,
+.link-item:hover {
   border-color: var(--color-primary);
-  color: var(--color-primary);
-  text-decoration: none;
+  color: var(--color-primary) !important;
+  text-decoration: none !important;
   transform: translateY(-1px);
 }
 
@@ -247,18 +250,10 @@ body::-webkit-scrollbar {
   height: 28px;
 }
 
-.link-hub a small {
+.link-item small {
   font-size: 0.85rem;
   color: var(--color-text-muted);
   margin-left: 0.15rem;
-}
-
-.contact-text-only {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-weight: 500;
-  color: var(--color-text);
 }
 
 .donation-grid {

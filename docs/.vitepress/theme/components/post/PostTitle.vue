@@ -24,13 +24,14 @@
           <span class="meta-label">标签</span>
         </span>
         <div class="meta-value">
-          <span
+          <a
             v-for="tag in tags"
             :key="tag"
+            :href="getTagLink(tag)"
             class="meta-tag"
           >
             {{ tag }}
-          </span>
+          </a>
         </div>
       </div>
     </section>
@@ -38,7 +39,7 @@
 </template>
 <script lang="ts" setup>
 import { computed } from "vue";
-import { useData } from "vitepress";
+import { useData, withBase } from "vitepress";
 import dayjs from "dayjs";
 import type { PageData } from "../../types";
 
@@ -69,6 +70,11 @@ const tags = computed(() => {
   }
   return [];
 });
+
+// 获取标签链接
+const getTagLink = (tag: string) => {
+  return withBase(`/posts/?tag=${encodeURIComponent(tag)}`);
+};
 </script>
 <style scoped>
 .title {
@@ -138,6 +144,16 @@ const tags = computed(() => {
   font-size: 0.75rem;
   color: var(--color-primary);
   background: rgba(8, 203, 0, 0.08);
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-block;
+}
+
+.meta-tag:hover {
+  background: rgba(8, 203, 0, 0.15);
+  border-color: rgba(8, 203, 0, 0.4);
+  transform: translateY(-1px);
 }
 
 .description {

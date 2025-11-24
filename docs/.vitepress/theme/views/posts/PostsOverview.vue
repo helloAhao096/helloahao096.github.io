@@ -69,7 +69,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, ref } from "vue";
+import { computed, ref, onMounted, onUnmounted } from "vue";
 import { useData } from "vitepress";
 import PageContainer from "../../components/layout/PageContainer.vue";
 import PostCard from "../../components/post/PostCard.vue";
@@ -83,6 +83,31 @@ const posts = computed<Post[]>(() => {
 });
 
 const activeTag = ref<string | null>(null);
+
+// 从 URL 查询参数读取标签
+const initTagFromQuery = () => {
+  if (typeof window !== "undefined") {
+    const params = new URLSearchParams(window.location.search);
+    const tagParam = params.get("tag");
+    if (tagParam) {
+      activeTag.value = decodeURIComponent(tagParam);
+    } else {
+      activeTag.value = null;
+    }
+  }
+};
+
+onMounted(() => {
+  initTagFromQuery();
+  // 监听浏览器前进后退
+  window.addEventListener("popstate", initTagFromQuery);
+});
+
+onUnmounted(() => {
+  if (typeof window !== "undefined") {
+    window.removeEventListener("popstate", initTagFromQuery);
+  }
+});
 
 const allTags = computed(() => {
   const tagSet = new Set<string>();
@@ -139,10 +164,26 @@ const activeTagLabel = computed(() => activeTag.value || "全部");
 
 const resetFilter = () => {
   activeTag.value = null;
+  updateURL(null);
 };
 
 const toggleTag = (tag: string) => {
-  activeTag.value = activeTag.value === tag ? null : tag;
+  const newTag = activeTag.value === tag ? null : tag;
+  activeTag.value = newTag;
+  updateURL(newTag);
+};
+
+// 更新 URL 查询参数
+const updateURL = (tag: string | null) => {
+  if (typeof window !== "undefined") {
+    const url = new URL(window.location.href);
+    if (tag) {
+      url.searchParams.set("tag", tag);
+    } else {
+      url.searchParams.delete("tag");
+    }
+    window.history.replaceState({}, "", url.toString());
+  }
 };
 
 const extractYear = (date?: string) => {
