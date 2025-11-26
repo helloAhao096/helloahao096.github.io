@@ -19,5 +19,11 @@ lib/
 .idea
 .vscode
 
+# Environment variables
+.env
+.env.*
+docs/.env
+docs/.env.*
+
 # Obsidian configuration
 .obsidian/
