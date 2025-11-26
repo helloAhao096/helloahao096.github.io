@@ -29,10 +29,11 @@ const HAS_TIME_REGEX = /\d{1,2}:\d{2}/;
 /**
  * 将日期字符串转换为 "Month Day, Year" 或 "Month Day, Year HH:MM:SS" 格式
  */
-export function formatDate(date: string): string {
+export function formatDate(date: string | number | Date): string {
+  const originalInput = normalizeInput(date);
   const parsed = parseDate(date);
   if (!parsed) {
-    return date;
+    return originalInput;
   }
 
   const monthKey = String(parsed.getMonth() + 1).padStart(2, "0");
@@ -40,7 +41,7 @@ export function formatDate(date: string): string {
   const day = pad(parsed.getDate());
   const base = `${month} ${day}, ${parsed.getFullYear()}`;
 
-  if (!hasTimeComponent(date)) {
+  if (!hasTimeComponent(originalInput)) {
     return base;
   }
 
@@ -53,17 +54,18 @@ export function formatDate(date: string): string {
 /**
  * 将日期字符串统一成 `YYYY-MM-DD` 或 `YYYY-MM-DD HH:mm:ss`
  */
-export function normalizeDateString(date?: string): string {
+export function normalizeDateString(date?: string | number | Date): string {
+  const originalInput = normalizeInput(date);
   const parsed = parseDate(date);
   if (!parsed) {
-    return (date ?? "").trim();
+    return originalInput;
   }
 
   const base = `${parsed.getFullYear()}-${pad(parsed.getMonth() + 1)}-${pad(
     parsed.getDate()
   )}`;
 
-  if (!hasTimeComponent(date)) {
+  if (!hasTimeComponent(originalInput)) {
     return base;
   }
 
@@ -75,12 +77,21 @@ export function normalizeDateString(date?: string): string {
 /**
  * 将日期字符串转换为毫秒时间戳
  */
-export function dateToTimestamp(date?: string): number {
+export function dateToTimestamp(date?: string | number | Date): number {
   const parsed = parseDate(date);
   return parsed ? parsed.getTime() : 0;
 }
 
-function parseDate(date?: string): Date | null {
+function parseDate(date?: string | number | Date): Date | null {
+  if (date instanceof Date) {
+    return Number.isNaN(date.getTime()) ? null : new Date(date.getTime());
+  }
+
+  if (typeof date === "number") {
+    const numericDate = new Date(date);
+    return Number.isNaN(numericDate.getTime()) ? null : numericDate;
+  }
+
   const input = (date ?? "").trim();
   const normalized = input
     ? input.includes("T")
@@ -116,5 +127,16 @@ function hasTimeComponent(date?: string): boolean {
 
 function pad(value: number): string {
   return value.toString().padStart(2, "0");
+}
+
+function normalizeInput(date?: string | number | Date): string {
+  if (date instanceof Date) {
+    return Number.isNaN(date.getTime()) ? "" : date.toISOString();
+  }
+  if (typeof date === "number") {
+    const numericDate = new Date(date);
+    return Number.isNaN(numericDate.getTime()) ? "" : numericDate.toISOString();
+  }
+  return (date ?? "").toString().trim();
 }
 

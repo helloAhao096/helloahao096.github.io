@@ -182,7 +182,7 @@ env:
    - 其他需要的 `VITE_GISCUS_*` 字段
 3. 在 GitHub Actions workflow（例如 `deploy-pages.yml`）中通过 `env` 或 `with.env` 引用这些 secrets，构建时 `import.meta.env` 就能拿到对应值。
 
-> 如果多个仓库共用同一套 giscus 参数，可在组织级 Secrets 中统一配置，然后使用 `${{ secrets.ORG_SECRET_NAME }}`。
+> 如果多个仓库共用同一套 giscus 参数，可在组织级 Secrets 中统一配置，然后在 workflow 中引用 `secrets.ORG_SECRET_NAME`。
 
 ## 8. 常见问题排查
 
