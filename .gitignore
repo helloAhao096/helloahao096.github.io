@@ -22,8 +22,8 @@ lib/
 # Environment variables
 .env
 .env.*
-docs/.env
-docs/.env.*
+**/.env
+**/.env.*
 
 # Obsidian configuration
 .obsidian/
