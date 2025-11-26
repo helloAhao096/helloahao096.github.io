@@ -74,6 +74,7 @@ import { useData } from "vitepress";
 import PageContainer from "../../components/layout/PageContainer.vue";
 import PostCard from "../../components/post/PostCard.vue";
 import type { Post } from "../../types";
+import { dateToTimestamp } from "../../utils/date";
 
 const { theme } = useData();
 
@@ -154,8 +155,10 @@ const yearGroups = computed(() => {
       year,
       posts: buckets[year]
         .slice()
-        .sort((a, b) =>
-          (b.frontMatter.date || "").localeCompare(a.frontMatter.date || "")
+        .sort(
+          (a, b) =>
+            dateToTimestamp(b.frontMatter.date) -
+            dateToTimestamp(a.frontMatter.date)
         ),
     }));
 });

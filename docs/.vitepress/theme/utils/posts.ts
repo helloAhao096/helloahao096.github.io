@@ -2,6 +2,7 @@ import globby from "globby";
 import matter from "gray-matter";
 import fs from "fs-extra";
 import type { Post } from "../types";
+import { normalizeDateString, dateToTimestamp } from "./date";
 
 export async function getPosts(): Promise<Post[]> {
   let paths = await getPostMDFilePaths();
@@ -11,7 +12,7 @@ export async function getPosts(): Promise<Post[]> {
       // 截断字符串 修改路由
       item = item.substring(5);
       const { data } = matter(content);
-      data.date = _convertDate(data.date);
+      data.date = normalizeDateString(data.date);
       return {
         frontMatter: data,
         regularPath: `/${item.replace(".md", ".html")}`,
@@ -22,13 +23,8 @@ export async function getPosts(): Promise<Post[]> {
   return posts;
 }
 
-function _convertDate(date = new Date().toString()): string {
-  const json_date = new Date(date).toJSON();
-  return json_date.split("T")[0];
-}
-
 function _compareDate(obj1: Post, obj2: Post): number {
-  return obj1.frontMatter.date! < obj2.frontMatter.date! ? 1 : -1;
+  return dateToTimestamp(obj2.frontMatter.date) - dateToTimestamp(obj1.frontMatter.date);
 }
 
 async function getPostMDFilePaths(): Promise<string[]> {
