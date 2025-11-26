@@ -41,18 +41,27 @@
 import { computed } from "vue";
 import { useData, withBase } from "vitepress";
 import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
+import timezone from "dayjs/plugin/timezone";
 import type { PageData } from "../../types";
+
+// 启用 dayjs 时区插件
+dayjs.extend(utc);
+dayjs.extend(timezone);
 
 const pageData: PageData = useData().page.value;
 const { title, description, frontmatter } = pageData;
 
 // 计算发布时间（YYYY-MM-DD HH:mm:ss），若格式异常则回退原始值
+// 输入时间视为 UTC+8（中国时区），直接格式化显示，不进行时区转换
 const publishDate = computed(() => {
   const source = frontmatter?.date;
   if (!source) {
     return "";
   }
-  const date = dayjs(source);
+  // 将输入的日期字符串解析为 UTC+8 时区（Asia/Shanghai）
+  // 这样即使系统时区不同，也能正确显示用户输入的中国时间
+  const date = dayjs.tz(source, "Asia/Shanghai");
   return date.isValid() ? date.format("YYYY-MM-DD HH:mm:ss") : String(source);
 });
 

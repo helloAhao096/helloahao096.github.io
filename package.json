@@ -14,8 +14,10 @@
     "gray-matter": "^4.0.3",
     "lottie-web": "^5.10.0",
     "markdown-it": "^13.0.1",
+    "mermaid": "^11.12.1",
     "sass": "^1.62.1",
-    "vitepress": "1.6.4"
+    "vitepress": "1.6.4",
+    "vitepress-plugin-mermaid": "^2.0.17"
   },
   "scripts": {
     "docs:dev": "vitepress dev docs",

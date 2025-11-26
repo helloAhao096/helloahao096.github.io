@@ -1,10 +1,14 @@
 import {resolve} from "node:path";
 import {getPosts, getPostLength} from "./theme/utils/posts";
+import type {UserConfig} from "vitepress";
 // import {buildBlogRSS} from "./theme/rss";
 
 
 async function config() {
-    return {
+    // 动态导入 ESM 插件，避免 esbuild 在加载配置时使用 require
+    const {withMermaid} = await import("vitepress-plugin-mermaid");
+
+    const baseConfig: UserConfig = {
         lang: "zh-CN",
         title: "QianFan",
         base:"/",
@@ -20,7 +24,7 @@ async function config() {
             ["meta", {property: "og:description", content: "Home of QianFan",},],
 
         ],
-        cleanUrls: "with-subfolders", // 启用 clean URLs，去掉 .html 后缀
+        cleanUrls: "with-subfolders" as any, // 启用 clean URLs，去掉 .html 后缀
         lastUpdated: true,
         // https://juejin.cn/post/7042206108458909727
         themeConfig: {
@@ -84,8 +88,29 @@ async function config() {
                 host: '0.0.0.0', // 允许局域网访问
                 port: 5173, // 指定端口
             },
+            optimizeDeps: {
+                // Mermaid 依赖的 ESM 包需要提前预构建
+                include: [
+                    "mermaid",
+                    "@braintree/sanitize-url",
+                    "cytoscape",
+                    "cytoscape-cose-bilkent",
+                    "debug",
+                ],
+            },
+            ssr: {
+                // 将相关依赖标记为内部打包，避免 SSR 阶段 require 失败
+                noExternal: [
+                    "vitepress-plugin-mermaid",
+                    "mermaid",
+                    "@braintree/sanitize-url",
+                ],
+            },
         },
     };
+    
+    // 使用 withMermaid 包装配置以启用 Mermaid 支持
+    return withMermaid(baseConfig);
 }
 
 export default config();
