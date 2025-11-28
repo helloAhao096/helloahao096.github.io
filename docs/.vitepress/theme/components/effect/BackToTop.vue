@@ -1,6 +1,5 @@
 <template>
   <button
-    v-if="isPostPage"
     class="back-to-top"
     :class="{ visible: isVisible }"
     @click="scrollToTop"
@@ -25,27 +24,10 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, computed, onMounted, onUnmounted } from "vue";
+import { ref, onMounted, onUnmounted } from "vue";
 import { useData } from "vitepress";
 
 const { page } = useData();
-
-// 判断是否为博文页面
-const isPostPage = computed(() => {
-  const path = page.value.relativePath || "";
-  
-  // relativePath 格式: "posts/xxx.md" 或 "posts/xxx/index.md"
-  // 判断路径包含 posts/ 且不是 index.md
-  const isPost = path.includes("posts/");
-  
-  // 排除 posts/index.md
-  const isIndex = 
-    path === "posts/index.md" ||
-    path.endsWith("/posts/index.md") ||
-    path.endsWith("posts/index.md");
-  
-  return isPost && !isIndex;
-});
 
 // 控制按钮显示/隐藏
 const isVisible = ref(false);
