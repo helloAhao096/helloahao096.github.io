@@ -277,88 +277,67 @@ src/
 
 项目结构应该随着项目发展而演进，而不是一开始就采用最复杂的结构：
 
-**阶段 1：项目初期（扁平化结构）**
+```mermaid
+flowchart LR
+    A[阶段1: 项目初期<br/>扁平化结构] -->|触发条件| B[阶段2: 项目增长<br/>引入模块化]
+    B -->|触发条件| C[阶段3: 项目成熟<br/>完整混合模式]
+    
+    A1[页面数 < 10<br/>团队 1-2 人<br/>功能简单] -.-> A
+    B1[代码量 > 500 行<br/>团队 > 3 人<br/>模块边界清晰] -.-> B
+    C1[页面数 > 30<br/>模块数 > 5<br/>需要独立部署] -.-> C
+    
+    style A fill:#e1f5ff
+    style B fill:#fff4e1
+    style C fill:#e8f5e9
 ```
-适用条件：
-- 页面数 < 10
-- 团队规模 1-2 人
-- 功能相对简单
 
-结构：扁平化结构（模式一）
-```
+**阶段 1：项目初期（扁平化结构）**
+- **适用条件**：页面数 < 10，团队规模 1-2 人，功能相对简单
+- **结构**：扁平化结构（模式一），按技术层次组织
 
 **阶段 2：项目增长（引入模块化）**
-```
-触发条件：
-- 某个功能代码量 > 500 行
-- 团队规模 > 3 人
-- 出现明显的业务模块边界
-
-结构：开始模块化
-src/
-├── api/              # 共享 API
-├── components/       # 共享组件
-├── stores/           # 共享状态
-└── modules/         # 开始模块化
-    └── [module]/
-        ├── components/
-        └── views/
-```
+- **触发条件**：某个功能代码量 > 500 行，团队规模 > 3 人，出现明显的业务模块边界
+- **结构**：开始模块化，共享代码仍在全局目录，业务代码按模块组织
 
 **阶段 3：项目成熟（完整混合模式）**
-```
-触发条件：
-- 页面数 > 30
-- 模块数 > 5
-- 需要模块独立部署
-
-结构：完整混合模式（模式二）
-src/
-├── core/            # 核心基础设施
-├── shared/          # 共享业务代码
-└── modules/         # 完整模块化
-    └── [module]/
-        ├── api/
-        ├── types/
-        ├── stores/
-        ├── components/
-        └── views/
-```
+- **触发条件**：页面数 > 30，模块数 > 5，需要模块独立部署
+- **结构**：完整混合模式（模式二），core/shared/modules 三层结构
 
 #### 决策树：如何选择设计模式？
 
-```
-新项目开始
-    │
-    ├─ 页面数 < 10 且 团队 < 3 人？
-    │   ├─ 是 → 使用扁平化结构（模式一）
-    │   └─ 否 → 继续判断
-    │
-    ├─ 业务领域是否清晰？
-    │   ├─ 是 → 使用混合模式（模式二）
-    │   └─ 否 → 使用扁平化结构，后续演进
-    │
-    └─ 是否需要模块独立部署？
-        ├─ 是 → 使用混合模式（模式二）
-        └─ 否 → 根据团队规模选择
+```mermaid
+flowchart TD
+    A[新项目开始] --> B{页面数 < 10<br/>且<br/>团队 < 3 人?}
+    B -->|是| C[使用扁平化结构<br/>模式一]
+    B -->|否| D{业务领域<br/>是否清晰?}
+    D -->|是| E[使用混合模式<br/>模式二]
+    D -->|否| F[使用扁平化结构<br/>后续演进]
+    A --> G{是否需要<br/>模块独立部署?}
+    G -->|是| E
+    G -->|否| H{根据团队规模选择}
+    H -->|团队 < 3 人| C
+    H -->|团队 ≥ 3 人| E
+    
+    style C fill:#e1f5ff
+    style E fill:#e8f5e9
+    style F fill:#fff4e1
 ```
 
 #### 代码放置决策树
 
-```
-新代码应该放在哪里？
-
-1. 是否被 3+ 个模块使用？
-   ├─ 是 → 继续判断
-   └─ 否 → 跳转到步骤 3
-
-2. 是否是基础设施（HTTP、工具函数、通用类型）？
-   ├─ 是 → core/
-   └─ 否 → shared/
-
-3. 是否属于某个业务模块？
-   ├─ 是 → modules/[module]/
-   └─ 否 → shared/
+```mermaid
+flowchart TD
+    A[新代码应该放在哪里?] --> B{是否被 3+ 个<br/>模块使用?}
+    B -->|是| C{是否是基础设施?<br/>HTTP、工具函数、通用类型}
+    C -->|是| D[core/<br/>核心基础设施层]
+    C -->|否| E[shared/<br/>共享业务代码层]
+    B -->|否| F{是否属于<br/>某个业务模块?}
+    F -->|是| G[modules/[module]/<br/>业务模块层]
+    F -->|否| E
+    
+    style D fill:#e1f5ff
+    style E fill:#fff4e1
+    style G fill:#e8f5e9
 ```
 
 #### 最佳实践建议
@@ -418,26 +397,9 @@ frontend/
   - 注册全局插件（路由、状态管理、UI 库等）
   - 挂载应用
 
-```typescript
-// main.ts 示例结构
-import { createApp } from 'vue'
-import App from './App.vue'
-import router from './router'
-import { createPinia } from 'pinia'
-import { i18n } from './plugins/i18n'
-
-const app = createApp(App)
-
-app.use(createPinia())
-app.use(router)
-app.use(i18n)
-
-app.mount('#app')
-```
-
 - `App.vue` - 根组件
   - 应用的最外层容器
-  - 通常包含路由视图 `<router-view />`
+  - 通常包含路由视图
   - 全局布局和样式
 
 - `vite-env.d.ts` - Vite 类型声明
@@ -459,60 +421,22 @@ app.mount('#app')
 api/
 ├── core/                # 核心基础设施
 │   ├── client/          # HTTP 客户端封装
-│   │   └── index.ts     # 创建 axios 实例
+│   │   └── index.ts     # HTTP 客户端实例
 │   ├── interceptors/    # 请求/响应拦截器
-│   │   ├── request.ts   # 请求拦截器
-│   │   └── response.ts  # 响应拦截器
+│   │   ├── request.ts   # 请求拦截器（添加 token、设置 headers 等）
+│   │   └── response.ts  # 响应拦截器（统一错误处理、数据转换等）
 │   └── services/        # 基础服务
 │       └── auth.ts      # 认证服务
 ├── index.ts             # API 统一导出
-├── user.ts              # 用户相关 API
+├── user.ts              # 用户相关 API（获取列表、详情、创建、更新、删除等）
 ├── project.ts           # 项目相关 API
 └── [module].ts          # 其他业务模块 API
 ```
 
-**示例代码：**
-
-```typescript
-// api/core/client/index.ts
-import axios from 'axios'
-import type { AxiosInstance } from 'axios'
-
-const client: AxiosInstance = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL,
-  timeout: 10000,
-})
-
-export default client
-```
-
-```typescript
-// api/user.ts
-import client from './core/client'
-import type { User, CreateUserRequest, UpdateUserRequest } from '@/types/modules/user'
-
-export const userApi = {
-  // 获取用户列表
-  getUsers: (params?: PaginationParams) => 
-    client.get<PaginatedResponse<User>>('/users', { params }),
-  
-  // 获取用户详情
-  getUserById: (id: string) => 
-    client.get<User>(`/users/${id}`),
-  
-  // 创建用户
-  createUser: (data: CreateUserRequest) => 
-    client.post<User>('/users', data),
-  
-  // 更新用户
-  updateUser: (id: string, data: UpdateUserRequest) => 
-    client.put<User>(`/users/${id}`, data),
-  
-  // 删除用户
-  deleteUser: (id: string) => 
-    client.delete(`/users/${id}`),
-}
-```
+**设计要点：**
+- `core/` 目录存放 HTTP 客户端封装和拦截器，所有 API 调用都通过统一的客户端
+- 按业务模块组织 API 文件，每个模块一个文件
+- 统一导出，便于管理和使用
 
 #### 2.2.3 类型定义层（Type Safety）
 
@@ -528,79 +452,24 @@ export const userApi = {
 ```
 types/
 ├── common/              # 通用类型定义
-│   ├── response.ts      # 响应类型
-│   ├── pagination.ts    # 分页类型
-│   ├── validation.ts    # 验证类型
+│   ├── response.ts      # 响应类型（ApiResponse、PaginatedResponse 等）
+│   ├── pagination.ts    # 分页类型（分页参数、分页响应等）
+│   ├── validation.ts    # 验证类型（表单验证规则等）
 │   └── index.ts         # 通用类型导出
 ├── modules/             # 业务模块类型
 │   ├── user/            # 用户模块类型
 │   │   ├── index.ts     # 模块类型统一导出
-│   │   ├── types.ts     # 实体类型（User, UserRole 等）
-│   │   ├── requests.ts  # 请求类型（CreateUserRequest 等）
+│   │   ├── types.ts     # 实体类型（User、UserRole 等）
+│   │   ├── requests.ts  # 请求类型（CreateUserRequest、UpdateUserRequest 等）
 │   │   └── responses.ts # 响应类型（UserResponse 等）
 │   └── [module]/        # 其他业务模块
 └── index.ts             # 全局类型导出
 ```
 
-**示例代码：**
-
-```typescript
-// types/common/response.ts
-export interface ApiResponse<T = any> {
-  code: number
-  message: string
-  data: T
-}
-
-export interface PaginatedResponse<T> {
-  items: T[]
-  total: number
-  page: number
-  pageSize: number
-}
-```
-
-```typescript
-// types/modules/user/types.ts
-export interface User {
-  id: string
-  username: string
-  email: string
-  role: UserRole
-  createdAt: string
-  updatedAt: string
-}
-
-export enum UserRole {
-  ADMIN = 'admin',
-  USER = 'user',
-}
-```
-
-```typescript
-// types/modules/user/requests.ts
-import type { UserRole } from './types'
-
-export interface CreateUserRequest {
-  username: string
-  email: string
-  password: string
-  role: UserRole
-}
-
-export interface UpdateUserRequest {
-  username?: string
-  email?: string
-  role?: UserRole
-}
-```
-
-```typescript
-// types/modules/user/index.ts
-export * from './types'
-export * from './requests'
-export * from './responses'
-```
+**设计要点：**
+- 通用类型放在 `common/`，业务类型按模块组织
+- 每个模块的类型分为：实体类型、请求类型、响应类型
+- 统一导出，便于使用和维护
 
 #### 2.2.4 状态管理层（State Management）
 
@@ -615,60 +484,16 @@ export * from './responses'
 **目录结构：**
 ```
 stores/
-├── useAuthStore.ts      # 认证状态
-├── useUserStore.ts      # 用户状态
+├── useAuthStore.ts      # 认证状态（登录状态、用户信息等）
+├── useUserStore.ts      # 用户状态（用户列表、当前用户等）
 ├── useProjectStore.ts   # 项目状态
 └── use[Module]Store.ts  # 其他模块状态
 ```
 
-**示例代码：**
-
-```typescript
-// stores/useUserStore.ts
-import { defineStore } from 'pinia'
-import { ref, computed } from 'vue'
-import { userApi } from '@/api/user'
-import type { User } from '@/types/modules/user'
-
-export const useUserStore = defineStore('user', () => {
-  // State
-  const users = ref<User[]>([])
-  const currentUser = ref<User | null>(null)
-  const loading = ref(false)
-
-  // Getters
-  const userCount = computed(() => users.value.length)
-  const isAuthenticated = computed(() => currentUser.value !== null)
-
-  // Actions
-  async function fetchUsers() {
-    loading.value = true
-    try {
-      const response = await userApi.getUsers()
-      users.value = response.data.items
-    } finally {
-      loading.value = false
-    }
-  }
-
-  function setCurrentUser(user: User | null) {
-    currentUser.value = user
-  }
-
-  return {
-    // State
-    users,
-    currentUser,
-    loading,
-    // Getters
-    userCount,
-    isAuthenticated,
-    // Actions
-    fetchUsers,
-    setCurrentUser,
-  }
-})
-```
+**设计要点：**
+- 按功能模块划分 Store，每个模块一个 Store 文件
+- Store 包含：状态（State）、计算属性（Getters）、方法（Actions）
+- 使用组合式 API 风格，保持代码简洁
 
 #### 2.2.5 组合式函数层（Composables）
 
@@ -683,70 +508,17 @@ export const useUserStore = defineStore('user', () => {
 **目录结构：**
 ```
 composables/
-├── useAuth.ts           # 认证相关逻辑
-├── useUser.ts            # 用户相关逻辑
-├── usePagination.ts      # 分页逻辑
-├── useForm.ts            # 表单处理逻辑
+├── useAuth.ts           # 认证相关逻辑（登录、登出、权限检查等）
+├── useUser.ts            # 用户相关逻辑（用户操作、状态管理等）
+├── usePagination.ts      # 分页逻辑（分页状态、翻页操作等）
+├── useForm.ts            # 表单处理逻辑（表单验证、提交等）
 └── use[Feature].ts       # 其他功能组合式函数
 ```
 
-**示例代码：**
-
-```typescript
-// composables/usePagination.ts
-import { ref, computed } from 'vue'
-
-export function usePagination<T>(
-  fetchFn: (page: number, pageSize: number) => Promise<PaginatedResponse<T>>
-) {
-  const items = ref<T[]>([])
-  const page = ref(1)
-  const pageSize = ref(10)
-  const total = ref(0)
-  const loading = ref(false)
-
-  const totalPages = computed(() => Math.ceil(total.value / pageSize.value))
-  const hasMore = computed(() => page.value < totalPages.value)
-
-  async function loadData() {
-    loading.value = true
-    try {
-      const response = await fetchFn(page.value, pageSize.value)
-      items.value = response.data.items
-      total.value = response.data.total
-    } finally {
-      loading.value = false
-    }
-  }
-
-  function nextPage() {
-    if (hasMore.value) {
-      page.value++
-      loadData()
-    }
-  }
-
-  function prevPage() {
-    if (page.value > 1) {
-      page.value--
-      loadData()
-    }
-  }
-
-  return {
-    items,
-    page,
-    pageSize,
-    total,
-    loading,
-    totalPages,
-    hasMore,
-    loadData,
-    nextPage,
-    prevPage,
-  }
-}
-```
+**设计要点：**
+- 每个 composable 只做一件事，保持单一职责
+- 可组合性，composables 之间可以相互组合使用
+- 充分利用 Vue 的响应式系统
 
 #### 2.2.6 路由层（Routing）
 
@@ -761,78 +533,20 @@ export function usePagination<T>(
 **目录结构：**
 ```
 router/
-├── index.ts             # 路由主入口
-├── guards.ts            # 路由守卫
-├── utils.ts             # 路由工具函数
+├── index.ts             # 路由主入口（创建路由实例、配置路由选项）
+├── guards.ts            # 路由守卫（认证检查、权限验证等）
+├── utils.ts             # 路由工具函数（路由跳转、参数获取等）
 └── modules/             # 路由模块
     ├── index.ts         # 路由模块统一导出
-    ├── auth.ts          # 认证相关路由
-    ├── user.ts          # 用户相关路由
+    ├── auth.ts          # 认证相关路由（登录、注册等）
+    ├── user.ts          # 用户相关路由（用户列表、详情等）
     └── [module].ts      # 其他业务模块路由
 ```
 
-**示例代码：**
-
-```typescript
-// router/modules/user.ts
-import type { RouteRecordRaw } from 'vue-router'
-
-const userRoutes: RouteRecordRaw[] = [
-  {
-    path: '/users',
-    name: 'UserList',
-    component: () => import('@/views/user/UserListView.vue'),
-    meta: {
-      title: '用户管理',
-      requiresAuth: true,
-    },
-  },
-  {
-    path: '/users/:id',
-    name: 'UserDetail',
-    component: () => import('@/views/user/UserDetailView.vue'),
-    meta: {
-      title: '用户详情',
-      requiresAuth: true,
-    },
-  },
-]
-
-export default userRoutes
-```
-
-```typescript
-// router/index.ts
-import { createRouter, createWebHistory } from 'vue-router'
-import { routes } from './modules'
-
-const router = createRouter({
-  history: createWebHistory(),
-  routes,
-})
-
-export default router
-```
-
-```typescript
-// router/guards.ts
-import type { Router } from 'vue-router'
-
-export function setupRouterGuards(router: Router) {
-  router.beforeEach((to, from, next) => {
-    // 认证检查
-    const requiresAuth = to.meta.requiresAuth
-    const isAuthenticated = checkAuth() // 你的认证检查逻辑
-    
-    if (requiresAuth && !isAuthenticated) {
-      next({ name: 'Login', query: { redirect: to.fullPath } })
-      return
-    }
-    
-    next()
-  })
-}
-```
+**设计要点：**
+- 按功能模块拆分路由配置，便于管理
+- 统一管理路由守卫，集中处理认证和权限
+- 使用懒加载优化性能
 
 #### 2.2.7 视图层（Views/Pages）
 
@@ -919,39 +633,18 @@ components/
 **目录结构：**
 ```
 utils/
-├── format.ts           # 格式化工具（日期、数字、货币等）
-├── validation.ts       # 验证工具（邮箱、手机号等）
-├── storage.ts          # 本地存储工具
-├── url.ts              # URL 处理工具
-├── string.ts           # 字符串处理工具
+├── format.ts           # 格式化工具（日期、数字、货币等格式化函数）
+├── validation.ts       # 验证工具（邮箱、手机号、身份证等验证函数）
+├── storage.ts          # 本地存储工具（localStorage、sessionStorage 封装）
+├── url.ts              # URL 处理工具（URL 解析、参数处理等）
+├── string.ts           # 字符串处理工具（字符串操作、转换等）
 └── [category].ts       # 其他类别工具
 ```
 
-**示例代码：**
-
-```typescript
-// utils/format.ts
-export function formatDate(date: Date | string, format = 'YYYY-MM-DD'): string {
-  // 日期格式化实现
-}
-
-export function formatCurrency(amount: number, currency = 'CNY'): string {
-  // 货币格式化实现
-}
-```
-
-```typescript
-// utils/validation.ts
-export function isValidEmail(email: string): boolean {
-  const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-  return regex.test(email)
-}
-
-export function isValidPhone(phone: string): boolean {
-  const regex = /^1[3-9]\d{9}$/
-  return regex.test(phone)
-}
-```
+**设计要点：**
+- 纯函数，无副作用，不依赖 Vue 实例
+- 按功能分类组织，便于查找和使用
+- 充分使用 TypeScript 类型，确保类型安全
 
 #### 2.2.10 常量定义层（Constants）
 
@@ -966,45 +659,17 @@ export function isValidPhone(phone: string): boolean {
 **目录结构：**
 ```
 constants/
-├── api.ts              # API 相关常量
-├── routes.ts            # 路由常量
-├── user.ts             # 用户相关常量
+├── api.ts              # API 相关常量（API 端点、HTTP 状态码等）
+├── routes.ts            # 路由常量（路由路径、路由名称等）
+├── user.ts             # 用户相关常量（用户角色、用户状态等）
 └── [module].ts         # 其他模块常量
 ```
 
-**示例代码：**
-
-```typescript
-// constants/api.ts
-export const API_ENDPOINTS = {
-  USERS: '/api/users',
-  PROJECTS: '/api/projects',
-} as const
-
-export const HTTP_STATUS = {
-  OK: 200,
-  CREATED: 201,
-  BAD_REQUEST: 400,
-  UNAUTHORIZED: 401,
-  FORBIDDEN: 403,
-  NOT_FOUND: 404,
-} as const
-```
-
-```typescript
-// constants/user.ts
-export enum UserRole {
-  ADMIN = 'admin',
-  USER = 'user',
-  GUEST = 'guest',
-}
-
-export const USER_STATUS = {
-  ACTIVE: 'active',
-  INACTIVE: 'inactive',
-  BANNED: 'banned',
-} as const
-```
+**设计要点：**
+- 使用 `const` 和 `as const` 确保类型安全
+- 按模块组织常量，便于管理
+- 使用枚举或对象组织相关常量
+- 避免魔法数字和字符串
 
 #### 2.2.11 样式层（Styles）
 
@@ -1019,60 +684,25 @@ export const USER_STATUS = {
 **目录结构：**
 ```
 styles/
-├── global.css          # 全局样式
-├── variables.css       # CSS 变量（主题变量）
-├── tokens/             # 设计令牌
-│   ├── colors.ts       # 颜色令牌（如果使用 JS/TS）
+├── global.css          # 全局样式（全局重置、基础样式等）
+├── variables.css       # CSS 变量（主题变量：颜色、间距、字体等）
+├── tokens/             # 设计令牌（设计系统的基础值）
+│   ├── colors.ts       # 颜色令牌（如果使用 JS/TS 管理）
 │   ├── spacing.ts      # 间距令牌
 │   └── typography.ts   # 字体令牌
 ├── foundations/        # 基础样式
-│   ├── reset.css       # 样式重置
-│   └── typography.css  # 排版基础样式
-└── mixins/             # SCSS 混入
-    ├── _flexbox.scss   # Flexbox 混入
-    └── _responsive.scss # 响应式混入
+│   ├── reset.css       # 样式重置（清除浏览器默认样式）
+│   └── typography.css  # 排版基础样式（字体、行高等）
+└── mixins/             # SCSS 混入（可复用的样式片段）
+    ├── _flexbox.scss   # Flexbox 混入（居中、布局等）
+    └── _responsive.scss # 响应式混入（媒体查询等）
 ```
 
-**示例代码：**
-
-```css
-/* styles/variables.css */
-:root {
-  /* 颜色 */
-  --color-primary: #409eff;
-  --color-success: #67c23a;
-  --color-warning: #e6a23c;
-  --color-danger: #f56c6c;
-  
-  /* 间距 */
-  --spacing-xs: 4px;
-  --spacing-sm: 8px;
-  --spacing-md: 16px;
-  --spacing-lg: 24px;
-  --spacing-xl: 32px;
-  
-  /* 字体 */
-  --font-size-sm: 12px;
-  --font-size-md: 14px;
-  --font-size-lg: 16px;
-  --font-size-xl: 20px;
-}
-```
-
-```scss
-// styles/mixins/_flexbox.scss
-@mixin flex-center {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-@mixin flex-between {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-```
+**设计要点：**
+- 使用 CSS 变量实现主题切换
+- 设计令牌统一管理设计规范
+- 基础样式与业务样式分离
+- 使用预处理器提升开发效率
 
 #### 2.2.12 国际化层（i18n）
 
@@ -1087,11 +717,11 @@ styles/
 **目录结构：**
 ```
 locales/
-├── index.ts            # i18n 配置入口
-├── zh-CN.ts            # 中文语言入口
-├── en-US.ts            # 英文语言入口
+├── index.ts            # i18n 配置入口（初始化 i18n 实例）
+├── zh-CN.ts            # 中文语言入口（汇总所有中文文本）
+├── en-US.ts            # 英文语言入口（汇总所有英文文本）
 └── modules/            # 按模块组织的语言包
-    ├── common/         # 通用文本
+    ├── common/         # 通用文本（按钮、提示等）
     │   ├── zh-CN.ts
     │   └── en-US.ts
     ├── user/           # 用户模块文本
@@ -1102,41 +732,11 @@ locales/
         └── en-US.ts
 ```
 
-**示例代码：**
-
-```typescript
-// locales/modules/user/zh-CN.ts
-export default {
-  title: '用户管理',
-  list: {
-    title: '用户列表',
-    add: '添加用户',
-    edit: '编辑用户',
-    delete: '删除用户',
-  },
-  form: {
-    username: '用户名',
-    email: '邮箱',
-    role: '角色',
-  },
-}
-```
-
-```typescript
-// locales/index.ts
-import { createI18n } from 'vue-i18n'
-import zhCN from './zh-CN'
-import enUS from './en-US'
-
-export const i18n = createI18n({
-  locale: 'zh-CN',
-  fallbackLocale: 'en-US',
-  messages: {
-    'zh-CN': zhCN,
-    'en-US': enUS,
-  },
-})
-```
+**设计要点：**
+- 按模块组织语言包，便于维护
+- 统一的 key 命名规范
+- 支持嵌套结构，组织复杂文本
+- 类型安全的 key 访问
 
 #### 2.2.13 插件层（Plugins）
 
@@ -1151,29 +751,15 @@ export const i18n = createI18n({
 **目录结构：**
 ```
 plugins/
-├── i18n.ts             # 国际化插件配置
-├── element-plus.ts     # Element Plus 配置（可选）
+├── i18n.ts             # 国际化插件配置（初始化 i18n）
+├── element-plus.ts     # Element Plus 配置（可选，UI 库配置）
 └── [plugin].ts         # 其他插件配置
 ```
 
-**示例代码：**
-
-```typescript
-// plugins/i18n.ts
-import { createI18n } from 'vue-i18n'
-import zhCN from '@/locales/zh-CN'
-import enUS from '@/locales/en-US'
-
-export const i18n = createI18n({
-  legacy: false,
-  locale: 'zh-CN',
-  fallbackLocale: 'en-US',
-  messages: {
-    'zh-CN': zhCN,
-    'en-US': enUS,
-  },
-})
-```
+**设计要点：**
+- 每个插件一个文件，便于管理
+- 统一导出插件实例
+- 封装插件配置逻辑
 
 #### 2.2.14 资源层（Assets）
 
@@ -1210,6 +796,40 @@ assets/
 混合模式是结合技术层次和功能领域的最佳实践，通过 `core/`、`shared/`、`modules/` 三层结构实现清晰的职责划分。
 
 #### 三层结构说明
+
+```mermaid
+graph TB
+    subgraph Core["core/ 核心基础设施层"]
+        direction TB
+        C1[HTTP 客户端]
+        C2[工具函数]
+        C3[通用类型]
+        C4[基础服务]
+    end
+    
+    subgraph Shared["shared/ 共享业务代码层"]
+        direction TB
+        S1[跨模块组件]
+        S2[共享状态]
+        S3[共享逻辑]
+        S4[共享常量]
+    end
+    
+    subgraph Modules["modules/ 业务模块层"]
+        direction TB
+        M1[user 模块]
+        M2[project 模块]
+        M3[其他模块]
+    end
+    
+    Shared -.->|依赖| Core
+    Modules -.->|依赖| Core
+    Modules -.->|依赖| Shared
+    
+    style Core fill:#e1f5ff,stroke:#1976d2,stroke-width:2px
+    style Shared fill:#fff4e1,stroke:#f57c00,stroke-width:2px
+    style Modules fill:#e8f5e9,stroke:#388e3c,stroke-width:2px
+```
 
 **1. core/ - 核心基础设施层**
 - **职责**：纯技术基础设施，不包含任何业务逻辑
@@ -1436,11 +1056,53 @@ modules/user/
 
 #### 依赖方向规则
 
-**正确的依赖方向：**
-```
-views → components → composables → stores → api → core
-  ↓        ↓            ↓          ↓       ↓
-shared/ ← shared/ ← shared/ ← shared/ ← shared/
+```mermaid
+graph TD
+    subgraph 业务层["业务层（modules/）"]
+        direction TB
+        Views[views<br/>视图层]
+        Components[components<br/>组件层]
+        Composables[composables<br/>组合式函数层]
+        Stores[stores<br/>状态管理层]
+        API[api<br/>API 层]
+    end
+    
+    subgraph 共享层["共享层（shared/）"]
+        direction TB
+        SharedViews[shared/views]
+        SharedComponents[shared/components]
+        SharedComposables[shared/composables]
+        SharedStores[shared/stores]
+    end
+    
+    subgraph 核心层["核心层（core/）"]
+        Core[core/<br/>核心基础设施]
+    end
+    
+    Views --> Components
+    Components --> Composables
+    Composables --> Stores
+    Stores --> API
+    API --> Core
+    
+    SharedViews --> SharedComponents
+    SharedComponents --> SharedComposables
+    SharedComposables --> SharedStores
+    SharedStores --> Core
+    
+    Views -.->|可依赖| SharedComponents
+    Components -.->|可依赖| SharedComposables
+    Composables -.->|可依赖| SharedStores
+    Stores -.->|可依赖| Core
+    
+    style Core fill:#e1f5ff,stroke:#1976d2,stroke-width:3px
+    style SharedViews fill:#fff4e1
+    style SharedComponents fill:#fff4e1
+    style SharedComposables fill:#fff4e1
+    style SharedStores fill:#fff4e1
+    style 业务层 fill:#e8f5e9,stroke:#388e3c,stroke-width:2px
+    style 共享层 fill:#fff4e1,stroke:#f57c00,stroke-width:2px
+    style 核心层 fill:#e1f5ff,stroke:#1976d2,stroke-width:2px
 ```
 
 **依赖规则：**
@@ -1451,35 +1113,50 @@ shared/ ← shared/ ← shared/ ← shared/ ← shared/
 
 #### 避免循环依赖
 
+```mermaid
+graph LR
+    subgraph 问题["❌ 循环依赖问题"]
+        direction LR
+        A[moduleA] -->|依赖| B[moduleB]
+        B -->|依赖| C[moduleC]
+        C -->|依赖| A
+    end
+    
+    subgraph 解决["✅ 解决方案：提取共享代码"]
+        direction TB
+        D[shared/<br/>共享代码]
+        E[moduleA]
+        F[moduleB]
+        G[moduleC]
+        D --> E
+        D --> F
+        D --> G
+    end
+    
+    问题 -.->|提取共享代码| 解决
+    
+    style 问题 fill:#ffebee,stroke:#c62828,stroke-width:2px
+    style 解决 fill:#e8f5e9,stroke:#388e3c,stroke-width:2px
+    style D fill:#fff4e1,stroke:#f57c00,stroke-width:2px
+    style A fill:#ffcdd2
+    style B fill:#ffcdd2
+    style C fill:#ffcdd2
+```
+
 **问题示例：**
-```
-moduleA 依赖 moduleB
-moduleB 依赖 moduleC
-moduleC 依赖 moduleA  // 循环依赖！
-```
+- moduleA 依赖 moduleB
+- moduleB 依赖 moduleC
+- moduleC 依赖 moduleA（形成循环依赖）
 
 **解决方案：**
 
 **方案 1：提取共享代码到 shared/**
-```typescript
-// 提取到 shared/
-// shared/types/common.ts
-export interface CommonType { }
-
-// modules/user/types.ts
-import type { CommonType } from '@/shared/types/common'
-
-// modules/project/types.ts
-import type { CommonType } from '@/shared/types/common'
-```
+- 将共同依赖的类型或工具提取到 `shared/` 目录
+- 各模块从 `shared/` 导入，而不是相互导入
 
 **方案 2：使用依赖注入**
-```typescript
-// 通过参数传递依赖，而不是直接导入
-function useFeature(dependency: DependencyType) {
-  // 使用 dependency
-}
-```
+- 通过参数传递依赖，而不是直接导入
+- 降低模块间的直接耦合
 
 **方案 3：重新设计模块边界**
 - 合并相关模块
@@ -1539,198 +1216,69 @@ function useFeature(dependency: DependencyType) {
 ### 4.3 导出规范
 
 #### 统一使用 index.ts
-每个目录都应该有一个 `index.ts` 作为入口文件：
-
-```typescript
-// types/modules/user/index.ts
-export * from './types'
-export * from './requests'
-export * from './responses'
-```
+- 每个目录都应该有一个 `index.ts` 作为入口文件
+- 统一导出目录下的所有内容，简化导入路径
+- 例如：`types/modules/user/index.ts` 导出该模块的所有类型
 
 #### 命名导出优于默认导出
-**推荐：**
-```typescript
-// utils/format.ts
-export function formatDate(date: Date): string { }
-export function formatCurrency(amount: number): string { }
-```
-
-**不推荐：**
-```typescript
-// utils/format.ts
-export default {
-  formatDate,
-  formatCurrency,
-}
-```
+- **推荐**：使用命名导出（`export function`），便于按需导入和重命名
+- **不推荐**：使用默认导出对象，不利于按需导入和类型推导
 
 #### 组件导出
-```typescript
-// components/layout/index.ts
-export { default as AppLayout } from './AppLayout.vue'
-export { default as AppHeader } from './AppHeader.vue'
-export { default as AppMenu } from './AppMenu.vue'
-```
+- 组件文件使用默认导出（Vue 组件的要求）
+- 在 `index.ts` 中重新导出为命名导出，便于统一管理
 
-## 五、工程化配置
+## 五、工程化配置要点
 
 ### 5.1 构建工具配置（Vite）
 
 #### 路径别名配置
-```typescript
-// vite.config.ts
-import { defineConfig } from 'vite'
-import vue from '@vitejs/plugin-vue'
-import path from 'path'
-
-export default defineConfig({
-  plugins: [vue()],
-  resolve: {
-    alias: {
-      '@': path.resolve(__dirname, './src'),
-      '@components': path.resolve(__dirname, './src/components'),
-      '@utils': path.resolve(__dirname, './src/utils'),
-      '@api': path.resolve(__dirname, './src/api'),
-      '@types': path.resolve(__dirname, './src/types'),
-    },
-  },
-})
-```
+- 配置路径别名（如 `@` 指向 `src/`），简化导入路径
+- 在 `vite.config.ts` 中设置 `resolve.alias`
+- 同时需要在 `tsconfig.json` 中配置对应的路径映射
 
 #### 自动导入配置
-```typescript
-// vite.config.ts
-import AutoImport from 'unplugin-auto-import/vite'
-import Components from 'unplugin-vue-components/vite'
-
-export default defineConfig({
-  plugins: [
-    AutoImport({
-      imports: ['vue', 'vue-router', 'pinia'],
-      dts: true, // 生成类型声明文件
-    }),
-    Components({
-      dirs: ['src/components'],
-      dts: true,
-    }),
-  ],
-})
-```
+- 使用 `unplugin-auto-import` 自动导入 Vue、Vue Router、Pinia 等常用 API
+- 使用 `unplugin-vue-components` 自动导入组件
+- 配置生成类型声明文件，确保类型安全
 
 #### 环境变量管理
-```bash
-# .env.development
-VITE_API_BASE_URL=http://localhost:3000/api
-VITE_APP_TITLE=开发环境
-
-# .env.production
-VITE_API_BASE_URL=https://api.example.com
-VITE_APP_TITLE=生产环境
-```
-
-```typescript
-// 使用环境变量
-const apiBaseUrl = import.meta.env.VITE_API_BASE_URL
-```
+- 使用 `.env.development` 和 `.env.production` 管理不同环境的配置
+- 环境变量必须以 `VITE_` 开头才能在前端代码中访问
+- 在 `vite-env.d.ts` 中声明环境变量的类型
 
 ### 5.2 TypeScript 配置
 
 #### 严格模式设置
-```json
-// tsconfig.json
-{
-  "compilerOptions": {
-    "strict": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "noImplicitReturns": true,
-    "noFallthroughCasesInSwitch": true
-  }
-}
-```
+- 启用 `strict` 模式，提升类型安全
+- 配置未使用变量和参数的检查
+- 启用隐式返回和 switch 语句的检查
 
 #### 路径映射
-```json
-// tsconfig.json
-{
-  "compilerOptions": {
-    "baseUrl": ".",
-    "paths": {
-      "@/*": ["src/*"],
-      "@components/*": ["src/components/*"],
-      "@utils/*": ["src/utils/*"],
-      "@api/*": ["src/api/*"],
-      "@types/*": ["src/types/*"]
-    }
-  }
-}
-```
+- 在 `tsconfig.json` 中配置 `baseUrl` 和 `paths`
+- 路径映射需要与 Vite 的别名配置保持一致
+- 支持通过路径别名导入，提升开发体验
 
 #### 类型声明文件
-```typescript
-// src/vite-env.d.ts
-/// <reference types="vite/client" />
-
-interface ImportMetaEnv {
-  readonly VITE_API_BASE_URL: string
-  readonly VITE_APP_TITLE: string
-}
-
-interface ImportMeta {
-  readonly env: ImportMetaEnv
-}
-```
+- 在 `vite-env.d.ts` 中声明 Vite 相关的类型
+- 声明环境变量的类型，确保类型安全
 
 ### 5.3 代码质量工具
 
 #### ESLint 配置
-```javascript
-// .eslintrc.cjs
-module.exports = {
-  root: true,
-  env: {
-    browser: true,
-    es2021: true,
-    node: true,
-  },
-  extends: [
-    'plugin:vue/vue3-recommended',
-    '@vue/typescript/recommended',
-  ],
-  rules: {
-    'vue/multi-word-component-names': 'off',
-    '@typescript-eslint/no-unused-vars': 'warn',
-  },
-}
-```
+- 配置 Vue 3 和 TypeScript 的 ESLint 规则
+- 根据项目需求调整规则，平衡严格性和开发效率
+- 集成到开发流程中，自动检查代码质量
 
 #### Prettier 配置
-```json
-// .prettierrc
-{
-  "semi": false,
-  "singleQuote": true,
-  "tabWidth": 2,
-  "trailingComma": "es5",
-  "printWidth": 100
-}
-```
+- 统一代码格式化规则（缩进、引号、分号等）
+- 与 ESLint 配合使用，确保代码风格一致
+- 配置编辑器自动格式化
 
 #### Git Hooks（可选）
-使用 `husky` + `lint-staged` 在提交前检查代码：
-
-```json
-// package.json
-{
-  "scripts": {
-    "prepare": "husky install"
-  },
-  "lint-staged": {
-    "*.{ts,vue}": ["eslint --fix", "prettier --write"]
-  }
-}
-```
+- 使用 `husky` + `lint-staged` 在提交前自动检查代码
+- 确保提交的代码符合规范
+- 提升代码质量和团队协作效率
 
 ## 六、最佳实践与建议
 
@@ -1779,25 +1327,12 @@ components/user/
 同一个数据或类型只在一个地方定义，其他地方通过导入使用。
 
 **避免：**
-```typescript
-// file1.ts
-interface User { id: string; name: string }
-
-// file2.ts
-interface User { id: string; name: string }  // 重复定义！
-```
+- 在多个文件中重复定义相同的类型或常量
+- 导致维护困难，修改时需要同步多个地方
 
 **推荐：**
-```typescript
-// types/user.ts
-export interface User { id: string; name: string }
-
-// file1.ts
-import type { User } from '@/types/user'
-
-// file2.ts
-import type { User } from '@/types/user'
-```
+- 在 `types/` 或 `constants/` 目录下统一定义
+- 其他地方通过导入使用，确保单一数据源
 
 #### 关注点分离
 不同职责的代码应该分离到不同的文件或目录。
@@ -1827,22 +1362,9 @@ import type { User } from '@/types/user'
 - 避免使用 `any` 类型
 
 #### 适当的注释和文档
-- 为复杂逻辑添加注释
-- 为公共 API 添加 JSDoc 注释
-- 在关键目录添加 `README.md` 说明
-
-**示例：**
-```typescript
-/**
- * 格式化日期
- * @param date - 要格式化的日期
- * @param format - 格式化字符串，默认为 'YYYY-MM-DD'
- * @returns 格式化后的日期字符串
- */
-export function formatDate(date: Date | string, format = 'YYYY-MM-DD'): string {
-  // 实现...
-}
-```
+- 为复杂逻辑添加注释，说明设计思路和实现细节
+- 为公共 API 添加 JSDoc 注释，说明参数、返回值等
+- 在关键目录添加 `README.md` 说明，解释目录用途和设计原则
 
 ## 七、常见问题与解决方案
 
@@ -1853,26 +1375,13 @@ export function formatDate(date: Date | string, format = 'YYYY-MM-DD'): string {
 
 #### 解决方案
 
-**方案 1：提取共享代码**
-```typescript
-// 提取到共享层
-// shared/types.ts
-export interface CommonType { }
-
-// moduleA/types.ts
-import type { CommonType } from '@/shared/types'
-
-// moduleB/types.ts
-import type { CommonType } from '@/shared/types'
-```
+**方案 1：提取共享代码到 shared/**
+- 将共同依赖的类型或工具提取到 `shared/` 目录
+- 各模块从 `shared/` 导入，而不是相互导入
 
 **方案 2：使用依赖注入**
-```typescript
-// 通过参数传递依赖，而不是直接导入
-function useFeature(dependency: DependencyType) {
-  // 使用 dependency
-}
-```
+- 通过参数传递依赖，而不是直接导入
+- 降低模块间的直接耦合
 
 **方案 3：重新设计模块边界**
 - 合并相关模块
@@ -1887,21 +1396,12 @@ function useFeature(dependency: DependencyType) {
 #### 解决方案
 
 **统一类型定义位置：**
-```typescript
-// types/modules/user/index.ts
-export interface User { }
-export type CreateUserRequest = { }
-export type UpdateUserRequest = { }
-
-// 其他地方统一导入
-import type { User, CreateUserRequest } from '@/types/modules/user'
-```
+- 在 `types/modules/[module]/` 目录下统一定义模块的所有类型
+- 其他地方统一从该目录导入，避免重复定义
 
 **使用类型工具：**
-```typescript
-// 使用 Pick、Omit 等工具类型避免重复
-type UpdateUserRequest = Partial<Pick<User, 'username' | 'email'>>
-```
+- 使用 TypeScript 的工具类型（Pick、Omit、Partial 等）避免重复
+- 通过类型组合和推导减少类型定义
 
 ### 7.3 模块边界模糊
 
@@ -1916,18 +1416,9 @@ type UpdateUserRequest = Partial<Pick<User, 'username' | 'email'>>
 - 定期审查和重构模块结构
 
 **建立模块规范：**
-```markdown
-# modules/user/README.md
-
-## 职责范围
-- 用户信息的展示和管理
-- 用户认证和授权
-- 用户相关的业务逻辑
-
-## 不包含
-- 项目相关的用户操作（应放在 project 模块）
-- 系统级别的用户配置（应放在 admin 模块）
-```
+- 为每个模块创建 `README.md` 文档
+- 明确模块的职责范围和不包含的内容
+- 说明模块的边界和与其他模块的关系
 
 ### 7.4 代码组织混乱
 
@@ -2009,10 +1500,153 @@ type UpdateUserRequest = Partial<Pick<User, 'username' | 'email'>>
 
 ---
 
+## 九、快速启动模板仓库
+
+以下是一些优秀的 Vue 3 工程化模板仓库，可以直接使用或作为参考：
+
+### 官方模板
+
+#### 1. Vue 3 + Vite 官方模板
+- **创建命令**：`npm create vue@latest`
+- **特点**：
+  - Vue 官方维护，最权威的模板
+  - 支持 TypeScript、Router、Pinia、ESLint 等可选配置
+  - 使用 Vite 构建，开发体验优秀
+  - 结构简洁，适合快速开始
+- **适用场景**：学习、小型项目、快速原型
+
+#### 2. Vite Vue 3 TypeScript 模板
+- **创建命令**：`npm create vite@latest my-vue-app -- --template vue-ts`
+- **特点**：
+  - 官方 Vite 模板
+  - 内置 TypeScript 支持
+  - 最小化配置，适合学习
+- **适用场景**：学习 TypeScript + Vue 3
+
+### 企业级模板
+
+#### 3. Vue Vben Admin
+- **GitHub**：`vbenjs/vue-vben-admin`
+- **技术栈**：Vue 3 + TypeScript + Vite + Pinia
+- **特点**：
+  - 企业级中后台解决方案
+  - 完整的工程化配置（ESLint、Prettier、Husky 等）
+  - 丰富的功能组件和业务示例
+  - 支持多种布局和主题
+  - 文档完善，社区活跃
+- **适用场景**：中大型管理后台系统
+- **推荐指数**：⭐⭐⭐⭐⭐
+
+#### 4. Vue3 Element Admin
+- **GitHub**：`youlaitech/vue3-element-admin`
+- **技术栈**：Vue 3 + Vite 7 + TypeScript + Element Plus
+- **特点**：
+  - 基于 Element Plus 的管理后台模板
+  - 提供配套的 Java 和 Node 后端源码
+  - 功能丰富，适合企业级应用
+  - 权限管理、国际化等功能完善
+- **适用场景**：使用 Element Plus 的管理系统
+- **推荐指数**：⭐⭐⭐⭐
+
+#### 5. Vue Naive Admin
+- **GitHub**：`zclzone/vue-naive-admin`
+- **技术栈**：Vue 3 + Vite + Pinia + UnoCSS + Naive UI
+- **特点**：
+  - 轻量级后台管理模板
+  - 设计简洁，易于上手
+  - 使用 UnoCSS，样式方案现代
+  - 结构清晰，适合学习
+- **适用场景**：中小型管理后台
+- **推荐指数**：⭐⭐⭐⭐
+
+### 轻量级模板
+
+#### 6. Vue3 Admin Element Template
+- **GitHub**：搜索 `vue3-admin-element-template`
+- **技术栈**：Vue 3 + Vite + Element Plus + Vue Router + Pinia
+- **特点**：
+  - 中后台管理模板
+  - 支持国际化、权限控制
+  - 集成 ECharts 等常用库
+- **适用场景**：管理后台系统
+
+#### 7. Gin-Vue-Admin
+- **GitHub**：`flipped-aurora/gin-vue-admin`
+- **技术栈**：Vue 3 + Vite + Gin（后端）
+- **特点**：
+  - 前后端一体化解决方案
+  - 集成 JWT 鉴权、权限管理、动态路由
+  - 代码生成器、表单生成器等开发工具
+  - 功能完整，适合快速开发
+- **适用场景**：全栈项目快速启动
+- **推荐指数**：⭐⭐⭐⭐
+
+### 模板选择指南
+
+```mermaid
+flowchart TD
+    A[选择模板] --> B{项目类型?}
+    B -->|学习/小型项目| C[官方模板<br/>npm create vue@latest]
+    B -->|管理后台| D{UI 库偏好?}
+    D -->|Element Plus| E[Vue3 Element Admin<br/>Vue3 Admin Element Template]
+    D -->|Naive UI| F[Vue Naive Admin]
+    D -->|Ant Design Vue| G[Vue Vben Admin]
+    B -->|全栈项目| H[Gin-Vue-Admin]
+    B -->|企业级应用| I[Vue Vben Admin]
+    
+    style C fill:#e1f5ff
+    style E fill:#fff4e1
+    style F fill:#fff4e1
+    style G fill:#e8f5e9
+    style H fill:#e8f5e9
+    style I fill:#e8f5e9
+```
+
+### 推荐使用方式
+
+1. **学习阶段**：
+   - 使用官方模板 `npm create vue@latest`
+   - 从零开始理解结构，参考本文档的设计原则
+
+2. **快速开发**：
+   - 使用企业级模板（如 `vue-vben-admin`）
+   - 快速搭建项目，专注于业务开发
+
+3. **自定义需求**：
+   - 基于本文档的设计原则
+   - 参考模板仓库的结构
+   - 根据项目需求自行搭建
+
+### 模板对比表
+
+| 模板名称 | 技术栈 | 适用规模 | 推荐场景 | 维护状态 |
+|---------|--------|---------|---------|---------|
+| **Vue 官方模板** | Vue 3 + Vite | 小型 | 学习、原型 | ⭐⭐⭐⭐⭐ |
+| **Vue Vben Admin** | Vue 3 + TS + Vite | 中大型 | 企业级后台 | ⭐⭐⭐⭐⭐ |
+| **Vue3 Element Admin** | Vue 3 + Element Plus | 中大型 | Element Plus 后台 | ⭐⭐⭐⭐ |
+| **Vue Naive Admin** | Vue 3 + Naive UI | 中小型 | 轻量级后台 | ⭐⭐⭐⭐ |
+| **Gin-Vue-Admin** | Vue 3 + Gin | 中大型 | 全栈项目 | ⭐⭐⭐⭐ |
+
+### 使用模板的注意事项
+
+1. **理解结构**：不要直接使用，先理解模板的目录结构设计
+2. **按需调整**：根据项目需求调整结构，删除不需要的功能
+3. **保持规范**：遵循本文档的设计原则，确保结构清晰
+4. **渐进演进**：从简单结构开始，随项目发展逐步演进
+5. **关注更新**：定期关注模板的更新，但不要盲目升级
+
+---
+
 ## 参考资源
 
+### 官方文档
 - [Vue 3 官方文档](https://vuejs.org/)
 - [TypeScript 官方文档](https://www.typescriptlang.org/)
 - [Vite 官方文档](https://vitejs.dev/)
 - [Pinia 官方文档](https://pinia.vuejs.org/)
 - [Vue Router 官方文档](https://router.vuejs.org/)
+
+### 相关工具
+- [ESLint 官方文档](https://eslint.org/)
+- [Prettier 官方文档](https://prettier.io/)
+- [Element Plus 官方文档](https://element-plus.org/)
