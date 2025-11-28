@@ -19,6 +19,7 @@
     <Footer/>
 
     <MouseEvent/>
+    <BackToTop/>
   </div>
 </template>
 <script lang="ts" setup>
@@ -30,6 +31,7 @@ import PostTitle from "./components/post/PostTitle.vue";
 import PostCategory from "./components/post/PostCategory.vue";
 import PostPager from "./components/post/PostPager.vue";
 import MouseEvent from "./components/effect/MouseEvent.vue";
+import BackToTop from "./components/effect/BackToTop.vue";
 
 const {Layout} = DefaultTheme;
 </script>
