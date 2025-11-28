@@ -347,7 +347,7 @@ flowchart TD
     C -->|是| D[core/<br/>核心基础设施层]
     C -->|否| E[shared/<br/>共享业务代码层]
     B -->|否| F{是否属于<br/>某个业务模块?}
-    F -->|是| G[modules/[module]/<br/>业务模块层]
+    F -->|是| G["modules/[module]/<br/>业务模块层"]
     F -->|否| E
     
     style D fill:#e1f5ff
