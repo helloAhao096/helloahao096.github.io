@@ -59,7 +59,8 @@ tags:
 
 #### 两种核心设计模式
 
-根据项目规模和复杂度，有两种主要的设计模式：**扁平化结构（按技术层次）**和**混合模式（功能领域 + 技术层次）**。这两种模式分别适用于不同阶段的项目，并且可以渐进式演进。
+根据项目规模和复杂度，有两种主要的结构形态：**扁平化结构（按技术层次）**和**混合模式（功能领域 + 技术层次）**。  
+> 默认推荐：中大型、长期维护的项目应直接采用混合模式（core/shared/modules），扁平结构只适用于项目早期的快速验证或学习对比，是迈向混合模式前的过渡形态。
 
 ##### 模式一：扁平化结构（按技术层次划分）
 
@@ -168,6 +169,20 @@ src/
 - ❌ 模块边界模糊：用户相关代码分散在多个目录
 - ❌ 并行协作冲突：多人修改同一模块时容易冲突
 - ❌ 模块拆分困难：相关代码分散，难以独立拆分
+
+**从扁平结构迁移到混合模式的触发信号：**
+1. 某个业务的代码散落在 ≥5 个目录（api/types/stores/components/views）且难以定位；
+2. 单个目录（如 `api/`、`stores/`）文件数超过 15 个，团队开始出现合并冲突；
+3. 需要为某业务单独定制权限、主题或构建产物；
+4. 希望复用某业务模块到其他项目；
+5. 需要引入多团队并行协作。
+
+**迁移 Checklist：**
+1. 在 `src/modules/[module]/` 下创建模块目录，迁移该模块的 api/types/stores/composables/views/components；
+2. 将跨 3+ 模块使用的组件/逻辑/常量抽到 `shared/`，纯工具抽到 `core/`；
+3. 调整路由、Store、国际化等引用路径，统一从模块入口导出；
+4. 更新别名/tsconfig 路径，保证构建工具感知新的目录；
+5. 补充文档说明模块职责与依赖，确保团队统一认知。
 
 ##### 模式二：混合模式（功能领域 + 技术层次）
 
@@ -703,6 +718,7 @@ styles/
 - 设计令牌统一管理设计规范
 - 基础样式与业务样式分离
 - 使用预处理器提升开发效率
+- 需要多品牌/多主题时，可在 `styles/themes/[brand]/variables.css` 定义差异化变量，并在入口按租户/品牌动态切换
 
 #### 2.2.12 国际化层（i18n）
 
@@ -737,6 +753,7 @@ locales/
 - 统一的 key 命名规范
 - 支持嵌套结构，组织复杂文本
 - 类型安全的 key 访问
+- 若模块有大量私有文案，可在 `modules/[module]/locales/` 定义局部语言包，并在全局 i18n 注册时动态合并，避免污染全局命名空间
 
 #### 2.2.13 插件层（Plugins）
 
@@ -1051,6 +1068,84 @@ modules/user/
 - 模块代码量 < 500 行
 - 模块功能简单
 - 共享代码较多，放在 `shared/` 更合适
+
+#### 最小模块骨架示例（以 `project` 模块为例）
+
+```text
+modules/
+└── project/
+    ├── api/
+    │   └── index.ts          # 模块 API 入口
+    ├── types/
+    │   ├── types.ts          # 实体类型
+    │   ├── requests.ts       # 请求 DTO
+    │   └── responses.ts      # 响应 DTO
+    ├── stores/
+    │   └── useProjectStore.ts
+    ├── composables/
+    │   └── useProject.ts
+    ├── components/
+    │   └── ProjectTable.vue
+    └── views/
+        ├── ProjectListView.vue
+        └── ProjectDetailView.vue
+```
+
+**代码模板：**
+```ts
+// modules/project/api/index.ts
+import http from '@/core/api/client'
+import type { ProjectResponse } from '../types/responses'
+
+export const projectApi = {
+  getList: () => http.get<ProjectResponse[]>('/projects'),
+}
+
+// modules/project/stores/useProjectStore.ts
+import { defineStore } from 'pinia'
+import { projectApi } from '../api'
+
+export const useProjectStore = defineStore('project', {
+  state: () => ({ list: [] as ProjectResponse[], loading: false }),
+  actions: {
+    async fetchList() {
+      this.loading = true
+      try {
+        const { data } = await projectApi.getList()
+        this.list = data
+      } finally {
+        this.loading = false
+      }
+    },
+  },
+})
+
+// modules/project/composables/useProject.ts
+import { storeToRefs } from 'pinia'
+import { useProjectStore } from '../stores/useProjectStore'
+
+export function useProject() {
+  const store = useProjectStore()
+  const { list, loading } = storeToRefs(store)
+  return { list, loading, fetchList: store.fetchList }
+}
+
+// modules/project/views/ProjectListView.vue
+<template>
+  <PageLayout title="项目列表">
+    <ProjectTable :data="list" :loading="loading" @refresh="fetchList" />
+  </PageLayout>
+</template>
+
+<script setup lang="ts">
+import { onMounted } from 'vue'
+import ProjectTable from '../components/ProjectTable.vue'
+import { useProject } from '../composables/useProject'
+
+const { list, loading, fetchList } = useProject()
+onMounted(fetchList)
+</script>
+```
 
 ### 3.4 模块间依赖管理
 
