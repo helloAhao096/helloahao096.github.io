@@ -30,10 +30,18 @@ tags:
 
 访问 [https://giscus.app](https://giscus.app)：
 
-- Repository：选择上面授权的仓库，例如 `helloAhao096/helloahao096.github.io`
-- Discussion Category：选刚创建的 `Blog Comments`
-- Mapping：推荐 `pathname`，可与 VitePress 的 `page.relativePath` 对齐
-- 其他选项按需勾选（是否启用 Reactions、Strict 模式、输入框位置、主题、语言等）
+- **Repository**：选择授权的仓库（`owner/repo`）
+- **Discussion Category**：选择要存放评论的分类
+- **Mapping**：决定如何匹配页面与讨论（支持 `pathname`、`url`、`title`、`og:title`、`number`、`specific` 等）
+- **strict**：`0/1` 控制是否严格匹配（`1` 表示没有讨论时不会自动创建）
+- **reactions-enabled**：`1/0` 控制是否展示 GitHub Reactions
+- **emit-metadata**：`1/0` 控制是否向父页面发送 metadata 事件
+- **input-position**：`top/bottom` 决定评论框位置
+- **theme**：内置 `light`、`dark`、`preferred_color_scheme`、`transparent_dark` 等，也支持自定义主题 URL
+- **lang**：界面语言（支持 `zh-CN`、`en` 等 30+ 语言）
+- **loading**：`lazy/eager` 控制加载策略
+- **allowFullScreen**：允许 iframe 全屏（与 `data-allowfullscreen` 对应）
+- **crossorigin / origin**：限制允许加载来源（防盗链）
 
 页面右侧会生成一段 `<script>`，其中包含：
 
@@ -101,7 +109,7 @@ export const GISCUS_CONFIG = {
 
 ## 6. Vue 组件挂载方式
 
-项目使用官方的 `@giscus/vue` 组件，核心逻辑在 `docs/.vitepress/theme/components/plugin/Comments.vue`：
+项目使用官方的 `@giscus/vue` 组件，核心逻辑在 `docs/.vitepress/theme/components/plugin/Comments.vue`（也可以使用 Web Component，自行传入 `data-*` 属性）：
 
 ```vue
 <template>
