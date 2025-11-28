@@ -309,13 +309,11 @@ const compareYear = (a: string, b: string) => {
   font-size: clamp(3rem, 14vw, 8rem);
   font-weight: 700;
   color: transparent;
-  opacity: 0.1;
-  -webkit-text-stroke: 2px #aaa;
+  -webkit-text-stroke-width: 2.5px !important;
+  -webkit-text-stroke-color: var(--color-watermark-stroke) !important;
   pointer-events: none;
-}
-
-.dark .year-watermark {
-  -webkit-text-stroke: 2px rgba(255, 255, 255, 0.45);
+  user-select: none;
+  transition: -webkit-text-stroke-color 0.3s ease;
 }
 
 .year-heading {

@@ -12,6 +12,7 @@
   --color-surface: #ffffff;
   --color-border: rgba(37, 57, 0, 0.15);
   --color-overlay: rgba(8, 203, 0, 0.08);
+  --color-watermark-stroke: rgba(8, 203, 0, 0.15);
 
   /* text */
   --color-text: #0b1400;
@@ -60,6 +61,7 @@
   --color-surface: #1a1d1a;
   --color-border: rgba(255, 255, 255, 0.08);
   --color-overlay: rgba(74, 222, 128, 0.16);
+  --color-watermark-stroke: rgba(74, 222, 128, 0.2);
 
   --color-text: #f3f4f6;
   --color-text-soft: rgba(243, 244, 246, 0.85);
