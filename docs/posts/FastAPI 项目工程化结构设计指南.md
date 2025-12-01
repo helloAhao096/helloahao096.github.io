@@ -77,7 +77,8 @@ tags:
 backend/
 ├── main.py                 # 应用入口
 ├── config.py              # 配置管理
-├── requirements.txt       # 依赖管理（或 pyproject.toml）
+├── pyproject.toml         # 项目配置和依赖（使用 uv 管理）
+├── uv.lock                # 锁定的依赖版本（使用 uv 生成）
 │
 ├── app/
 │   ├── __init__.py
@@ -364,7 +365,8 @@ backend/
 ├── .env                   # 环境变量配置
 ├── .env.example           # 环境变量示例
 ├── .gitignore             # Git 忽略配置
-├── pyproject.toml         # 项目配置和依赖（或 requirements.txt）
+├── pyproject.toml         # 项目配置和依赖（使用 uv 管理）
+├── uv.lock                # 锁定的依赖版本（使用 uv 生成）
 ├── Dockerfile             # 容器化配置
 ├── docker-compose.yml     # Docker Compose 配置
 ├── README.md              # 项目文档
@@ -1355,6 +1357,8 @@ class UserService:
 - 使用 `uv` 或 `poetry` 管理虚拟环境
 - 锁定依赖版本，确保环境一致性
 - 支持多环境配置
+
+> 💡 **推荐使用 uv**：uv 是由 Astral（Ruff 的开发者）开发的极快 Python 包管理器，使用 Rust 编写，比 pip 快 10-100 倍。它集成了包管理、虚拟环境、Python 版本管理、脚本运行等功能，可以替代 pip、pip-tools、pipx、poetry、virtualenv 等多个工具。详细使用指南请参考：[uv Python 包管理器使用指南](https://blog.mapin.net/posts/uv%20Python%20%E5%8C%85%E7%AE%A1%E7%90%86%E5%99%A8%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97)。
 
 ### 8.2 环境配置
 
