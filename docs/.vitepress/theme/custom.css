@@ -188,6 +188,25 @@ body::-webkit-scrollbar {
   color: var(--color-primary) !important;
 }
 
+/* ============================================
+   右侧大纲（Aside）样式定制
+   ============================================ */
+
+/* 大纲激活标记线 - 使用主题色 */
+.VPDocAside .outline-marker {
+  background-color: var(--color-primary) !important;
+}
+
+/* 大纲激活项文本颜色 - 使用主题色 */
+.VPDocAside .outline-link.active {
+  color: var(--color-primary) !important;
+}
+
+/* 大纲链接悬停颜色 */
+.VPDocAside .outline-link:hover {
+  color: var(--color-primary) !important;
+}
+
 .about-avatar {
   width: 110px;
   aspect-ratio: 1 / 1;

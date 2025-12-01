@@ -33,6 +33,11 @@ async function config() {
             lastUpdated: {
                 text: "最后更新时间",
             },
+            // 页面大纲配置（右侧 aside）
+            outline: {
+                level: [2, 6], // 显示从 h2 到 h6 的所有标题
+                label: "本页目录", // 汉化 aside 标题
+            },
             // 项目
             // docsDir: "/",
             // docsBranch: "master",
