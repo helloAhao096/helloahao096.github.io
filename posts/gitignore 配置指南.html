@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="zh-CN" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>.gitignore 配置指南 | QianFan</title>
+    <meta name="description" content="通用的、可复用、可标准化的 .gitignore 配置指南，适用于各种类型的项目，提供分层管理策略和最佳实践">
+    <meta name="generator" content="VitePress v1.6.4">
+    <link rel="preload stylesheet" href="/assets/style.CI6TXCdj.css" as="style">
+    <link rel="preload stylesheet" href="/vp-icons.css" as="style">
+    
+    <script type="module" src="/assets/app.B2sVXvF1.js"></script>
+    <link rel="preload" href="/assets/inter-roman-latin.Di8DUHzh.woff2" as="font" type="font/woff2" crossorigin="">
+    <link rel="modulepreload" href="/assets/chunks/framework.DXI-tbPr.js">
+    <link rel="modulepreload" href="/assets/chunks/theme.CFNFfdet.js">
+    <link rel="modulepreload" href="/assets/chunks/katex.BbEIqZs1.js">
+    <link rel="modulepreload" href="/assets/chunks/dagre-6UL2VRFP.Pi8RDH9P.js">
+    <link rel="modulepreload" href="/assets/chunks/cose-bilkent-S5V4N54A.Cd20y0tc.js">
+    <link rel="modulepreload" href="/assets/chunks/c4Diagram-YG6GDRKO.Dx5XpfV6.js">
+    <link rel="modulepreload" href="/assets/chunks/flowDiagram-NV44I4VS.CKyQ5o8n.js">
+    <link rel="modulepreload" href="/assets/chunks/erDiagram-Q2GNP2WA.Bb6txAk5.js">
+    <link rel="modulepreload" href="/assets/chunks/gitGraphDiagram-NY62KEGX.Be4YQFmN.js">
+    <link rel="modulepreload" href="/assets/chunks/ganttDiagram-LVOFAZNH.DSjBKosL.js">
+    <link rel="modulepreload" href="/assets/chunks/infoDiagram-ER5ION4S.LEo1O9SU.js">
+    <link rel="modulepreload" href="/assets/chunks/pieDiagram-ADFJNKIX.CfWI5Q1U.js">
+    <link rel="modulepreload" href="/assets/chunks/quadrantDiagram-AYHSOK5B.BvB_busS.js">
+    <link rel="modulepreload" href="/assets/chunks/xychartDiagram-PRI3JC2R.BjU0gRrW.js">
+    <link rel="modulepreload" href="/assets/chunks/requirementDiagram-UZGBJVZJ.BRkhj7GZ.js">
+    <link rel="modulepreload" href="/assets/chunks/sequenceDiagram-WL72ISMW.cyawUQ9a.js">
+    <link rel="modulepreload" href="/assets/chunks/classDiagram-2ON5EDUG.paJWjXG8.js">
+    <link rel="modulepreload" href="/assets/chunks/classDiagram-v2-WZHVMYZB.paJWjXG8.js">
+    <link rel="modulepreload" href="/assets/chunks/stateDiagram-FKZM4ZOC.8cp-YYCG.js">
+    <link rel="modulepreload" href="/assets/chunks/stateDiagram-v2-4FDKWEC3.BZuOnNTx.js">
+    <link rel="modulepreload" href="/assets/chunks/journeyDiagram-XKPGCS4Q.WPR1aKlP.js">
+    <link rel="modulepreload" href="/assets/chunks/timeline-definition-IT6M3QCI.-nbRlu9P.js">
+    <link rel="modulepreload" href="/assets/chunks/mindmap-definition-VGOIOE7T.DisS-OsP.js">
+    <link rel="modulepreload" href="/assets/chunks/kanban-definition-3W4ZIXB7.CAoHoZPW.js">
+    <link rel="modulepreload" href="/assets/chunks/sankeyDiagram-TZEHDZUN.DvWmT2B1.js">
+    <link rel="modulepreload" href="/assets/chunks/diagram-S2PKOQOG.m3iA993E.js">
+    <link rel="modulepreload" href="/assets/chunks/diagram-QEK2KX5R.CROMfy0R.js">
+    <link rel="modulepreload" href="/assets/chunks/blockDiagram-VD42YOAC.8kD8VPwo.js">
+    <link rel="modulepreload" href="/assets/chunks/architectureDiagram-VXUJARFQ.DbSc1ATD.js">
+    <link rel="modulepreload" href="/assets/chunks/diagram-PSM6KHXK.C1gbJHmd.js">
+    <link rel="modulepreload" href="/assets/chunks/virtual_mermaid-config.DDnGl6nM.js">
+    <link rel="modulepreload" href="/assets/posts_gitignore 配置指南.md.BBNgUitK.lean.js">
+    <link rel="icon" type="image/jpg" href="/QianFan.jpg">
+    <meta name="referrer" content="no-referrer-when-downgrade">
+    <meta name="author" content="QianFan">
+    <meta property="og:title" content="Home">
+    <meta property="og:description" content="Home of QianFan">
+    <script id="check-dark-mode">(()=>{const e=localStorage.getItem("vitepress-theme-appearance")||"auto",a=window.matchMedia("(prefers-color-scheme: dark)").matches;(!e||e==="auto"?a:e==="dark")&&document.documentElement.classList.add("dark")})();</script>
+    <script id="check-mac-os">document.documentElement.classList.toggle("mac",/Mac|iPhone|iPod|iPad/i.test(navigator.platform));</script>
+  </head>
+  <body>
+    <div id="app"><div class="layout-wrapper" data-v-87e6cc74><div class="Layout" data-v-87e6cc74 data-v-850ab906><!--[--><!--]--><!--[--><span tabindex="-1" data-v-21456531></span><a href="#VPContent" class="VPSkipLink visually-hidden" data-v-21456531>Skip to content</a><!--]--><!----><header class="VPNav" data-v-850ab906 data-v-cf446907><div class="VPNavBar" data-v-cf446907 data-v-6eb24790><div class="wrapper" data-v-6eb24790><div class="container" data-v-6eb24790><div class="title" data-v-6eb24790><div class="VPNavBarTitle" data-v-6eb24790 data-v-19e2f64c><a class="title" href="/" data-v-19e2f64c><!--[--><!--]--><!--[--><img class="VPImage logo" src="/QianFan.jpg" alt data-v-4f51225a><!--]--><span data-v-19e2f64c>QianFan</span><!--[--><!--]--></a></div></div><div class="content" data-v-6eb24790><div class="content-body" data-v-6eb24790><!--[--><!--]--><div class="VPNavBarSearch search" data-v-6eb24790><!----></div><nav aria-labelledby="main-nav-aria-label" class="VPNavBarMenu menu" data-v-6eb24790 data-v-7a608cf3><span id="main-nav-aria-label" class="visually-hidden" data-v-7a608cf3> Main Navigation </span><!--[--><!--[--><a class="VPLink link VPNavBarMenuLink" href="/" tabindex="0" data-v-7a608cf3 data-v-ec38c768><!--[--><span data-v-ec38c768>🏡 首页</span><!--]--></a><!--]--><!--[--><a class="VPLink link VPNavBarMenuLink active" href="/posts/" tabindex="0" data-v-7a608cf3 data-v-ec38c768><!--[--><span data-v-ec38c768>📚 博客</span><!--]--></a><!--]--><!--[--><a class="VPLink link VPNavBarMenuLink" href="/about" tabindex="0" data-v-7a608cf3 data-v-ec38c768><!--[--><span data-v-ec38c768>👤 关于</span><!--]--></a><!--]--><!--]--></nav><!----><div class="VPNavBarAppearance appearance" data-v-6eb24790 data-v-d6d9c22b><button class="VPSwitch VPSwitchAppearance" type="button" role="switch" title aria-checked="false" data-v-d6d9c22b data-v-ed6ed1d6 data-v-0f618858><span class="check" data-v-0f618858><span class="icon" data-v-0f618858><!--[--><span class="vpi-sun sun" data-v-ed6ed1d6></span><span class="vpi-moon moon" data-v-ed6ed1d6></span><!--]--></span></span></button></div><div class="VPSocialLinks VPNavBarSocialLinks social-links" data-v-6eb24790 data-v-17a16bac data-v-9170378a><!--[--><a class="VPSocialLink no-icon" href="https://github.com/helloAhao096" aria-label="github" target="_blank" rel="noopener" data-v-9170378a data-v-713e5710><span class="vpi-social-github"></span></a><a class="VPSocialLink no-icon" href="mailto:helloahao@icloud.com" aria-label target="_blank" rel="noopener" data-v-9170378a data-v-713e5710><svg role="img" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" width="20">
+            <path d="M874.666667 375.189333V746.666667a64 64 0 0 1-64 64H213.333333a64 64 0 0 1-64-64V375.189333l266.090667 225.6a149.333333 149.333333 0 0 0 193.152 0L874.666667 375.189333zM810.666667 213.333333a64.789333 64.789333 0 0 1 22.826666 4.181334 63.616 63.616 0 0 1 26.794667 19.413333 64.32 64.32 0 0 1 9.344 15.466667c2.773333 6.570667 4.48 13.696 4.906667 21.184L874.666667 277.333333v21.333334L553.536 572.586667a64 64 0 0 1-79.893333 2.538666l-3.178667-2.56L149.333333 298.666667v-21.333334a63.786667 63.786667 0 0 1 35.136-57.130666A63.872 63.872 0 0 1 213.333333 213.333333h597.333334z" ></path>
+            </svg></a><!--]--></div><div class="VPFlyout VPNavBarExtra extra" data-v-6eb24790 data-v-a6b3d708 data-v-98e7be0f><button type="button" class="button" aria-haspopup="true" aria-expanded="false" aria-label="extra navigation" data-v-98e7be0f><span class="vpi-more-horizontal icon" data-v-98e7be0f></span></button><div class="menu" data-v-98e7be0f><div class="VPMenu" data-v-98e7be0f data-v-e1050040><!----><!--[--><!--[--><!----><div class="group" data-v-a6b3d708><div class="item appearance" data-v-a6b3d708><p class="label" data-v-a6b3d708>Appearance</p><div class="appearance-action" data-v-a6b3d708><button class="VPSwitch VPSwitchAppearance" type="button" role="switch" title aria-checked="false" data-v-a6b3d708 data-v-ed6ed1d6 data-v-0f618858><span class="check" data-v-0f618858><span class="icon" data-v-0f618858><!--[--><span class="vpi-sun sun" data-v-ed6ed1d6></span><span class="vpi-moon moon" data-v-ed6ed1d6></span><!--]--></span></span></button></div></div></div><div class="group" data-v-a6b3d708><div class="item social-links" data-v-a6b3d708><div class="VPSocialLinks social-links-list" data-v-a6b3d708 data-v-9170378a><!--[--><a class="VPSocialLink no-icon" href="https://github.com/helloAhao096" aria-label="github" target="_blank" rel="noopener" data-v-9170378a data-v-713e5710><span class="vpi-social-github"></span></a><a class="VPSocialLink no-icon" href="mailto:helloahao@icloud.com" aria-label target="_blank" rel="noopener" data-v-9170378a data-v-713e5710><svg role="img" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" width="20">
+            <path d="M874.666667 375.189333V746.666667a64 64 0 0 1-64 64H213.333333a64 64 0 0 1-64-64V375.189333l266.090667 225.6a149.333333 149.333333 0 0 0 193.152 0L874.666667 375.189333zM810.666667 213.333333a64.789333 64.789333 0 0 1 22.826666 4.181334 63.616 63.616 0 0 1 26.794667 19.413333 64.32 64.32 0 0 1 9.344 15.466667c2.773333 6.570667 4.48 13.696 4.906667 21.184L874.666667 277.333333v21.333334L553.536 572.586667a64 64 0 0 1-79.893333 2.538666l-3.178667-2.56L149.333333 298.666667v-21.333334a63.786667 63.786667 0 0 1 35.136-57.130666A63.872 63.872 0 0 1 213.333333 213.333333h597.333334z" ></path>
+            </svg></a><!--]--></div></div></div><!--]--><!--]--></div></div></div><!--[--><!--]--><button type="button" class="VPNavBarHamburger hamburger" aria-label="mobile navigation" aria-expanded="false" aria-controls="VPNavScreen" data-v-6eb24790 data-v-7b132a62><span class="container" data-v-7b132a62><span class="top" data-v-7b132a62></span><span class="middle" data-v-7b132a62></span><span class="bottom" data-v-7b132a62></span></span></button></div></div></div></div><div class="divider" data-v-6eb24790><div class="divider-line" data-v-6eb24790></div></div></div><!----></header><div class="VPLocalNav empty fixed" data-v-850ab906 data-v-8a7258f9><div class="container" data-v-8a7258f9><!----><div class="VPLocalNavOutlineDropdown" style="--vp-vh:0px;" data-v-8a7258f9 data-v-8a01e7c8><button data-v-8a01e7c8>Return to top</button><!----></div></div></div><!----><div class="VPContent" id="VPContent" data-v-850ab906 data-v-4d48dfda><div class="VPDoc has-aside" data-v-4d48dfda data-v-8b9a1a38><!--[--><!--]--><div class="container" data-v-8b9a1a38><div class="aside" data-v-8b9a1a38><div class="aside-curtain" data-v-8b9a1a38></div><div class="aside-container" data-v-8b9a1a38><div class="aside-content" data-v-8b9a1a38><div class="VPDocAside" data-v-8b9a1a38 data-v-0c3fa5b7><!--[--><!--]--><!--[--><!--]--><nav aria-labelledby="doc-outline-aria-label" class="VPDocAsideOutline" data-v-0c3fa5b7 data-v-3e9630cc><div class="content" data-v-3e9630cc><div class="outline-marker" data-v-3e9630cc></div><div aria-level="2" class="outline-title" id="doc-outline-aria-label" role="heading" data-v-3e9630cc>本页目录</div><ul class="VPDocOutlineItem root" data-v-3e9630cc data-v-b81b42d0><!--[--><!--]--></ul></div></nav><!--[--><!--]--><div class="spacer" data-v-0c3fa5b7></div><!--[--><!--]--><!----><!--[--><!--]--><!--[--><!--]--></div></div></div></div><div class="content" data-v-8b9a1a38><div class="content-container" data-v-8b9a1a38><!--[--><!--[--><!--[--><section class="post-title" data-v-87e6cc74 data-v-8d8f77b5><h1 class="title" data-v-8d8f77b5>.gitignore 配置指南</h1><blockquote class="description" data-v-8d8f77b5><p class="description-text" data-v-8d8f77b5>通用的、可复用、可标准化的 .gitignore 配置指南，适用于各种类型的项目，提供分层管理策略和最佳实践</p></blockquote><section class="meta-block" data-v-8d8f77b5><div class="meta-row" data-v-8d8f77b5><span class="meta-leading" data-v-8d8f77b5><span class="meta-emoji" aria-hidden="true" data-v-8d8f77b5>🗓️</span><span class="meta-label" data-v-8d8f77b5>发布时间</span></span><span class="meta-value" data-v-8d8f77b5>2025-12-01 14:43:20</span></div><div class="meta-row meta-row-tags" data-v-8d8f77b5><span class="meta-leading" data-v-8d8f77b5><span class="meta-emoji" aria-hidden="true" data-v-8d8f77b5>🏷️</span><span class="meta-label" data-v-8d8f77b5>标签</span></span><div class="meta-value" data-v-8d8f77b5><!--[--><a href="/posts/?tag=Git" class="meta-tag" data-v-8d8f77b5>Git</a><a href="/posts/?tag=%E5%B7%A5%E7%A8%8B%E5%8C%96" class="meta-tag" data-v-8d8f77b5>工程化</a><a href="/posts/?tag=%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5" class="meta-tag" data-v-8d8f77b5>最佳实践</a><a href="/posts/?tag=%E7%89%88%E6%9C%AC%E6%8E%A7%E5%88%B6" class="meta-tag" data-v-8d8f77b5>版本控制</a><!--]--></div></div></section></section><!----><!--]--><!--]--><!--]--><main class="main" data-v-8b9a1a38><div style="position:relative;" class="vp-doc _posts_gitignore%20%E9%85%8D%E7%BD%AE%E6%8C%87%E5%8D%97" data-v-8b9a1a38><div><blockquote><p>基于实际项目经验，总结通用的 <code>.gitignore</code> 配置原则和最佳实践，提供可复用的、标准化的配置方案，适用于各种类型的项目。</p></blockquote><h2 id="一、核心原则" tabindex="-1">一、核心原则 <a class="header-anchor" href="#一、核心原则" aria-label="Permalink to &quot;一、核心原则&quot;">​</a></h2><h3 id="_1-1-为什么需要-gitignore" tabindex="-1">1.1 为什么需要 .gitignore <a class="header-anchor" href="#_1-1-为什么需要-gitignore" aria-label="Permalink to &quot;1.1 为什么需要 .gitignore&quot;">​</a></h3><p><code>.gitignore</code> 用于告诉 Git 哪些文件或目录不应该被版本控制。核心原则：</p><ul><li><strong>不提交生成文件</strong>：构建产物、编译文件等由工具生成，不应提交</li><li><strong>不提交依赖目录</strong>：依赖由包管理器管理，通过声明文件（如 <code>package.json</code>）管理版本</li><li><strong>不提交敏感信息</strong>：环境变量、密钥、密码等敏感信息不应提交</li><li><strong>不提交个人配置</strong>：IDE 配置、系统文件等个人偏好不应影响团队</li></ul><h3 id="_1-2-配置策略" tabindex="-1">1.2 配置策略 <a class="header-anchor" href="#_1-2-配置策略" aria-label="Permalink to &quot;1.2 配置策略&quot;">​</a></h3><p>根据项目复杂度选择配置策略：</p><table tabindex="0"><thead><tr><th>策略</th><th>适用场景</th><th>结构</th></tr></thead><tbody><tr><td><strong>单文件管理</strong></td><td>单一技术栈、小型项目</td><td>项目根目录一个 <code>.gitignore</code></td></tr><tr><td><strong>分层管理</strong></td><td>多技术栈、中大型项目</td><td>根目录通用规则 + 子目录特定规则</td></tr></tbody></table><div class="mermaid"></div><h3 id="_1-3-分类组织原则" tabindex="-1">1.3 分类组织原则 <a class="header-anchor" href="#_1-3-分类组织原则" aria-label="Permalink to &quot;1.3 分类组织原则&quot;">​</a></h3><p>按类别组织规则，使用注释清晰标注：</p><ul><li><strong>数据目录</strong>：运行时数据（<code>data/</code>、<code>logs/</code>、<code>uploads/</code>）</li><li><strong>配置文件</strong>：环境变量、本地配置（<code>*.env</code>、<code>*.local</code>）</li><li><strong>构建产物</strong>：编译输出、打包文件（<code>dist/</code>、<code>build/</code>、<code>target/</code>）</li><li><strong>依赖目录</strong>：包管理器安装的依赖（<code>node_modules/</code>、<code>venv/</code>、<code>vendor/</code>）</li><li><strong>测试覆盖率</strong>：测试报告、覆盖率数据（<code>coverage/</code>、<code>.coverage</code>）</li><li><strong>IDE 配置</strong>：编辑器配置文件（<code>.vscode/</code>、<code>.idea/</code>）</li><li><strong>系统文件</strong>：操作系统生成的文件（<code>.DS_Store</code>、<code>Thumbs.db</code>）</li><li><strong>日志和临时文件</strong>：运行时日志、临时文件（<code>*.log</code>、<code>*.tmp</code>）</li></ul><h2 id="二、模板集合" tabindex="-1">二、模板集合 <a class="header-anchor" href="#二、模板集合" aria-label="Permalink to &quot;二、模板集合&quot;">​</a></h2><h3 id="_2-1-通用项目模板" tabindex="-1">2.1 通用项目模板 <a class="header-anchor" href="#_2-1-通用项目模板" aria-label="Permalink to &quot;2.1 通用项目模板&quot;">​</a></h3><p><strong>位置：</strong> <code>project-root/.gitignore</code><br><strong>适用场景：</strong> 所有项目的通用规则</p><div class="language-text vp-adaptive-theme"><button title="Copy Code" class="copy"></button><span class="lang">text</span><pre class="shiki shiki-themes github-light github-dark vp-code" tabindex="0"><code><span class="line"><span># ============================================</span></span>
+<span class="line"><span># 数据目录（运行时数据，不提交到版本控制）</span></span>
+<span class="line"><span># ============================================</span></span>
+<span class="line"><span>data/</span></span>
+<span class="line"><span>logs/</span></span>
+<span class="line"><span>uploads/</span></span>
+<span class="line"><span>cache/</span></span>
+<span class="line"><span>temp/</span></span>
+<span class="line"><span>tmp/</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span># ============================================</span></span>
+<span class="line"><span># 配置文件（敏感信息，使用 .env.example 作为模板）</span></span>
+<span class="line"><span># ============================================</span></span>
+<span class="line"><span>*.env</span></span>
+<span class="line"><span>*.env.local</span></span>
+<span class="line"><span>*.env.*.local</span></span>
+<span class="line"><span>!.env.example</span></span>
+<span class="line"><span>!.env.template</span></span>
+<span class="line"><span>*.local</span></span>
+<span class="line"><span>.local/</span></span>
+<span class="line"><span>config.local.*</span></span>
+<span class="line"><span>settings.local.*</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span># ============================================</span></span>
+<span class="line"><span># 构建产物（由构建工具生成，不应提交）</span></span>
+<span class="line"><span># ============================================</span></span>
+<span class="line"><span>dist/</span></span>
+<span class="line"><span>build/</span></span>
+<span class="line"><span>out/</span></span>
+<span class="line"><span>.output/</span></span>
+<span class="line"><span>*.min.js</span></span>
+<span class="line"><span>*.min.css</span></span>
+<span class="line"><span>*.bundle.js</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span># ============================================</span></span>
+<span class="line"><span># 测试和覆盖率报告</span></span>
+<span class="line"><span># ============================================</span></span>
+<span class="line"><span>coverage/</span></span>
+<span class="line"><span>.nyc_output/</span></span>
+<span class="line"><span>.coverage</span></span>
+<span class="line"><span>htmlcov/</span></span>
+<span class="line"><span>.pytest_cache/</span></span>
+<span class="line"><span>.tox/</span></span>
+<span class="line"><span>.hypothesis/</span></span>
+<span class="line"><span>*.cover</span></span>
+<span class="line"><span>*.lcov</span></span>
+<span class="line"><span>test-results/</span></span>
+<span class="line"><span>junit.xml</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span># ============================================</span></span>
+<span class="line"><span># IDE 和编辑器配置（可选，团队统一时可提交）</span></span>
+<span class="line"><span># ============================================</span></span>
+<span class="line"><span># VS Code</span></span>
+<span class="line"><span>.vscode/</span></span>
+<span class="line"><span>!.vscode/settings.json</span></span>
+<span class="line"><span>!.vscode/tasks.json</span></span>
+<span class="line"><span>!.vscode/launch.json</span></span>
+<span class="line"><span>!.vscode/extensions.json</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span># IntelliJ IDEA / PyCharm / WebStorm</span></span>
+<span class="line"><span>.idea/</span></span>
+<span class="line"><span>*.iml</span></span>
+<span class="line"><span>*.iws</span></span>
+<span class="line"><span>*.ipr</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span># Eclipse</span></span>
+<span class="line"><span>.classpath</span></span>
+<span class="line"><span>.project</span></span>
+<span class="line"><span>.settings/</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span># Vim / Emacs</span></span>
+<span class="line"><span>*.swp</span></span>
+<span class="line"><span>*.swo</span></span>
+<span class="line"><span>*~</span></span>
+<span class="line"><span>.vim/</span></span>
+<span class="line"><span>\#*\#</span></span>
+<span class="line"><span>.\#*</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span># Sublime Text</span></span>
+<span class="line"><span>*.sublime-project</span></span>
+<span class="line"><span>*.sublime-workspace</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span># ============================================</span></span>
+<span class="line"><span># 系统文件</span></span>
+<span class="line"><span># ============================================</span></span>
+<span class="line"><span># macOS</span></span>
+<span class="line"><span>.DS_Store</span></span>
+<span class="line"><span>.AppleDouble</span></span>
+<span class="line"><span>.LSOverride</span></span>
+<span class="line"><span>._*</span></span>
+<span class="line"><span>.Spotlight-V100</span></span>
+<span class="line"><span>.Trashes</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span># Windows</span></span>
+<span class="line"><span>Thumbs.db</span></span>
+<span class="line"><span>ehthumbs.db</span></span>
+<span class="line"><span>Desktop.ini</span></span>
+<span class="line"><span>$RECYCLE.BIN/</span></span>
+<span class="line"><span>*.lnk</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span># Linux</span></span>
+<span class="line"><span>.directory</span></span>
+<span class="line"><span>.Trash-*</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span># ============================================</span></span>
+<span class="line"><span># 日志文件</span></span>
+<span class="line"><span># ============================================</span></span>
+<span class="line"><span>*.log</span></span>
+<span class="line"><span>logs/</span></span>
+<span class="line"><span>*.log.*</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span># ============================================</span></span>
+<span class="line"><span># 临时文件</span></span>
+<span class="line"><span># ============================================</span></span>
+<span class="line"><span>*.tmp</span></span>
+<span class="line"><span>*.temp</span></span>
+<span class="line"><span>*.bak</span></span>
+<span class="line"><span>*.cache</span></span>
+<span class="line"><span>*.backup</span></span>
+<span class="line"><span>*.old</span></span>
+<span class="line"><span>*.orig</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span># ============================================</span></span>
+<span class="line"><span># Docker 相关</span></span>
+<span class="line"><span># ============================================</span></span>
+<span class="line"><span>docker-compose.override.yml</span></span></code></pre></div><h3 id="_2-2-node-js-javascript-typescript-项目" tabindex="-1">2.2 Node.js / JavaScript / TypeScript 项目 <a class="header-anchor" href="#_2-2-node-js-javascript-typescript-项目" aria-label="Permalink to &quot;2.2 Node.js / JavaScript / TypeScript 项目&quot;">​</a></h3><p><strong>完整模板：</strong></p><div class="language-text vp-adaptive-theme"><button title="Copy Code" class="copy"></button><span class="lang">text</span><pre class="shiki shiki-themes github-light github-dark vp-code" tabindex="0"><code><span class="line"><span># ============================================</span></span>
+<span class="line"><span># 依赖</span></span>
+<span class="line"><span># ============================================</span></span>
+<span class="line"><span>node_modules/</span></span>
+<span class="line"><span>npm-debug.log*</span></span>
+<span class="line"><span>yarn-debug.log*</span></span>
+<span class="line"><span>yarn-error.log*</span></span>
+<span class="line"><span>pnpm-debug.log*</span></span>
+<span class="line"><span>lerna-debug.log*</span></span>
+<span class="line"><span>.pnpm-store/</span></span>
+<span class="line"><span>.yarn/</span></span>
+<span class="line"><span>.yarn/cache/</span></span>
+<span class="line"><span>.yarn/unplugged/</span></span>
+<span class="line"><span>.yarn/build-state.yml</span></span>
+<span class="line"><span>.yarn/install-state.gz</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span># ============================================</span></span>
+<span class="line"><span># 构建产物</span></span>
+<span class="line"><span># ============================================</span></span>
+<span class="line"><span>dist/</span></span>
+<span class="line"><span>build/</span></span>
+<span class="line"><span>out/</span></span>
+<span class="line"><span>.next/</span></span>
+<span class="line"><span>.nuxt/</span></span>
+<span class="line"><span>.vite/</span></span>
+<span class="line"><span>.output/</span></span>
+<span class="line"><span>.cache/</span></span>
+<span class="line"><span>.webpack/</span></span>
+<span class="line"><span>.angular/</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span># ============================================</span></span>
+<span class="line"><span># 测试覆盖率</span></span>
+<span class="line"><span># ============================================</span></span>
+<span class="line"><span>coverage/</span></span>
+<span class="line"><span>.nyc_output/</span></span>
+<span class="line"><span>.jest/</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span># ============================================</span></span>
+<span class="line"><span># 环境变量</span></span>
+<span class="line"><span># ============================================</span></span>
+<span class="line"><span>.env</span></span>
+<span class="line"><span>.env.local</span></span>
+<span class="line"><span>.env.*.local</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span># ============================================</span></span>
+<span class="line"><span># 编辑器</span></span>
+<span class="line"><span># ============================================</span></span>
+<span class="line"><span>.vscode/*</span></span>
+<span class="line"><span>!.vscode/extensions.json</span></span>
+<span class="line"><span>.idea/</span></span>
+<span class="line"><span>*.suo</span></span>
+<span class="line"><span>*.ntvs*</span></span>
+<span class="line"><span>*.njsproj</span></span>
+<span class="line"><span>*.sln</span></span></code></pre></div><h3 id="_2-3-python-项目" tabindex="-1">2.3 Python 项目 <a class="header-anchor" href="#_2-3-python-项目" aria-label="Permalink to &quot;2.3 Python 项目&quot;">​</a></h3><p><strong>完整模板：</strong></p><div class="language-text vp-adaptive-theme"><button title="Copy Code" class="copy"></button><span class="lang">text</span><pre class="shiki shiki-themes github-light github-dark vp-code" tabindex="0"><code><span class="line"><span># ============================================</span></span>
+<span class="line"><span># Python 编译文件</span></span>
+<span class="line"><span># ============================================</span></span>
+<span class="line"><span>__pycache__/</span></span>
+<span class="line"><span>*.py[cod]</span></span>
+<span class="line"><span>*$py.class</span></span>
+<span class="line"><span>*.so</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span># ============================================</span></span>
+<span class="line"><span># 分发和打包</span></span>
+<span class="line"><span># ============================================</span></span>
+<span class="line"><span>.Python</span></span>
+<span class="line"><span>build/</span></span>
+<span class="line"><span>develop-eggs/</span></span>
+<span class="line"><span>dist/</span></span>
+<span class="line"><span>downloads/</span></span>
+<span class="line"><span>eggs/</span></span>
+<span class="line"><span>.eggs/</span></span>
+<span class="line"><span>lib/</span></span>
+<span class="line"><span>lib64/</span></span>
+<span class="line"><span>parts/</span></span>
+<span class="line"><span>sdist/</span></span>
+<span class="line"><span>var/</span></span>
+<span class="line"><span>wheels/</span></span>
+<span class="line"><span>pip-wheel-metadata/</span></span>
+<span class="line"><span>share/python-wheels/</span></span>
+<span class="line"><span>*.egg-info/</span></span>
+<span class="line"><span>.installed.cfg</span></span>
+<span class="line"><span>*.egg</span></span>
+<span class="line"><span>MANIFEST</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span># PyInstaller</span></span>
+<span class="line"><span>*.manifest</span></span>
+<span class="line"><span>*.spec</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span># ============================================</span></span>
+<span class="line"><span># 虚拟环境</span></span>
+<span class="line"><span># ============================================</span></span>
+<span class="line"><span>.venv/</span></span>
+<span class="line"><span>venv/</span></span>
+<span class="line"><span>ENV/</span></span>
+<span class="line"><span>env/</span></span>
+<span class="line"><span>.conda/</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span># ============================================</span></span>
+<span class="line"><span># 测试覆盖率</span></span>
+<span class="line"><span># ============================================</span></span>
+<span class="line"><span>htmlcov/</span></span>
+<span class="line"><span>.tox/</span></span>
+<span class="line"><span>.nox/</span></span>
+<span class="line"><span>.coverage</span></span>
+<span class="line"><span>.coverage.*</span></span>
+<span class="line"><span>.cache</span></span>
+<span class="line"><span>nosetests.xml</span></span>
+<span class="line"><span>coverage.xml</span></span>
+<span class="line"><span>*.cover</span></span>
+<span class="line"><span>*.py,cover</span></span>
+<span class="line"><span>.hypothesis/</span></span>
+<span class="line"><span>.pytest_cache/</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span># ============================================</span></span>
+<span class="line"><span># Jupyter Notebook</span></span>
+<span class="line"><span># ============================================</span></span>
+<span class="line"><span>.ipynb_checkpoints</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span># ============================================</span></span>
+<span class="line"><span># mypy</span></span>
+<span class="line"><span># ============================================</span></span>
+<span class="line"><span>.mypy_cache/</span></span>
+<span class="line"><span>.dmypy.json</span></span>
+<span class="line"><span>dmypy.json</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span># ============================================</span></span>
+<span class="line"><span># pyenv</span></span>
+<span class="line"><span># ============================================</span></span>
+<span class="line"><span>.python-version</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span># ============================================</span></span>
+<span class="line"><span># 环境变量</span></span>
+<span class="line"><span># ============================================</span></span>
+<span class="line"><span>.env</span></span>
+<span class="line"><span>.env.local</span></span>
+<span class="line"><span>.env.*.local</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span># ============================================</span></span>
+<span class="line"><span># 数据库文件</span></span>
+<span class="line"><span># ============================================</span></span>
+<span class="line"><span>*.db</span></span>
+<span class="line"><span>*.sqlite</span></span>
+<span class="line"><span>*.sqlite3</span></span>
+<span class="line"><span>*.db-journal</span></span></code></pre></div><h3 id="_2-4-java-项目" tabindex="-1">2.4 Java 项目 <a class="header-anchor" href="#_2-4-java-项目" aria-label="Permalink to &quot;2.4 Java 项目&quot;">​</a></h3><p><strong>完整模板：</strong></p><div class="language-text vp-adaptive-theme"><button title="Copy Code" class="copy"></button><span class="lang">text</span><pre class="shiki shiki-themes github-light github-dark vp-code" tabindex="0"><code><span class="line"><span># ============================================</span></span>
+<span class="line"><span># 编译文件</span></span>
+<span class="line"><span># ============================================</span></span>
+<span class="line"><span>*.class</span></span>
+<span class="line"><span>*.jar</span></span>
+<span class="line"><span>*.war</span></span>
+<span class="line"><span>*.ear</span></span>
+<span class="line"><span>*.nar</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span># ============================================</span></span>
+<span class="line"><span># 构建工具</span></span>
+<span class="line"><span># ============================================</span></span>
+<span class="line"><span># Maven</span></span>
+<span class="line"><span>target/</span></span>
+<span class="line"><span>.mvn/</span></span>
+<span class="line"><span>mvnw</span></span>
+<span class="line"><span>mvnw.cmd</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span># Gradle</span></span>
+<span class="line"><span>.gradle/</span></span>
+<span class="line"><span>build/</span></span>
+<span class="line"><span>!gradle/wrapper/gradle-wrapper.jar</span></span>
+<span class="line"><span>!**/src/main/**/build/</span></span>
+<span class="line"><span>!**/src/test/**/build/</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span># ============================================</span></span>
+<span class="line"><span># IDE</span></span>
+<span class="line"><span># ============================================</span></span>
+<span class="line"><span>.idea/</span></span>
+<span class="line"><span>*.iml</span></span>
+<span class="line"><span>*.iws</span></span>
+<span class="line"><span>*.ipr</span></span>
+<span class="line"><span>.classpath</span></span>
+<span class="line"><span>.project</span></span>
+<span class="line"><span>.settings/</span></span></code></pre></div><h3 id="_2-5-go-项目" tabindex="-1">2.5 Go 项目 <a class="header-anchor" href="#_2-5-go-项目" aria-label="Permalink to &quot;2.5 Go 项目&quot;">​</a></h3><p><strong>完整模板：</strong></p><div class="language-text vp-adaptive-theme"><button title="Copy Code" class="copy"></button><span class="lang">text</span><pre class="shiki shiki-themes github-light github-dark vp-code" tabindex="0"><code><span class="line"><span># ============================================</span></span>
+<span class="line"><span># 编译文件</span></span>
+<span class="line"><span># ============================================</span></span>
+<span class="line"><span>*.exe</span></span>
+<span class="line"><span>*.exe~</span></span>
+<span class="line"><span>*.dll</span></span>
+<span class="line"><span>*.so</span></span>
+<span class="line"><span>*.dylib</span></span>
+<span class="line"><span>*.test</span></span>
+<span class="line"><span>*.out</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span># ============================================</span></span>
+<span class="line"><span># 依赖</span></span>
+<span class="line"><span># ============================================</span></span>
+<span class="line"><span>vendor/</span></span>
+<span class="line"><span>go.sum</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span># ============================================</span></span>
+<span class="line"><span># IDE</span></span>
+<span class="line"><span># ============================================</span></span>
+<span class="line"><span>.idea/</span></span>
+<span class="line"><span>*.swp</span></span>
+<span class="line"><span>*.swo</span></span></code></pre></div><h3 id="_2-6-rust-项目" tabindex="-1">2.6 Rust 项目 <a class="header-anchor" href="#_2-6-rust-项目" aria-label="Permalink to &quot;2.6 Rust 项目&quot;">​</a></h3><p><strong>完整模板：</strong></p><div class="language-text vp-adaptive-theme"><button title="Copy Code" class="copy"></button><span class="lang">text</span><pre class="shiki shiki-themes github-light github-dark vp-code" tabindex="0"><code><span class="line"><span># ============================================</span></span>
+<span class="line"><span># 编译文件</span></span>
+<span class="line"><span># ============================================</span></span>
+<span class="line"><span>target/</span></span>
+<span class="line"><span>Cargo.lock</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span># ============================================</span></span>
+<span class="line"><span># IDE</span></span>
+<span class="line"><span># ============================================</span></span>
+<span class="line"><span>.idea/</span></span>
+<span class="line"><span>*.swp</span></span>
+<span class="line"><span>*.swo</span></span></code></pre></div><h3 id="_2-7-移动端项目" tabindex="-1">2.7 移动端项目 <a class="header-anchor" href="#_2-7-移动端项目" aria-label="Permalink to &quot;2.7 移动端项目&quot;">​</a></h3><h4 id="ios" tabindex="-1">iOS <a class="header-anchor" href="#ios" aria-label="Permalink to &quot;iOS&quot;">​</a></h4><div class="language-text vp-adaptive-theme"><button title="Copy Code" class="copy"></button><span class="lang">text</span><pre class="shiki shiki-themes github-light github-dark vp-code" tabindex="0"><code><span class="line"><span>*.pbxuser</span></span>
+<span class="line"><span>*.mode1v3</span></span>
+<span class="line"><span>*.mode2v3</span></span>
+<span class="line"><span>*.perspectivev3</span></span>
+<span class="line"><span>*.xcuserstate</span></span>
+<span class="line"><span>project.xcworkspace/</span></span>
+<span class="line"><span>xcuserdata/</span></span>
+<span class="line"><span>*.moved-aside</span></span>
+<span class="line"><span>DerivedData/</span></span>
+<span class="line"><span>*.hmap</span></span>
+<span class="line"><span>*.ipa</span></span>
+<span class="line"><span>*.dSYM.zip</span></span>
+<span class="line"><span>*.dSYM</span></span></code></pre></div><h4 id="android" tabindex="-1">Android <a class="header-anchor" href="#android" aria-label="Permalink to &quot;Android&quot;">​</a></h4><div class="language-text vp-adaptive-theme"><button title="Copy Code" class="copy"></button><span class="lang">text</span><pre class="shiki shiki-themes github-light github-dark vp-code" tabindex="0"><code><span class="line"><span>*.apk</span></span>
+<span class="line"><span>*.ap_</span></span>
+<span class="line"><span>*.aab</span></span>
+<span class="line"><span>.gradle/</span></span>
+<span class="line"><span>local.properties</span></span>
+<span class="line"><span>*.iml</span></span>
+<span class="line"><span>.idea/</span></span>
+<span class="line"><span>*.dex</span></span>
+<span class="line"><span>*.class</span></span>
+<span class="line"><span>bin/</span></span>
+<span class="line"><span>gen/</span></span>
+<span class="line"><span>out/</span></span></code></pre></div><h3 id="_2-8-分层配置示例" tabindex="-1">2.8 分层配置示例 <a class="header-anchor" href="#_2-8-分层配置示例" aria-label="Permalink to &quot;2.8 分层配置示例&quot;">​</a></h3><p><strong>场景：</strong> Vue3 + FastAPI 全栈项目</p><p><strong>项目结构：</strong></p><div class="language- vp-adaptive-theme"><button title="Copy Code" class="copy"></button><span class="lang"></span><pre class="shiki shiki-themes github-light github-dark vp-code" tabindex="0"><code><span class="line"><span>project-root/</span></span>
+<span class="line"><span>├── .gitignore           # 通用规则</span></span>
+<span class="line"><span>├── frontend/</span></span>
+<span class="line"><span>│   ├── .gitignore       # 前端特定规则</span></span>
+<span class="line"><span>│   └── ...</span></span>
+<span class="line"><span>└── backend/</span></span>
+<span class="line"><span>    ├── .gitignore       # 后端特定规则</span></span>
+<span class="line"><span>    └── ...</span></span></code></pre></div><p><strong>根目录 <code>.gitignore</code>：</strong></p><div class="language-text vp-adaptive-theme"><button title="Copy Code" class="copy"></button><span class="lang">text</span><pre class="shiki shiki-themes github-light github-dark vp-code" tabindex="0"><code><span class="line"><span># 通用规则</span></span>
+<span class="line"><span>data/</span></span>
+<span class="line"><span>logs/</span></span>
+<span class="line"><span>uploads/</span></span>
+<span class="line"><span>*.env</span></span>
+<span class="line"><span>*.env.local</span></span>
+<span class="line"><span>!.env.example</span></span>
+<span class="line"><span>.DS_Store</span></span>
+<span class="line"><span>Thumbs.db</span></span>
+<span class="line"><span>*.log</span></span>
+<span class="line"><span>*.tmp</span></span></code></pre></div><p><strong><code>frontend/.gitignore</code>：</strong></p><div class="language-text vp-adaptive-theme"><button title="Copy Code" class="copy"></button><span class="lang">text</span><pre class="shiki shiki-themes github-light github-dark vp-code" tabindex="0"><code><span class="line"><span># 前端特定规则</span></span>
+<span class="line"><span>node_modules/</span></span>
+<span class="line"><span>.pnpm-store/</span></span>
+<span class="line"><span>.yarn/</span></span>
+<span class="line"><span>dist/</span></span>
+<span class="line"><span>.vite/</span></span>
+<span class="line"><span>.output/</span></span>
+<span class="line"><span>coverage/</span></span>
+<span class="line"><span>.env</span></span>
+<span class="line"><span>.env.local</span></span></code></pre></div><p><strong><code>backend/.gitignore</code>：</strong></p><div class="language-text vp-adaptive-theme"><button title="Copy Code" class="copy"></button><span class="lang">text</span><pre class="shiki shiki-themes github-light github-dark vp-code" tabindex="0"><code><span class="line"><span># 后端特定规则</span></span>
+<span class="line"><span>__pycache__/</span></span>
+<span class="line"><span>*.pyc</span></span>
+<span class="line"><span>*.pyo</span></span>
+<span class="line"><span>.venv/</span></span>
+<span class="line"><span>venv/</span></span>
+<span class="line"><span>.pytest_cache/</span></span>
+<span class="line"><span>.coverage</span></span>
+<span class="line"><span>htmlcov/</span></span>
+<span class="line"><span>*.db</span></span>
+<span class="line"><span>*.sqlite</span></span>
+<span class="line"><span>.env</span></span>
+<span class="line"><span>.env.local</span></span></code></pre></div><h2 id="三、最佳实践" tabindex="-1">三、最佳实践 <a class="header-anchor" href="#三、最佳实践" aria-label="Permalink to &quot;三、最佳实践&quot;">​</a></h2><h3 id="_3-1-敏感信息管理" tabindex="-1">3.1 敏感信息管理 <a class="header-anchor" href="#_3-1-敏感信息管理" aria-label="Permalink to &quot;3.1 敏感信息管理&quot;">​</a></h3><p><strong>环境变量文件：</strong></p><div class="language-text vp-adaptive-theme"><button title="Copy Code" class="copy"></button><span class="lang">text</span><pre class="shiki shiki-themes github-light github-dark vp-code" tabindex="0"><code><span class="line"><span># 忽略所有环境变量文件</span></span>
+<span class="line"><span>*.env</span></span>
+<span class="line"><span>*.env.local</span></span>
+<span class="line"><span>*.env.*.local</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span># 但保留模板文件</span></span>
+<span class="line"><span>!.env.example</span></span>
+<span class="line"><span>!.env.template</span></span></code></pre></div><p><strong>推荐做法：</strong></p><ul><li>✅ 提交 <code>.env.example</code> 作为模板</li><li>❌ 不提交实际的 <code>.env</code> 文件</li><li>✅ 使用环境变量管理敏感信息</li><li>✅ 在 README 中说明如何配置</li></ul><h3 id="_3-2-构建产物管理" tabindex="-1">3.2 构建产物管理 <a class="header-anchor" href="#_3-2-构建产物管理" aria-label="Permalink to &quot;3.2 构建产物管理&quot;">​</a></h3><p><strong>原则：</strong></p><ul><li>❌ 不提交构建产物（由构建工具生成）</li><li>✅ 在 CI/CD 中构建，而不是提交构建后的文件</li><li>✅ 明确列出所有构建产物目录</li></ul><p><strong>常见构建产物：</strong></p><ul><li>前端：<code>dist/</code>、<code>build/</code>、<code>out/</code>、<code>.next/</code>、<code>.nuxt/</code>、<code>.vite/</code></li><li>后端：<code>target/</code>、<code>build/</code>、<code>dist/</code>、<code>*.egg-info/</code></li></ul><h3 id="_3-3-依赖管理" tabindex="-1">3.3 依赖管理 <a class="header-anchor" href="#_3-3-依赖管理" aria-label="Permalink to &quot;3.3 依赖管理&quot;">​</a></h3><p><strong>原则：</strong></p><ul><li>❌ 不提交依赖目录（由包管理器管理）</li><li>✅ 提交依赖声明文件（<code>package.json</code>、<code>requirements.txt</code>、<code>Cargo.toml</code> 等）</li><li>✅ 在 README 中说明如何安装依赖</li></ul><p><strong>常见依赖目录：</strong></p><ul><li>Node.js：<code>node_modules/</code>、<code>.pnpm-store/</code></li><li>Python：<code>venv/</code>、<code>.venv/</code>、<code>__pycache__/</code></li><li>Java：<code>target/</code>、<code>.gradle/</code></li><li>Go：<code>vendor/</code></li><li>Rust：<code>target/</code>（但 <code>Cargo.lock</code> 通常需要提交）</li></ul><h3 id="_3-4-ide-配置管理" tabindex="-1">3.4 IDE 配置管理 <a class="header-anchor" href="#_3-4-ide-配置管理" aria-label="Permalink to &quot;3.4 IDE 配置管理&quot;">​</a></h3><p><strong>两种策略：</strong></p><p><strong>策略一：忽略所有 IDE 配置（个人项目）</strong></p><div class="language-text vp-adaptive-theme"><button title="Copy Code" class="copy"></button><span class="lang">text</span><pre class="shiki shiki-themes github-light github-dark vp-code" tabindex="0"><code><span class="line"><span>.vscode/</span></span>
+<span class="line"><span>.idea/</span></span>
+<span class="line"><span>*.iml</span></span></code></pre></div><p><strong>策略二：提交部分 IDE 配置（团队项目）</strong></p><div class="language-text vp-adaptive-theme"><button title="Copy Code" class="copy"></button><span class="lang">text</span><pre class="shiki shiki-themes github-light github-dark vp-code" tabindex="0"><code><span class="line"><span># 忽略个人配置</span></span>
+<span class="line"><span>.vscode/*</span></span>
+<span class="line"><span>.idea/</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span># 但保留团队共享配置</span></span>
+<span class="line"><span>!.vscode/settings.json</span></span>
+<span class="line"><span>!.vscode/tasks.json</span></span>
+<span class="line"><span>!.vscode/launch.json</span></span>
+<span class="line"><span>!.vscode/extensions.json</span></span></code></pre></div><p><strong>选择建议：</strong></p><ul><li>个人项目：忽略所有 IDE 配置</li><li>团队项目：提交共享配置，忽略个人配置</li></ul><h3 id="_3-5-规则优先级" tabindex="-1">3.5 规则优先级 <a class="header-anchor" href="#_3-5-规则优先级" aria-label="Permalink to &quot;3.5 规则优先级&quot;">​</a></h3><p><code>.gitignore</code> 规则按顺序匹配，更具体的规则会覆盖更通用的规则：</p><div class="language-text vp-adaptive-theme"><button title="Copy Code" class="copy"></button><span class="lang">text</span><pre class="shiki shiki-themes github-light github-dark vp-code" tabindex="0"><code><span class="line"><span># 通用规则</span></span>
+<span class="line"><span>*.log</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span># 特定规则（优先级更高）</span></span>
+<span class="line"><span>!important.log</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span># 目录规则</span></span>
+<span class="line"><span>logs/</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span># 但保留 .gitkeep</span></span>
+<span class="line"><span>!logs/.gitkeep</span></span></code></pre></div><p><strong>规则优先级：</strong></p><ol><li>更具体的规则优先于通用规则</li><li>后面的规则可以覆盖前面的规则（使用 <code>!</code>）</li><li>目录规则会忽略目录中的所有文件</li></ol><h2 id="四、常见问题处理" tabindex="-1">四、常见问题处理 <a class="header-anchor" href="#四、常见问题处理" aria-label="Permalink to &quot;四、常见问题处理&quot;">​</a></h2><h3 id="_4-1-已提交的文件需要忽略" tabindex="-1">4.1 已提交的文件需要忽略 <a class="header-anchor" href="#_4-1-已提交的文件需要忽略" aria-label="Permalink to &quot;4.1 已提交的文件需要忽略&quot;">​</a></h3><p><strong>问题：</strong> 文件已经被 Git 跟踪，但需要添加到 <code>.gitignore</code></p><p><strong>解决方案：</strong></p><div class="language-bash vp-adaptive-theme"><button title="Copy Code" class="copy"></button><span class="lang">bash</span><pre class="shiki shiki-themes github-light github-dark vp-code" tabindex="0"><code><span class="line"><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;"># 从 Git 中移除但保留本地文件</span></span>
+<span class="line"><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">git</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> rm</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> --cached</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> &lt;</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">fil</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">e</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">&gt;</span></span>
+<span class="line"></span>
+<span class="line"><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;"># 对于目录</span></span>
+<span class="line"><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">git</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> rm</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> -r</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> --cached</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> &lt;</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">director</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">y</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">&gt;</span></span>
+<span class="line"></span>
+<span class="line"><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;"># 提交更改</span></span>
+<span class="line"><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">git</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> commit</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> -m</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> &quot;Remove tracked files from Git&quot;</span></span></code></pre></div><p><strong>批量处理：</strong></p><div class="language-bash vp-adaptive-theme"><button title="Copy Code" class="copy"></button><span class="lang">bash</span><pre class="shiki shiki-themes github-light github-dark vp-code" tabindex="0"><code><span class="line"><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;"># 移除所有已跟踪的 .env 文件</span></span>
+<span class="line"><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">git</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> rm</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> --cached</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> **</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">/</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">*</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">.env</span></span>
+<span class="line"></span>
+<span class="line"><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;"># 移除所有已跟踪的 node_modules</span></span>
+<span class="line"><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">find</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> .</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> -name</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> node_modules</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> -type</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> d</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> -exec</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> git</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> rm</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> -r</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> --cached</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> {}</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> +</span></span></code></pre></div><h3 id="_4-2-忽略规则不生效" tabindex="-1">4.2 忽略规则不生效 <a class="header-anchor" href="#_4-2-忽略规则不生效" aria-label="Permalink to &quot;4.2 忽略规则不生效&quot;">​</a></h3><p><strong>检查步骤：</strong></p><ol><li><p><strong>确认文件路径正确</strong></p><ul><li>使用相对路径（相对于 <code>.gitignore</code> 文件位置）</li><li>使用 <code>/</code> 作为路径分隔符（跨平台）</li></ul></li><li><p><strong>检查规则优先级</strong></p><ul><li>更具体的规则会覆盖更通用的规则</li><li>使用 <code>!</code> 可以取消忽略</li></ul></li><li><p><strong>确认文件未被 Git 跟踪</strong></p><ul><li>如果文件已被跟踪，需要先使用 <code>git rm --cached</code></li></ul></li><li><p><strong>检查 .gitignore 文件位置</strong></p><ul><li><code>.gitignore</code> 只影响其所在目录及子目录</li><li>确保 <code>.gitignore</code> 在正确的位置</li></ul></li></ol><p><strong>调试技巧：</strong></p><div class="language-bash vp-adaptive-theme"><button title="Copy Code" class="copy"></button><span class="lang">bash</span><pre class="shiki shiki-themes github-light github-dark vp-code" tabindex="0"><code><span class="line"><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;"># 检查文件是否被忽略</span></span>
+<span class="line"><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">git</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> check-ignore</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> -v</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> &lt;</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">fil</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">e</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">&gt;</span></span>
+<span class="line"></span>
+<span class="line"><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;"># 查看所有被忽略的文件</span></span>
+<span class="line"><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">git</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> status</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> --ignored</span></span></code></pre></div><h3 id="_4-3-需要忽略但保留目录结构" tabindex="-1">4.3 需要忽略但保留目录结构 <a class="header-anchor" href="#_4-3-需要忽略但保留目录结构" aria-label="Permalink to &quot;4.3 需要忽略但保留目录结构&quot;">​</a></h3><p><strong>问题：</strong> 需要忽略目录中的文件，但保留目录结构（用于 Git 跟踪空目录）</p><p><strong>解决方案：</strong> 使用 <code>.gitkeep</code> 文件</p><div class="language-bash vp-adaptive-theme"><button title="Copy Code" class="copy"></button><span class="lang">bash</span><pre class="shiki shiki-themes github-light github-dark vp-code" tabindex="0"><code><span class="line"><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;"># 创建目录并添加 .gitkeep</span></span>
+<span class="line"><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">mkdir</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> -p</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> data/logs/backend</span></span>
+<span class="line"><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">touch</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> data/logs/backend/.gitkeep</span></span>
+<span class="line"></span>
+<span class="line"><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;"># .gitignore 中排除 .gitkeep</span></span>
+<span class="line"><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">!**</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">/.gitkeep</span></span></code></pre></div><p><strong>配置示例：</strong></p><div class="language-text vp-adaptive-theme"><button title="Copy Code" class="copy"></button><span class="lang">text</span><pre class="shiki shiki-themes github-light github-dark vp-code" tabindex="0"><code><span class="line"><span># 忽略目录中的所有文件</span></span>
+<span class="line"><span>data/logs/</span></span>
+<span class="line"><span>data/uploads/</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span># 但保留 .gitkeep 文件</span></span>
+<span class="line"><span>!**/.gitkeep</span></span></code></pre></div><h3 id="_4-4-部分文件需要提交" tabindex="-1">4.4 部分文件需要提交 <a class="header-anchor" href="#_4-4-部分文件需要提交" aria-label="Permalink to &quot;4.4 部分文件需要提交&quot;">​</a></h3><p><strong>问题：</strong> 某个模式的文件需要忽略，但其中某些文件需要提交</p><p><strong>解决方案：</strong> 使用 <code>!</code> 取消忽略</p><div class="language-text vp-adaptive-theme"><button title="Copy Code" class="copy"></button><span class="lang">text</span><pre class="shiki shiki-themes github-light github-dark vp-code" tabindex="0"><code><span class="line"><span># 忽略所有 .env 文件</span></span>
+<span class="line"><span>*.env</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span># 但提交 .env.example</span></span>
+<span class="line"><span>!.env.example</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span># 忽略所有日志文件</span></span>
+<span class="line"><span>*.log</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span># 但提交 changelog.log</span></span>
+<span class="line"><span>!changelog.log</span></span></code></pre></div><h3 id="_4-5-跨平台路径问题" tabindex="-1">4.5 跨平台路径问题 <a class="header-anchor" href="#_4-5-跨平台路径问题" aria-label="Permalink to &quot;4.5 跨平台路径问题&quot;">​</a></h3><p><strong>问题：</strong> Windows 和 Linux/macOS 路径分隔符不同</p><p><strong>解决方案：</strong> 使用 <code>/</code> 作为路径分隔符（Git 会自动处理）</p><div class="language-text vp-adaptive-theme"><button title="Copy Code" class="copy"></button><span class="lang">text</span><pre class="shiki shiki-themes github-light github-dark vp-code" tabindex="0"><code><span class="line"><span># ✅ 正确（跨平台）</span></span>
+<span class="line"><span>data/logs/</span></span>
+<span class="line"><span>config/*.env</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span># ❌ 错误（Windows 特定）</span></span>
+<span class="line"><span>data\logs\</span></span>
+<span class="line"><span>config\*.env</span></span></code></pre></div><h2 id="五、团队协作建议" tabindex="-1">五、团队协作建议 <a class="header-anchor" href="#五、团队协作建议" aria-label="Permalink to &quot;五、团队协作建议&quot;">​</a></h2><h3 id="_5-1-统一配置" tabindex="-1">5.1 统一配置 <a class="header-anchor" href="#_5-1-统一配置" aria-label="Permalink to &quot;5.1 统一配置&quot;">​</a></h3><p><strong>原则：</strong></p><ul><li>团队成员使用相同的 <code>.gitignore</code> 配置</li><li><code>.gitignore</code> 文件应该提交到版本控制</li><li>定期审查和更新 <code>.gitignore</code> 配置</li></ul><p><strong>实践：</strong></p><ol><li>在项目初始化时创建 <code>.gitignore</code></li><li>使用模板或参考最佳实践</li><li>在 README 中说明 <code>.gitignore</code> 的配置原则</li><li>定期审查是否有遗漏的规则</li></ol><h3 id="_5-2-文档说明" tabindex="-1">5.2 文档说明 <a class="header-anchor" href="#_5-2-文档说明" aria-label="Permalink to &quot;5.2 文档说明&quot;">​</a></h3><p><strong>建议在 README 中说明：</strong></p><ul><li><code>.gitignore</code> 的配置原则</li><li>哪些文件/目录被忽略及原因</li><li>如何添加新的忽略规则</li><li>如何处理已提交的文件</li></ul><p><strong>示例：</strong></p><div class="language-markdown vp-adaptive-theme"><button title="Copy Code" class="copy"></button><span class="lang">markdown</span><pre class="shiki shiki-themes github-light github-dark vp-code" tabindex="0"><code><span class="line"><span style="--shiki-light:#005CC5;--shiki-light-font-weight:bold;--shiki-dark:#79B8FF;--shiki-dark-font-weight:bold;">## .gitignore 配置说明</span></span>
+<span class="line"></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">本项目采用分层管理的方式组织 </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">`.gitignore`</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">：</span></span>
+<span class="line"><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;">-</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> 根目录：项目级通用规则</span></span>
+<span class="line"><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;">-</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> 子目录：特定技术栈规则</span></span>
+<span class="line"></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">被忽略的内容：</span></span>
+<span class="line"><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;">-</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> 依赖目录（node_modules、venv 等）</span></span>
+<span class="line"><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;">-</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> 构建产物（dist、build 等）</span></span>
+<span class="line"><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;">-</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> 环境变量文件（*.env）</span></span>
+<span class="line"><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;">-</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> 日志文件（*.log）</span></span></code></pre></div><h3 id="_5-3-定期审查" tabindex="-1">5.3 定期审查 <a class="header-anchor" href="#_5-3-定期审查" aria-label="Permalink to &quot;5.3 定期审查&quot;">​</a></h3><p><strong>审查时机：</strong></p><ul><li>项目初始化时</li><li>添加新技术栈时</li><li>发现意外提交的文件时</li><li>定期（如每季度）审查</li></ul><p><strong>审查内容：</strong></p><ol><li>检查是否有遗漏的忽略规则</li><li>检查是否有不必要的忽略规则</li><li>检查配置是否清晰易懂</li><li>检查是否符合团队规范</li></ol><h2 id="六、工具推荐" tabindex="-1">六、工具推荐 <a class="header-anchor" href="#六、工具推荐" aria-label="Permalink to &quot;六、工具推荐&quot;">​</a></h2><ul><li><strong><a href="https://www.toptal.com/developers/gitignore" target="_blank" rel="noreferrer">gitignore.io</a></strong>：根据技术栈生成 <code>.gitignore</code></li><li><strong><a href="https://github.com/github/gitignore" target="_blank" rel="noreferrer">GitHub .gitignore 模板</a></strong>：官方模板集合</li><li><strong>Git 命令</strong>：<code>git check-ignore -v &lt;file&gt;</code> 检查文件是否被忽略</li></ul><h2 id="参考资源" tabindex="-1">参考资源 <a class="header-anchor" href="#参考资源" aria-label="Permalink to &quot;参考资源&quot;">​</a></h2><h3 id="官方文档" tabindex="-1">官方文档 <a class="header-anchor" href="#官方文档" aria-label="Permalink to &quot;官方文档&quot;">​</a></h3><ul><li><a href="https://git-scm.com/docs/gitignore" target="_blank" rel="noreferrer">Git 官方文档 - gitignore</a></li><li><a href="https://github.com/github/gitignore" target="_blank" rel="noreferrer">GitHub .gitignore 模板</a></li></ul><h3 id="在线工具" tabindex="-1">在线工具 <a class="header-anchor" href="#在线工具" aria-label="Permalink to &quot;在线工具&quot;">​</a></h3><ul><li><a href="https://www.toptal.com/developers/gitignore" target="_blank" rel="noreferrer">gitignore.io</a> - 根据技术栈生成 .gitignore</li></ul><h3 id="相关指南" tabindex="-1">相关指南 <a class="header-anchor" href="#相关指南" aria-label="Permalink to &quot;相关指南&quot;">​</a></h3><ul><li><a href="https://git-scm.com/book" target="_blank" rel="noreferrer">Git 最佳实践</a></li><li><a href="https://docs.github.com/en/get-started/getting-started-with-git/ignoring-files" target="_blank" rel="noreferrer">GitHub 文档 - 忽略文件</a></li></ul></div></div></main><footer class="VPDocFooter" data-v-8b9a1a38 data-v-e586032c><!--[--><!--]--><div class="edit-info" data-v-e586032c><!----><div class="last-updated" data-v-e586032c><p class="VPLastUpdated" data-v-e586032c data-v-d7300fe5>最后更新时间: <time datetime="2025-12-01T09:52:21.000Z" data-v-d7300fe5></time></p></div></div><!----></footer><!--[--><!--[--><!--[--><nav class="post-pager" aria-label="文章翻页导航" data-v-87e6cc74 data-v-f63809f7><a class="pager-link prev" href="/posts/uv Python 包管理器使用指南.html" rel="prev" data-v-f63809f7><span class="label" data-v-f63809f7>上一篇</span><span class="title" data-v-f63809f7>uv Python 包管理器使用指南</span></a><a class="pager-link next" href="/posts/全栈项目目录结构设计.html" rel="next" data-v-f63809f7><span class="label" data-v-f63809f7>下一篇</span><span class="title" data-v-f63809f7>FastAPI + Vue 3 全栈项目目录结构设计指南</span></a></nav><div class="giscus-container" data-v-87e6cc74 data-v-67f8576b><!----></div><!--]--><!--]--><!--]--></div></div></div><!--[--><!--]--></div></div><!----><!--[--><!--]--></div><footer data-v-87e6cc74 data-v-649c6707><div class="busuanzi" data-v-649c6707><span id="busuanzi_container_site_pv" style="display:none;"> 本站总访问量 <span id="busuanzi_value_site_pv"></span>次 <span class="post-meta-divider">|</span></span><span id="busuanzi_container_site_uv" style="display:none;"> 本站访客数 <span id="busuanzi_value_site_uv"></span>人 </span></div> Powered by <a href="https://github.com/helloAhao096" target="_blank" title="作者" data-v-649c6707> QianFan </a> | Copyright © 2023.3.6-2025 | MIT License </footer><button class="back-to-top" aria-label="返回顶部" type="button" data-v-87e6cc74 data-v-53aa58d3><svg class="back-to-top-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" data-v-53aa58d3><path d="M18 15L12 9L6 15" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" data-v-53aa58d3></path></svg></button></div></div>
+    <script>window.__VP_HASH_MAP__=JSON.parse("{\"about.md\":\"BqqRFp3S\",\"gallery.md\":\"CxSyska5\",\"index.md\":\"Cm18a-_C\",\"posts_docker 自动化安装部署、配置镜像源.md\":\"ac6TPWUK\",\"posts_fastapi 项目工程化结构设计指南.md\":\"B1kyG5sm\",\"posts_giscus评论配置.md\":\"D7MlPFy8\",\"posts_git branch 分支管理规范指南.md\":\"juSNYTH3\",\"posts_git commit 提交规范指南.md\":\"CH3J-rKL\",\"posts_gitalk配置.md\":\"XQxFtahl\",\"posts_github action一键部署个人博客.md\":\"Dg5XlG71\",\"posts_github action完整示例详解.md\":\"DAvLdWRI\",\"posts_gitignore 配置指南.md\":\"BBNgUitK\",\"posts_homebrew 设置代理_国内镜像源.md\":\"CxcWri5L\",\"posts_index.md\":\"DtwFHOzl\",\"posts_langgraph 人机环路 interrupt.md\":\"CcPdYauv\",\"posts_linux service服务配置.md\":\"J6CpuxQo\",\"posts_linux挂载u盘拷贝文件.md\":\"D47xc9vR\",\"posts_linux连接蓝牙设备.md\":\"C8fNCFZy\",\"posts_openspec 使用指南.md\":\"DDSl3elc\",\"posts_osm离线地图docker服务器搭建流程.md\":\"D7pHHDnh\",\"posts_postgresql常用命令.md\":\"DyEOYrl6\",\"posts_ubuntu22.04网络配置wlan_wifi固定ip.md\":\"CTVBmvrM\",\"posts_uv python 包管理器使用指南.md\":\"UhRYdGx0\",\"posts_vitepress自定义静态文件路由.md\":\"ttkM1DqP\",\"posts_vue 3 项目工程化结构设计指南.md\":\"CduqXIc6\",\"posts_vue_vite的api网络请求proxy设置.md\":\"CI_bMlde\",\"posts_vue项目vite全局静态变量配置.md\":\"D-2NpYIc\",\"posts_不蒜子 网站计数器.md\":\"DAx8ec46\",\"posts_全栈项目目录结构设计.md\":\"DPr5wtkU\",\"posts_树莓派4b配置watchdog.md\":\"DJPm81VO\",\"posts_网站自定义鼠标事件.md\":\"Bedr_kTu\",\"posts_车机安装第三方应用.md\":\"DoHanX06\",\"tools.md\":\"CjFCHeA-\"}");window.__VP_SITE_DATA__=JSON.parse("{\"lang\":\"zh-CN\",\"dir\":\"ltr\",\"title\":\"QianFan\",\"description\":\"Home of QianFan\",\"base\":\"/\",\"head\":[],\"router\":{\"prefetchLinks\":true},\"appearance\":true,\"themeConfig\":{\"logo\":\"/QianFan.jpg\",\"lastUpdated\":{\"text\":\"最后更新时间\"},\"outline\":{\"level\":[2,6],\"label\":\"本页目录\"},\"posts\":[{\"frontMatter\":{\"title\":\"Git Branch 分支管理规范指南\",\"description\":\"统一的 Git 分支命名和管理规范，包括分支类型、命名规则、分支策略（Git Flow、GitHub Flow）、功能分支管理、代码审查流程等，提升团队协作效率和代码质量。\",\"date\":\"2025-12-01 15:43:56\",\"tags\":[\"Git\",\"版本控制\",\"工程化\",\"规范\",\"协作\",\"分支管理\"]},\"regularPath\":\"/posts/Git Branch 分支管理规范指南.html\"},{\"frontMatter\":{\"title\":\"Git Commit 提交规范指南\",\"description\":\"统一的 Git Commit 提交信息规范，提升代码审查效率、便于生成变更日志、支持后续集成自动化流程。基于 Conventional Commits 标准，提供完整的提交信息格式、类型定义和最佳实践。\",\"date\":\"2025-12-01 15:26:13\",\"tags\":[\"Git\",\"工程化\",\"规范\"]},\"regularPath\":\"/posts/Git Commit 提交规范指南.html\"},{\"frontMatter\":{\"title\":\"uv Python 包管理器使用指南\",\"description\":\"uv 是由 Astral 开发的极快的 Python 包和项目管理工具，用于替代 pip、pip-tools、pipx、poetry、pyenv、twine、virtualenv 等工具。本文档介绍 uv 的基本概念、安装方法和常用操作。\",\"date\":\"2025-12-01 15:03:37\",\"tags\":[\"Python\",\"包管理\",\"工具\",\"uv\",\"工程化\"]},\"regularPath\":\"/posts/uv Python 包管理器使用指南.html\"},{\"frontMatter\":{\"title\":\".gitignore 配置指南\",\"description\":\"通用的、可复用、可标准化的 .gitignore 配置指南，适用于各种类型的项目，提供分层管理策略和最佳实践\",\"date\":\"2025-12-01 14:43:20\",\"tags\":[\"Git\",\"工程化\",\"最佳实践\",\"版本控制\"]},\"regularPath\":\"/posts/gitignore 配置指南.html\"},{\"frontMatter\":{\"title\":\"FastAPI + Vue 3 全栈项目目录结构设计指南\",\"description\":\"基于实际项目经验，设计前后端分离的全栈项目目录结构，支持开发模式（热重载）和生产模式（容器化部署），提供最小可维护的核心服务配置和可扩展的可选服务集成方案\",\"date\":\"2025-12-01 14:28:48\",\"tags\":[\"FastAPI\",\"Vue3\",\"工程化\",\"架构设计\",\"全栈开发\",\"Docker\"]},\"regularPath\":\"/posts/全栈项目目录结构设计.html\"},{\"frontMatter\":{\"title\":\"FastAPI 项目工程化结构设计指南\",\"description\":\"基于实际项目经验，总结 FastAPI 后端项目的工程化目录架构设计原则和最佳实践，提供可复用的、解耦的工程化结构方案\",\"date\":\"2025-11-28 15:23:23\",\"tags\":[\"FastAPI\",\"Python\",\"工程化\",\"架构设计\",\"后端开发\"]},\"regularPath\":\"/posts/FastAPI 项目工程化结构设计指南.html\"},{\"frontMatter\":{\"title\":\"Vue 3 项目工程化结构设计指南\",\"description\":\"基于实际项目经验，总结 Vue 3 前端项目的工程化目录架构设计原则和最佳实践，提供可复用的、解耦的工程化结构方案\",\"date\":\"2025-11-28 13:24:01\",\"tags\":[\"Vue3\",\"工程化\",\"架构设计\",\"前端开发\"]},\"regularPath\":\"/posts/Vue 3 项目工程化结构设计指南.html\"},{\"frontMatter\":{\"title\":\"giscus 评论插件配置指南\",\"description\":\"从启用 GitHub Discussions 到在 VitePress 中完成 giscus 评论集成的完整流程\",\"date\":\"2025-11-26 18:29:00\",\"tags\":[\"博客搭建\",\"giscus\",\"VitePress\"]},\"regularPath\":\"/posts/giscus评论配置.html\"},{\"frontMatter\":{\"title\":\"OpenSpec 使用指南\",\"description\":\"OpenSpec 规范驱动开发工具快速指南，帮助 AI 编程助手与开发者对齐需求\",\"date\":\"2025-11-26 16:29:00\",\"tags\":[\"AI工具\",\"开发规范\",\"项目管理\"]},\"regularPath\":\"/posts/OpenSpec 使用指南.html\"},{\"frontMatter\":{\"title\":\"GitHub Action完整示例详解\",\"description\":\"GitHub Action 完整工作流程详解、配置示例、最佳实践\",\"date\":\"2025-11-16 00:00:00\",\"tags\":[\"GitHub\",\"CI/CD\",\"自动化部署\"]},\"regularPath\":\"/posts/GitHub Action完整示例详解.html\"},{\"frontMatter\":{\"title\":\"LangGraph 人机环路 interrupt\",\"description\":\"LangGraph 人机环路 interrupt 完整使用指南\",\"date\":\"2025-10-03 00:00:00\",\"tags\":[\"LangGraph\"]},\"regularPath\":\"/posts/LangGraph 人机环路 interrupt.html\"},{\"frontMatter\":{\"title\":\"docker 自动化安装部署、配置镜像源\",\"description\":\"docker 自动化安装部署、配置镜像源\",\"date\":\"2024-11-18 00:00:00\",\"tags\":[\"docker\",\"ubuntu\"]},\"regularPath\":\"/posts/docker 自动化安装部署、配置镜像源.html\"},{\"frontMatter\":{\"title\":\"linux service服务配置\",\"description\":\"linux service服务配置\",\"date\":\"2024-07-18 00:00:00\",\"tags\":[\"linux\"]},\"regularPath\":\"/posts/linux service服务配置.html\"},{\"frontMatter\":{\"title\":\"postgresql 常用命令\",\"description\":\"postgresql 常用命令\",\"date\":\"2024-07-01 00:00:00\",\"tags\":[\"linux\",\"sql\"]},\"regularPath\":\"/posts/postgresql常用命令.html\"},{\"frontMatter\":{\"title\":\"Homebrew 设置代理&国内镜像源\",\"description\":\"Homebrew 设置代理&国内镜像源\",\"date\":\"2024-05-10 00:00:00\",\"tags\":[\"homebrew\",\"MacOS\",\"proxy\"]},\"regularPath\":\"/posts/Homebrew 设置代理&国内镜像源.html\"},{\"frontMatter\":{\"title\":\"vue&vite的api网络请求proxy设置\",\"description\":\"vue&vite的api网络请求proxy设置\",\"date\":\"2024-05-10 00:00:00\",\"tags\":[\"vue\",\"vite\"]},\"regularPath\":\"/posts/vue&vite的api网络请求proxy设置.html\"},{\"frontMatter\":{\"title\":\"vue项目vite全局静态变量配置\",\"description\":\"vue项目vite全局静态变量配置\",\"date\":\"2024-05-10 00:00:00\",\"tags\":[\"vue\",\"vite\"]},\"regularPath\":\"/posts/vue项目vite全局静态变量配置.html\"},{\"frontMatter\":{\"title\":\"linux连接蓝牙设备📶\",\"description\":\"linux连接蓝牙设备\",\"date\":\"2024-01-23 00:00:00\",\"tags\":[\"linux\",\"Bluetooth\"]},\"regularPath\":\"/posts/linux连接蓝牙设备.html\"},{\"frontMatter\":{\"title\":\"linux挂载硬盘拷贝文件\",\"description\":\"linux挂载硬盘拷贝文件\",\"date\":\"2023-12-18 00:00:00\",\"tags\":[\"linux\"]},\"regularPath\":\"/posts/linux挂载u盘拷贝文件.html\"},{\"frontMatter\":{\"title\":\"ubuntu22.04网络配置WLAN&WIFI固定ip\",\"description\":\"ubuntu22.04网络配置WLAN&WIFI固定ip\",\"date\":\"2023-12-08 00:00:00\",\"tags\":[\"linux\",\"ubuntu\",\"网络\"]},\"regularPath\":\"/posts/ubuntu22.04网络配置WLAN&WIFI固定ip.html\"},{\"frontMatter\":{\"title\":\"树莓派4b配置watchdog\",\"description\":\"树莓派4b(ubuntu)配置watchdog防止系统卡死\",\"date\":\"2023-12-08 00:00:00\",\"tags\":[\"linux\",\"ubuntu\"]},\"regularPath\":\"/posts/树莓派4b配置watchdog.html\"},{\"frontMatter\":{\"title\":\"osm离线地图docker服务器搭建流程\",\"description\":\"osm离线地图docker服务器搭建流程\",\"date\":\"2023-12-07 00:00:00\",\"tags\":[\"linux\",\"docker\",\"map\"]},\"regularPath\":\"/posts/osm离线地图docker服务器搭建流程.html\"},{\"frontMatter\":{\"title\":\"车机安装第三方应用\",\"description\":\"在所有安卓车机上安装第三方应用\",\"date\":\"2023-11-02 00:00:00\",\"tags\":[\"汽车\",\"技术\"]},\"regularPath\":\"/posts/车机安装第三方应用.html\"},{\"frontMatter\":{\"title\":\"GitHub Action一键部署个人博客\",\"description\":\"GitHub Action 部署 个人博客 踩坑 教程\",\"date\":\"2023-03-13 00:00:00\",\"tags\":[\"博客搭建\",\"Github\"]},\"regularPath\":\"/posts/GitHub Action一键部署个人博客.html\"},{\"frontMatter\":{\"title\":\"Gitalk配置\",\"description\":\"vitepress gitalk 配置 总结\",\"date\":\"2023-03-13 00:00:00\",\"tags\":[\"博客搭建\",\"gitalk\"]},\"regularPath\":\"/posts/Gitalk配置.html\"},{\"frontMatter\":{\"title\":\"vitepress自定义静态文件路由\",\"description\":\"vitepress自定义静态文件路由\",\"date\":\"2023-03-11 00:00:00\",\"tags\":[\"博客搭建\"]},\"regularPath\":\"/posts/vitepress自定义静态文件路由.html\"},{\"frontMatter\":{\"title\":\"vitepress中使用不蒜子网站计数器\",\"description\":\"在博客中添加网站计数器\",\"date\":\"2023-03-07 00:00:00\",\"tags\":[\"技术\",\"博客搭建\",\"vue\"]},\"regularPath\":\"/posts/不蒜子 网站计数器.html\"},{\"frontMatter\":{\"title\":\"网站自定义鼠标事件\",\"description\":\"好看的彩虹鼠标🌈\",\"date\":\"2023-03-07 00:00:00\",\"tags\":[\"技术\",\"博客搭建\"]},\"regularPath\":\"/posts/网站自定义鼠标事件.html\"}],\"pageSize\":5,\"postLength\":28,\"nav\":[{\"text\":\"🏡 首页\",\"link\":\"/\",\"activeMatch\":\"^/$\"},{\"text\":\"📚 博客\",\"link\":\"/posts/\",\"activeMatch\":\"^/posts/\"},{\"text\":\"👤 关于\",\"link\":\"/about\",\"activeMatch\":\"^/about\"}],\"socialLinks\":[{\"icon\":\"github\",\"link\":\"https://github.com/helloAhao096\"},{\"icon\":{\"svg\":\"<svg role=\\\"img\\\" viewBox=\\\"0 0 1024 1024\\\" xmlns=\\\"http://www.w3.org/2000/svg\\\" width=\\\"20\\\">\\n            <path d=\\\"M874.666667 375.189333V746.666667a64 64 0 0 1-64 64H213.333333a64 64 0 0 1-64-64V375.189333l266.090667 225.6a149.333333 149.333333 0 0 0 193.152 0L874.666667 375.189333zM810.666667 213.333333a64.789333 64.789333 0 0 1 22.826666 4.181334 63.616 63.616 0 0 1 26.794667 19.413333 64.32 64.32 0 0 1 9.344 15.466667c2.773333 6.570667 4.48 13.696 4.906667 21.184L874.666667 277.333333v21.333334L553.536 572.586667a64 64 0 0 1-79.893333 2.538666l-3.178667-2.56L149.333333 298.666667v-21.333334a63.786667 63.786667 0 0 1 35.136-57.130666A63.872 63.872 0 0 1 213.333333 213.333333h597.333334z\\\" ></path>\\n            </svg>\"},\"link\":\"mailto:helloahao@icloud.com\"}]},\"locales\":{},\"scrollOffset\":134,\"cleanUrls\":true}");</script>
+    
+  </body>
+</html>
