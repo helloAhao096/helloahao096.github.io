@@ -3,8 +3,7 @@ title: Gitalk配置
 description: vitepress gitalk 配置 总结
 date: 2023-03-13
 tags:
-- 博客搭建
-- gitalk
+  - 博客搭建
 ---
 
 ## 项目介绍

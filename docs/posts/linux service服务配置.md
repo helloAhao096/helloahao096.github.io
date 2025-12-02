@@ -3,7 +3,8 @@ title: linux service服务配置
 description: linux service服务配置
 date: 2024-07-18
 tags:
-- linux
+  - Linux
+  - 系统配置
 ---
 > 参考文档
 > https://blog.csdn.net/blood_Z/article/details/128848056

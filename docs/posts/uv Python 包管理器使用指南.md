@@ -4,9 +4,6 @@ description: uv 是由 Astral 开发的极快的 Python 包和项目管理工具
 date: 2025-12-01 15:03:37
 tags:
   - Python
-  - 包管理
-  - 工具
-  - uv
   - 工程化
 ---
 

@@ -3,9 +3,8 @@ title: Homebrew 设置代理&国内镜像源
 description: Homebrew 设置代理&国内镜像源
 date: 2024-05-10
 tags:
-- homebrew
-- MacOS
-- proxy
+  - macOS
+  - 系统配置
 ---
 
 > 参考文档

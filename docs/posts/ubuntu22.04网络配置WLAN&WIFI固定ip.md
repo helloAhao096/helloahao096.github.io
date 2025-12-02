@@ -3,9 +3,8 @@ title: ubuntu22.04网络配置WLAN&WIFI固定ip
 description: ubuntu22.04网络配置WLAN&WIFI固定ip
 date: 2023-12-08
 tags:
-- linux
-- ubuntu
-- 网络
+  - Ubuntu
+  - 系统配置
 ---
 
 > 适用于Ubuntu 17.04及更高版本

@@ -3,7 +3,8 @@ title: LangGraph 人机环路 interrupt
 description: LangGraph 人机环路 interrupt 完整使用指南
 date: 2025-10-03
 tags:
-- LangGraph
+  - LangGraph
+  - AI工具
 ---
 
 # LangGraph 人机环路 (Human-in-the-Loop) 使用指南

@@ -3,7 +3,8 @@ title: vitepress自定义静态文件路由
 description: vitepress自定义静态文件路由
 date: 2023-03-11
 tags:
-- 博客搭建
+  - VitePress
+  - 博客搭建
 ---
 
 ## 自定义路由

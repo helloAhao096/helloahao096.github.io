@@ -5,7 +5,6 @@ date: 2025-12-01 15:26:13
 tags:
   - Git
   - 工程化
-  - 规范
 ---
 
 > 统一的 Git Commit 提交信息规范，提升代码审查效率、便于生成变更日志、支持后续集成自动化流程。本文档基于 [Conventional Commits](https://www.conventionalcommits.org/) 标准。

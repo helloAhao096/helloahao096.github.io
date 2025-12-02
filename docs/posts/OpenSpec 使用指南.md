@@ -3,9 +3,8 @@ title: OpenSpec 使用指南
 description: OpenSpec 规范驱动开发工具快速指南，帮助 AI 编程助手与开发者对齐需求
 date: 2025-11-26 16:29:00
 tags:
-- AI工具
-- 开发规范
-- 项目管理
+  - AI工具
+  - 工程化
 ---
 
 > 参考文档

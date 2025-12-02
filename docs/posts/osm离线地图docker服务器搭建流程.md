@@ -3,9 +3,8 @@ title: osm离线地图docker服务器搭建流程
 description: osm离线地图docker服务器搭建流程
 date: 2023-12-07 
 tags:
-- linux
-- docker
-- map
+  - Docker
+  - 系统配置
 ---
 # 安装docker
   >  参考资料:

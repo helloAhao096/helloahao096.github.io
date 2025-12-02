@@ -3,8 +3,9 @@ title: 树莓派4b配置watchdog
 description: 树莓派4b(ubuntu)配置watchdog防止系统卡死
 date: 2023-12-08
 tags:
-- linux
-- ubuntu
+  - Linux
+  - Ubuntu
+  - 系统配置
 ---
 
 在Linux系统中，Watchdog（看门狗）是一种硬件或软件机制，用于监视系统的运行状态，并在系统出现故障或停滞时采取预定的措施，例如重启系统。Watchdog 的目标是确保系统在发生故障时能够自动恢复，提高系统的可用性和稳定性。

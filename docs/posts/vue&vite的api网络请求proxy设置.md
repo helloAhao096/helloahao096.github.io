@@ -3,8 +3,8 @@ title: vue&vite的api网络请求proxy设置
 description: vue&vite的api网络请求proxy设置
 date: 2024-05-10
 tags:
-- vue
-- vite
+  - Vue
+  - 前端开发
 ---
 
 

@@ -3,8 +3,9 @@ title: docker 自动化安装部署、配置镜像源
 description: docker 自动化安装部署、配置镜像源
 date: 2024-11-18
 tags:
-- docker
-- ubuntu
+  - Docker
+  - Ubuntu
+  - 系统配置
 ---
 
 ## Docker 自动安装部署脚本

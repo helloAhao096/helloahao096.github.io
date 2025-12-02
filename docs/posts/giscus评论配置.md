@@ -3,9 +3,8 @@ title: giscus 评论插件配置指南
 description: 从启用 GitHub Discussions 到在 VitePress 中完成 giscus 评论集成的完整流程
 date: 2025-11-26 18:29:00
 tags:
-  - 博客搭建
-  - giscus
   - VitePress
+  - 博客搭建
 ---
 
 > 这篇文章记录了我将博客评论系统从 Gitalk 迁移到 giscus 的全过程，涵盖仓库准备、环境变量、组件集成与常见问题排查，适合直接复制到自己的 VitePress 站点。

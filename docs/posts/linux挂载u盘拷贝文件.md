@@ -3,7 +3,8 @@ title: linux挂载硬盘拷贝文件
 description: linux挂载硬盘拷贝文件
 date: 2023-12-18
 tags:
-- linux
+  - Linux
+  - 系统配置
 ---
 
 ## linux挂载硬盘/u盘

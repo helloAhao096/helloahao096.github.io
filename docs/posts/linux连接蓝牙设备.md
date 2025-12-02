@@ -3,8 +3,8 @@ title: linux连接蓝牙设备📶
 description: linux连接蓝牙设备
 date: 2024-01-23
 tags:
-- linux
-- Bluetooth
+  - Linux
+  - 系统配置
 ---
 ## 检测蓝牙模块/启动蓝牙
 

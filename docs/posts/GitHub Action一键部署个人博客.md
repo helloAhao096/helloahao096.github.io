@@ -3,8 +3,9 @@ title: GitHub Action一键部署个人博客
 description: GitHub Action 部署 个人博客 踩坑 教程
 date: 2023-03-13
 tags:
-- 博客搭建
-- Github
+  - GitHub
+  - 博客搭建
+  - CI/CD
 ---
 
 # GitHub Action基本介绍

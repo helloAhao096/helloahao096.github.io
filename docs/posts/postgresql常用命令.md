@@ -3,8 +3,8 @@ title: postgresql 常用命令
 description: postgresql 常用命令
 date: 2024-07-01
 tags:
-- linux
-- sql
+  - PostgreSQL
+  - 数据库
 ---
 
 >  参考资料:

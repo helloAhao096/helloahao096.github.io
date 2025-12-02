@@ -3,9 +3,8 @@ title: GitHub Action完整示例详解
 description: GitHub Action 完整工作流程详解、配置示例、最佳实践
 date: 2025-11-16
 tags:
-- GitHub
-- CI/CD
-- 自动化部署
+  - GitHub
+  - CI/CD
 ---
 
 # GitHub Action 完整示例详解

@@ -3,8 +3,8 @@ title: vue项目vite全局静态变量配置
 description: vue项目vite全局静态变量配置
 date: 2024-05-10
 tags:
-- vue
-- vite
+  - Vue
+  - 前端开发
 ---
 
 > 参考文档
