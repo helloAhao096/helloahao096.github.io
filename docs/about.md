@@ -10,10 +10,12 @@ Hi，互联网上的朋友，欢迎你来到这里，我是千帆
 
 00后，江苏无锡，ISTJ
 
-在人生的长河中，给自己留一点回忆
+在人生的长河中，给自己留一点回忆，也作为自己的思路和笔记，知行合一
 
-"trying to be consistently not stupid, instead of trying to be very intelligent."
 
+> "trying to be consistently not stupid, instead of trying to be very intelligent."
+>
+> "比起追求变得特别聪明，更重要的是让自己始终不至于犯傻。"
 ---
 
 ## 🔍网站域名
