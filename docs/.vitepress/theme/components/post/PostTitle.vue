@@ -43,19 +43,23 @@ import { useData, withBase } from "vitepress";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
-import type { PageData } from "../../types";
 
 // 启用 dayjs 时区插件
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
-const pageData: PageData = useData().page.value;
-const { title, description, frontmatter } = pageData;
+// 使用响应式引用，而不是 .value 快照
+const { page } = useData();
+
+// 使用 computed 确保响应式更新
+const title = computed(() => page.value.title);
+const description = computed(() => page.value.description);
+const frontmatter = computed(() => page.value.frontmatter);
 
 // 计算发布时间（YYYY-MM-DD HH:mm:ss），若格式异常则回退原始值
 // 输入时间视为 UTC+8（中国时区），直接格式化显示，不进行时区转换
 const publishDate = computed(() => {
-  const source = frontmatter?.date;
+  const source = frontmatter.value?.date;
   if (!source) {
     return "";
   }
@@ -67,7 +71,7 @@ const publishDate = computed(() => {
 
 // 规范化标签数据，兼容 string / array
 const tags = computed(() => {
-  const raw = frontmatter?.tags;
+  const raw = frontmatter.value?.tags;
   if (Array.isArray(raw)) {
     return raw;
   }
