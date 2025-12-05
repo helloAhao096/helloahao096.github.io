@@ -1,5 +1,5 @@
 import {resolve} from "node:path";
-import {getPosts, getPostLength} from "./theme/utils/posts";
+import {getPosts, getPostLength, generateSidebarFromPosts} from "./theme/utils/posts";
 import type {UserConfig} from "vitepress";
 // import {buildBlogRSS} from "./theme/rss";
 
@@ -7,6 +7,21 @@ import type {UserConfig} from "vitepress";
 async function config() {
     // 动态导入 ESM 插件，避免 esbuild 在加载配置时使用 require
     const {withMermaid} = await import("vitepress-plugin-mermaid");
+
+    // 获取所有文章数据
+    const posts = await getPosts();
+    
+    // 生成 sidebar 配置
+    const sidebarConfig = generateSidebarFromPosts(posts);
+    
+    // 调试：输出 sidebar 配置信息
+    console.log('Sidebar 配置生成完成，共', sidebarConfig.length, '个年份分组');
+    if (sidebarConfig.length > 0) {
+        console.log('第一个年份分组:', sidebarConfig[0].text, '包含', sidebarConfig[0].items.length, '篇文章');
+        if (sidebarConfig[0].items.length > 0) {
+            console.log('示例文章链接:', sidebarConfig[0].items[0].link);
+        }
+    }
 
     const baseConfig: UserConfig = {
         lang: "zh-CN",
@@ -38,11 +53,18 @@ async function config() {
                 level: [2, 6], // 显示从 h2 到 h6 的所有标题
                 label: "本页目录", // 汉化 aside 标题
             },
+            // Sidebar 配置 - 使用对象形式进行路径匹配
+            // 根据官方文档：https://vitepress.dev/reference/default-theme-sidebar#sidebar
+            sidebar: {
+                // 匹配 /posts/ 下的所有页面（包括详情页）
+                // 注意：这也会匹配 /posts/ 列表页，需要在列表页的 frontmatter 中设置 sidebar: false
+                '/posts/': sidebarConfig,
+            },
             // 项目
             // docsDir: "/",
             // docsBranch: "master",
             // 这里配置的数据通过useData获取，等于是全局的变量
-            posts: await getPosts(),
+            posts: posts,
             pageSize: 5,
             postLength: await getPostLength(),
             // search: true,

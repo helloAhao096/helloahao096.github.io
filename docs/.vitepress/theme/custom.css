@@ -333,3 +333,20 @@ body::-webkit-scrollbar {
     gap: 1.25rem;
   }
 }
+
+
+
+/* ============================================
+   Sidebar Active 和 Hover 状态颜色统一
+   ============================================ */
+
+/* Sidebar 激活项使用主题色 */
+.VPSidebarItem.is-active .text {
+  color: var(--color-primary) !important;
+}
+
+/* Sidebar hover 使用次级主题色 */
+.VPSidebarItem .text:hover,
+.VPSidebarItem .link:hover .text {
+  color: var(--color-primary-hover) !important;
+}
