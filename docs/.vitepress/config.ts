@@ -48,6 +48,10 @@ async function config() {
             lastUpdated: {
                 text: "最后更新时间",
             },
+            docFooter: {
+                prev: '上一篇',
+                next: '下一篇',
+              },
             // 页面大纲配置（右侧 aside）
             outline: {
                 level: [2, 6], // 显示从 h2 到 h6 的所有标题

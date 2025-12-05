@@ -350,3 +350,29 @@ body::-webkit-scrollbar {
 .VPSidebarItem .link:hover .text {
   color: var(--color-primary-hover) !important;
 }
+
+/* ============================================
+   VPDocFooter 样式定制 - 与 PostPager 保持一致
+   ============================================ */
+
+/* VPDocFooter 翻页链接样式 - 同步 PostPager 的边框颜色 */
+.VPDocFooter .pager-link {
+  border-color: var(--vp-c-border) !important;
+}
+
+.VPDocFooter .pager-link:hover {
+  border-color: var(--vp-c-brand) !important;
+}
+
+/* VPDocFooter 描述文字样式（"上一页"/"下一页"） */
+.VPDocFooter .pager-link .desc {
+  font-size: 0.875rem !important;
+}
+
+/* VPDocFooter 标题文字样式（文章标题） */
+.VPDocFooter .pager-link .title {
+  font-size: 1.1rem !important;
+  font-weight: 600 !important;
+  color: var(--vp-c-brand) !important;
+  line-height: 1.4 !important;
+}

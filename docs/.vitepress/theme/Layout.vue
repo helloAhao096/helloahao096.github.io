@@ -11,7 +11,7 @@
 
       <!--  github评论   -->
       <template #doc-after>
-        <PostPager />
+        <!-- <PostPager /> -->
         <Comments />
       </template>
     </Layout>
