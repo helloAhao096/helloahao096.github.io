@@ -178,6 +178,7 @@ pip install langchain-core langchain-postgres langchain-openai pgvector psycopg[
 ```
 
 ```python
+# pyproject.toml 或 requirements.txt
 langchain-core>=1.0.3
 langchain-postgres>=0.0.5
 langchain-openai>=1.0.2
@@ -186,7 +187,6 @@ psycopg[binary,pool]>=3.2.0
 asyncpg
 ```
 
-**注意**：`pgvector` Python 包只是客户端库，实际的 pgvector 扩展需要在 PostgreSQL 数据库中安装（见步骤 1）。
 
 ### FastAPI 最小示例
 
