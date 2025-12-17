@@ -539,7 +539,8 @@ composables/
 **职责：** 管理应用的路由配置和导航逻辑
 
 **设计原则：**
-- 按功能模块拆分路由配置
+- 业务模块路由配置在模块内（`modules/{module}/router.ts`）
+- 通用路由配置在 `router/modules/common.ts`（首页、404、403 等）
 - 统一管理路由守卫
 - 提供路由工具函数
 - 使用懒加载优化性能
@@ -550,15 +551,30 @@ router/
 ├── index.ts             # 路由主入口（创建路由实例、配置路由选项）
 ├── guards.ts            # 路由守卫（认证检查、权限验证等）
 ├── utils.ts             # 路由工具函数（路由跳转、参数获取等）
-└── modules/             # 路由模块
-    ├── index.ts         # 路由模块统一导出
-    ├── auth.ts          # 认证相关路由（登录、注册等）
-    ├── user.ts          # 用户相关路由（用户列表、详情等）
-    └── [module].ts      # 其他业务模块路由
+└── modules/             # 路由模块统一管理
+    ├── index.ts         # 路由模块统一导出（从 modules/{module}/router.ts 导入）
+    └── common.ts        # 通用路由（首页、404、403 等，不属于任何业务模块）
+
+modules/
+├── auth/
+│   ├── router.ts        # 认证模块路由配置（业务模块路由在模块内）
+│   └── constants/
+│       └── routes.ts    # 路由常量（路径、名称等）
+├── user/
+│   ├── router.ts        # 用户模块路由配置
+│   └── constants/
+│       └── routes.ts    # 路由常量
+└── [module]/
+    ├── router.ts        # 其他业务模块路由配置
+    └── constants/
+        └── routes.ts    # 路由常量
 ```
 
 **设计要点：**
-- 按功能模块拆分路由配置，便于管理
+- **业务模块路由在模块内**：符合模块化原则，路由配置与模块代码在一起
+- **通用路由单独管理**：首页、404、403 等通用路由保留在 `router/modules/common.ts`
+- **统一导入**：在 `router/modules/index.ts` 中统一导入所有路由配置
+- **路由常量分离**：路由路径和名称常量在 `modules/{module}/constants/routes.ts` 中定义
 - 统一管理路由守卫，集中处理认证和权限
 - 使用懒加载优化性能
 
@@ -908,23 +924,31 @@ src/
 │
 ├── modules/                # 业务模块
 │   ├── user/               # 用户模块
-│   │   ├── api/            # 用户 API
+│   │   ├── router.ts        # 用户模块路由配置（业务模块路由在模块内）
+│   │   ├── constants/       # 模块常量
+│   │   │   ├── routes.ts    # 路由常量（路径、名称）
+│   │   │   ├── api.ts       # API 端点常量
+│   │   │   └── index.ts     # 常量统一导出
+│   │   ├── api/             # 用户 API
 │   │   │   └── index.ts
-│   │   ├── types/          # 用户类型
+│   │   ├── types/           # 用户类型（按需创建）
 │   │   │   ├── types.ts
 │   │   │   ├── requests.ts
 │   │   │   └── responses.ts
-│   │   ├── stores/         # 用户 Store
+│   │   ├── stores/          # 用户 Store（按需创建）
 │   │   │   └── useUserStore.ts
-│   │   ├── composables/    # 用户 Composables
+│   │   ├── composables/     # 用户 Composables（按需创建）
 │   │   │   └── useUser.ts
-│   │   ├── components/     # 用户组件
+│   │   ├── components/      # 用户组件（按需创建）
 │   │   │   └── UserForm.vue
-│   │   └── views/          # 用户视图
+│   │   └── views/           # 用户视图
 │   │       ├── UserListView.vue
 │   │       └── UserDetailView.vue
 │   │
-│   └── project/           # 项目模块
+│   └── project/            # 项目模块
+│       ├── router.ts        # 项目模块路由配置
+│       ├── constants/
+│       │   └── routes.ts
 │       ├── api/
 │       ├── types/
 │       ├── stores/
@@ -934,9 +958,11 @@ src/
 │               └── WorkflowListView.vue
 │
 ├── router/                 # 路由（共享）
-│   ├── index.ts
-│   ├── guards.ts
-│   └── modules/
+│   ├── index.ts            # 路由主入口
+│   ├── guards.ts           # 路由守卫
+│   └── modules/            # 路由模块统一管理
+│       ├── index.ts        # 路由模块统一导出（从 modules/{module}/router.ts 导入）
+│       └── common.ts       # 通用路由（首页、404、403 等）
 │
 ├── styles/                 # 样式（共享）
 │   ├── global.css
