@@ -244,8 +244,6 @@ router = APIRouter(prefix="/users")
 # 结果：200 OK（直接匹配）
 ```
 
-### 2.3 路由匹配流程
-
 ```mermaid
 flowchart TD
     A[请求路径: /users] --> B{检查路由定义}
