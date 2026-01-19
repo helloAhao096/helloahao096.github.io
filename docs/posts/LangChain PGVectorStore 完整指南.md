@@ -119,7 +119,6 @@ async def search(query: str, k: int = 5):
 **强烈推荐**在以下环境中运行：
 
 1. **Docker 容器**（最推荐）
-   - 环境隔离，配置简单，跨平台一致
    ```bash
    # 运行 PostgreSQL + pgvector 容器
    docker run --name pgvector \
@@ -142,12 +141,8 @@ async def search(query: str, k: int = 5):
    connection_string = "postgresql+asyncpg://langchain:langchain@db:5432/langchain"
    ```
 
-2. **Linux 系统**（推荐）
-   - Ubuntu、Debian、CentOS 等主流发行版
-   - 安装简单，依赖管理方便
-
-3. **WSL (Windows Subsystem for Linux)**
-   - 在 Windows 上使用 Linux 环境
+2. **Linux 系统**（推荐）- Ubuntu、Debian、CentOS 等主流发行版
+3. **WSL (Windows Subsystem for Linux)** - 在 Windows 上使用 Linux 环境
 
 #### Windows 用户建议
 
@@ -163,7 +158,6 @@ async def search(query: str, k: int = 5):
 **方式一：使用 Docker（推荐）**
 
 ```bash
-# 运行 PostgreSQL + pgvector 容器
 docker run --name pgvector \
   -e POSTGRES_USER=langchain \
   -e POSTGRES_PASSWORD=langchain \
@@ -171,7 +165,6 @@ docker run --name pgvector \
   -p 5432:5432 \
   -d pgvector/pgvector:pg16
 
-# 验证并创建扩展
 docker exec -it pgvector psql -U langchain -d langchain -c "CREATE EXTENSION IF NOT EXISTS vector;"
 ```
 
@@ -194,7 +187,6 @@ CREATE EXTENSION IF NOT EXISTS vector;
 #### 2. Python 依赖
 
 ```bash
-# 使用 pip 安装
 pip install langchain-core langchain-postgres langchain-openai pgvector psycopg[binary,pool] asyncpg
 ```
 
@@ -212,50 +204,86 @@ asyncpg
 
 ## 数据库连接与引擎管理
 
-### 3.1 为什么需要独立的 PGEngine？
+### 3.1 连接池架构（核心概念）
 
-**核心问题**：
-- **asyncpg 驱动限制**：同一连接上不能并发执行操作
-- **连接池冲突**：SQLAlchemy AsyncEngine 和 PGEngine 使用不同的连接管理策略
-- **错误表现**：共享连接会导致 `cannot perform operation: another operation is in progress` 错误
+**核心理解**：
+- **PGEngine** 管理一个**独立的连接池**到 PostgreSQL 数据库
+- 这是 LangChain 官方推荐的行业最佳实践，用于管理连接数和减少延迟
+- **连接池的独立性**：即使从 SQLAlchemy Engine 创建，PGEngine 也会创建自己的连接池
 
-**解决方案**：
-- ✅ **PGEngine 必须使用独立的连接池**
-- ✅ **不要尝试复用 SQLAlchemy 的连接**
-- ✅ **使用 `from_connection_string()` 创建独立的 PGEngine**
+**连接池架构图**：
+
+```mermaid
+graph TB
+    subgraph PostgreSQL["PostgreSQL Database<br/>(同一个数据库实例)"]
+    end
+    
+    subgraph App["应用层"]
+        SA[SQLAlchemy AsyncEngine<br/>连接池 A]
+        PE[PGEngine<br/>连接池 B]
+        
+        SA -->|业务 ORM<br/>CRUD/事务/查询| ORM[业务数据操作]
+        PE -->|向量存储<br/>相似搜索/向量删除| VS[PGVectorStore]
+    end
+    
+    PostgreSQL <-->|独立连接池| SA
+    PostgreSQL <-->|独立连接池| PE
+    
+    style SA fill:#e1f5ff
+    style PE fill:#fff4e1
+    style PostgreSQL fill:#f0f0f0
+```
+
+**关键点**：
+- ✅ **两个连接池完全独立**：互不干扰，可以并发使用
+- ✅ **连接到同一个数据库**：使用相同的连接字符串
+- ✅ **各自管理连接生命周期**：SQLAlchemy 和 PGEngine 各自管理自己的连接
+- ✅ **不会导致并发冲突**：因为连接池是独立的，不是共享的
 
 ### 3.2 PGEngine 创建方法
 
-#### ✅ 推荐：使用 from_connection_string()
+根据 [LangChain 官方文档](https://docs.langchain.com/oss/python/integrations/vectorstores/pgvectorstore)，PGEngine 支持两种创建方式，**两种方式都是官方推荐的标准用法**。
+
+#### 方式一：使用 from_connection_string()（纯向量场景）
 
 ```python
 from langchain_postgres import PGEngine
 
-# 使用连接字符串创建独立连接池（推荐）
 connection_string = "postgresql+asyncpg://user:password@host:port/dbname"
 pg_engine = PGEngine.from_connection_string(url=connection_string)
 ```
 
-**优点**：
-- ✅ 独立连接池，避免冲突
+**适用场景**：
+- ✅ 只使用 PGVectorStore，不需要 SQLAlchemy ORM
 - ✅ 配置简单，直接使用连接字符串
-- ✅ 生产环境推荐方式
+- ✅ 快速启动项目
 
-#### ❌ 不推荐：尝试从 SQLAlchemy Engine 创建
+#### 方式二：使用 from_engine()（混合场景，推荐）
 
 ```python
-# ❌ 错误示例：会导致连接冲突
 from sqlalchemy.ext.asyncio import create_async_engine
 from langchain_postgres import PGEngine
 
+# 创建 SQLAlchemy AsyncEngine
 sqlalchemy_engine = create_async_engine(connection_string)
-pg_engine = PGEngine.from_engine(sqlalchemy_engine)  # ❌ 会导致并发冲突
+
+# 从 SQLAlchemy Engine 创建 PGEngine
+pg_engine = PGEngine.from_engine(engine=sqlalchemy_engine)
 ```
 
-**问题**：
-- ❌ 共享连接池可能导致并发操作冲突
-- ❌ asyncpg 不允许同一连接上的并发操作
-- ❌ 生产环境不稳定
+**工作原理**：
+- `from_engine()` 会从 SQLAlchemy AsyncEngine **提取连接字符串**
+- PGEngine 会**创建自己的独立连接池**（不会共享 SQLAlchemy 的连接）
+- 两个连接池连接到同一个数据库，但**完全独立，互不干扰**
+
+**适用场景**：
+- ✅ 项目中同时使用 SQLAlchemy ORM 和 PGVectorStore
+- ✅ 需要复用已有的 SQLAlchemy Engine 配置
+- ✅ 需要同时进行业务查询和向量操作
+
+**选择建议**：
+- 纯向量场景 → 使用 `from_connection_string()`
+- 混合场景（ORM + 向量）→ 使用 `from_engine()`（推荐）
 
 ### 3.3 连接字符串配置
 
@@ -274,20 +302,13 @@ connection_string = "postgresql://user:password@host:port/dbname"  # 会导致�
 - 支持标准 PostgreSQL 连接参数
 - 连接字符串中的参数会被传递给 asyncpg 驱动
 
-#### 从配置文件读取
-
-```python
-from core.config import settings
-from langchain_postgres import PGEngine
-
-# 从 settings 读取数据库 URL（推荐）
-connection_string = settings.database_url  # postgresql+asyncpg://...
-pg_engine = PGEngine.from_connection_string(url=connection_string)
-```
-
 #### 连接字符串示例
 
 ```python
+# 从配置文件读取（推荐）
+from core.config import settings
+pg_engine = PGEngine.from_connection_string(url=settings.database_url)
+
 # 本地 Docker 容器
 connection_string = "postgresql+asyncpg://langchain:langchain@localhost:5432/langchain"
 
@@ -296,18 +317,11 @@ connection_string = "postgresql+asyncpg://langchain:langchain@db:5432/langchain"
 
 # 带 SSL 的连接
 connection_string = "postgresql+asyncpg://user:password@host:5432/db?ssl=true"
-
-# 带连接池参数的连接（注意：这些参数可能不会生效，因为 PGEngine 有自己的连接池管理）
-connection_string = "postgresql+asyncpg://user:password@host:5432/db?pool_size=10"
 ```
 
 ### 3.4 与 SQLAlchemy 共存的最佳实践
 
-**架构设计**：
-- **SQLAlchemy AsyncEngine**：用于业务数据操作（ORM 查询）
-- **PGEngine**：用于向量存储操作（独立连接池）
-
-**代码示例**：
+**推荐方式：使用 `from_engine()` 复用配置**
 
 ```python
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
@@ -316,44 +330,47 @@ from langchain_postgres import PGEngine, PGVectorStore
 # 1. SQLAlchemy 引擎（业务数据）
 sqlalchemy_engine = create_async_engine(
     "postgresql+asyncpg://user:password@host:port/dbname",
-    pool_size=10,        # 业务查询连接池大小
-    max_overflow=20,      # 最大溢出连接数
-    pool_timeout=30,      # 连接池超时时间（秒）
-    pool_recycle=3600,    # 连接回收时间（秒）
+    pool_size=10,
+    max_overflow=20,
 )
 
-# 2. PGEngine（向量存储，独立连接池）
-# 注意：使用相同的连接字符串，但创建独立的连接池
-pg_engine = PGEngine.from_connection_string(
-    url="postgresql+asyncpg://user:password@host:port/dbname"
-)
+# 2. PGEngine（从 SQLAlchemy Engine 创建，但使用独立连接池）
+pg_engine = PGEngine.from_engine(engine=sqlalchemy_engine)
 
-# 3. 各自使用，互不干扰
-# - SQLAlchemy: 用于业务查询
-async with AsyncSession(sqlalchemy_engine) as session:
-    result = await session.execute(query)
+# 3. 可以同时使用两个引擎
+# - SQLAlchemy: 用于业务查询和原生 SQL
+async with sqlalchemy_engine.begin() as conn:
+    await conn.execute(text("UPDATE ..."))
 
 # - PGEngine: 用于向量操作
 vector_store = await PGVectorStore.create(engine=pg_engine, ...)
 ```
 
-**关键点**：
-- ✅ 使用相同的连接字符串（连接到同一个数据库）
-- ✅ 但使用独立的连接池（避免冲突）
-- ✅ 各自管理自己的连接生命周期
-- ✅ 不互相影响
+**工作流程**：
 
-### 3.5 连接池参数说明
+```mermaid
+sequenceDiagram
+    participant App as 应用代码
+    participant SA as SQLAlchemy Engine
+    participant PE as PGEngine
+    participant DB as PostgreSQL
 
-**注意**：`PGEngine.from_connection_string()` 内部使用 asyncpg 的连接池，连接池参数由 asyncpg 自动管理。
+    Note over App,DB: 初始化阶段
+    App->>SA: create_async_engine()
+    SA->>DB: 创建连接池 A
+    App->>PE: from_engine(SA)
+    PE->>SA: 提取连接字符串
+    PE->>DB: 创建连接池 B（独立）
 
-如果需要自定义连接池参数，可以考虑：
-1. 在连接字符串中传递参数（某些参数可能生效）
-2. 等待 LangChain 官方支持连接池配置（未来可能添加）
-
-**当前建议**：
-- 使用默认连接池配置（通常足够）
-- 如果遇到连接池问题，考虑增加 PostgreSQL 服务器的最大连接数
+    Note over App,DB: 运行时阶段
+    App->>SA: 业务查询
+    SA->>DB: 使用连接池 A
+    DB-->>SA: 返回结果
+    
+    App->>PE: 向量操作
+    PE->>DB: 使用连接池 B
+    DB-->>PE: 返回结果
+```
 
 ---
 
@@ -395,7 +412,7 @@ embedding = OpenAIEmbeddings(
 | `check_embedding_ctx_length=False` | 禁用客户端 token 检查 | LangChain 默认会使用 tiktoken 进行客户端分片，发送 token 列表而不是文本，导致兼容 API 报错 |
 | `chunk_size=10` | 限制批处理大小为 10 | 阿里云百炼限制批量大小为 10（OpenAI 默认为 1000） |
 
-#### 错误示例与解决方案
+#### 常见错误与解决方案
 
 **错误 1**：`Value error, contents is neither str nor list of str`
 
@@ -403,7 +420,6 @@ embedding = OpenAIEmbeddings(
 
 **解决方案**：
 ```python
-# ✅ 正确：禁用客户端 token 检查
 embedding = OpenAIEmbeddings(
     model="text-embedding-v4",
     api_key="your-api-key",
@@ -418,7 +434,6 @@ embedding = OpenAIEmbeddings(
 
 **解决方案**：
 ```python
-# ✅ 正确：限制批处理大小
 embedding = OpenAIEmbeddings(
     model="text-embedding-v4",
     api_key="your-api-key",
@@ -439,7 +454,7 @@ embedding = OpenAIEmbeddings(
     api_key="your-api-key",
     base_url="https://api.deepseek.com/v1",
     check_embedding_ctx_length=False,
-    chunk_size=10,  # 根据 API 限制调整
+    chunk_size=10,
 )
 
 # Azure OpenAI
@@ -470,7 +485,7 @@ embedding = OpenAIEmbeddings(
     openai_api_key="your-api-key",
 )
 
-# 2. 创建 PGEngine（独立连接池）
+# 2. 创建 PGEngine
 connection_string = "postgresql+asyncpg://user:password@host:port/dbname"
 pg_engine = PGEngine.from_connection_string(url=connection_string)
 
@@ -485,7 +500,6 @@ vector_store = await PGVectorStore.create(
 #### 使用已存在的表（配置列名映射）
 
 ```python
-# 使用已存在的表，配置列名映射
 vector_store = await PGVectorStore.create(
     engine=pg_engine,
     table_name="products",
@@ -509,10 +523,6 @@ documents = [
     Document(
         page_content="文档内容",
         metadata={"source": "doc1", "category": "tech"}
-    ),
-    Document(
-        page_content="另一篇文档",
-        metadata={"source": "doc2", "category": "food"}
     ),
 ]
 
@@ -551,16 +561,13 @@ results = await vector_store.asimilarity_search(
 **注意**：
 - 只能使用 `metadata_columns` 中定义的字段
 - 过滤值必须是字符串（UUID 需要转换为字符串）
-- 不支持复杂的过滤操作符（如 `$in`、`$gte` 等）
+- 支持复杂过滤操作符（如 `$in`、`$gte` 等，详见官方文档）
 
 #### 删除文档
 
 ```python
 # 根据 ID 删除
 await vector_store.adelete(ids=["id1", "id2"])
-
-# 根据过滤器删除（如果支持）
-await vector_store.adelete(filter={"source": "doc1"})
 ```
 
 ---
@@ -632,97 +639,38 @@ class VectorModel(Base):
 
 ### 7.1 Embedding API 兼容性问题
 
-#### 问题 1：`Value error, contents is neither str nor list of str`
+详见 [4.2 节 - 阿里云百炼等兼容 API](#42-阿里云百炼等兼容-api重点) 中的常见错误与解决方案。
 
-**错误信息**：
-```
-openai.OpenAIError: Error code: 400 - {'error': {'message': '<400> InternalError.Algo.InvalidParameter: Value error, contents is neither str nor list of str.: input.contents', ...}}
-```
-
-**原因**：
-- LangChain 默认启用 `check_embedding_ctx_length=True`
-- 会使用 tiktoken 进行客户端分片，发送 token 列表而不是文本字符串
-- 兼容 OpenAI 的 API（如阿里云百炼）不支持这种格式
-
-**解决方案**：
-```python
-# ✅ 正确：禁用客户端 token 检查
-embedding = OpenAIEmbeddings(
-    model="text-embedding-v4",
-    api_key="your-api-key",
-    base_url="https://dashscope.aliyuncs.com/compatible-mode/v1",
-    check_embedding_ctx_length=False,  # 关键配置
-)
-```
-
-#### 问题 2：`batch size is invalid, it should not be larger than 10`
-
-**错误信息**：
-```
-openai.OpenAIError: Error code: 400 - {'error': {'message': '<400> InternalError.Algo.InvalidParameter: Value error, batch size is invalid, it should not be larger than 10.: input.contents', ...}}
-```
-
-**原因**：
-- 阿里云百炼等 API 限制批量大小为 10
-- OpenAIEmbeddings 默认 `chunk_size=1000`，超过限制
-
-**解决方案**：
-```python
-# ✅ 正确：限制批处理大小
-embedding = OpenAIEmbeddings(
-    model="text-embedding-v4",
-    api_key="your-api-key",
-    base_url="https://dashscope.aliyuncs.com/compatible-mode/v1",
-    check_embedding_ctx_length=False,
-    chunk_size=10,  # 关键配置：限制为 10
-)
-```
-
-**额外处理**：
-如果文档数量很多，PGVectorStore 内部会自动分批处理。如果手动分批，建议：
-
-```python
-# 手动分批处理大量文档
-batch_size = 10  # 阿里云百炼限制
-for i in range(0, len(documents), batch_size):
-    batch = documents[i:i + batch_size]
-    await vector_store.aadd_documents(batch)
-```
-
-### 7.2 连接池冲突问题
+### 7.2 连接池相关问题
 
 #### 问题：`cannot perform operation: another operation is in progress`
 
-**错误信息**：
-```
-sqlalchemy.exc.InterfaceError: (sqlalchemy.dialects.postgresql.asyncpg.InterfaceError) 
-<class 'asyncpg.exceptions._base.InterfaceError'>: cannot perform operation: another operation is in progress
-```
+**真实原因**：
+- **asyncpg 驱动限制**：同一连接对象上不能并发执行操作
+- **错误理解**：误以为 `from_engine()` 会共享连接池导致冲突
+- **实际情况**：`from_engine()` 会创建独立连接池，不会导致此错误
 
-**原因**：
-- `PGEngine.from_engine()` 尝试复用 SQLAlchemy AsyncEngine 的连接
-- asyncpg 驱动不允许同一连接上的并发操作
-- SQLAlchemy 和 PGEngine 使用不同的连接管理策略
+**正确的理解**：
+根据 [LangChain 官方文档](https://docs.langchain.com/oss/python/integrations/vectorstores/pgvectorstore)，`PGEngine.from_engine()` 是官方支持的标准方式：
+- `from_engine()` 会从 SQLAlchemy Engine **提取连接字符串**
+- PGEngine 会**创建自己的独立连接池**（不会共享 SQLAlchemy 的连接）
+- 两个连接池**完全独立**，不会导致并发冲突
 
-**解决方案**：
+**如果遇到此错误，可能的原因**：
+1. **在同一连接对象上并发操作**（不是连接池问题）
+2. **连接池配置不当**（连接数不足）
+3. **其他代码层面的并发问题**
+
+**正确的解决方案**：
+
 ```python
-# ❌ 错误：共享连接池
-from sqlalchemy.ext.asyncio import create_async_engine
-from langchain_postgres import PGEngine
+# ✅ 方式一：使用 from_connection_string()（推荐用于纯向量场景）
+pg_engine = PGEngine.from_connection_string(url=connection_string)
 
+# ✅ 方式二：使用 from_engine()（推荐用于混合场景）
 sqlalchemy_engine = create_async_engine(connection_string)
-pg_engine = PGEngine.from_engine(sqlalchemy_engine)  # ❌ 会导致并发冲突
-
-# ✅ 正确：独立连接池
-from langchain_postgres import PGEngine
-
-pg_engine = PGEngine.from_connection_string(url=connection_string)  # ✅ 独立连接池
+pg_engine = PGEngine.from_engine(engine=sqlalchemy_engine)  # ✅ 正确，不会冲突
 ```
-
-**最佳实践**：
-- 始终使用 `PGEngine.from_connection_string()` 创建独立的连接池
-- 即使有 SQLAlchemy AsyncEngine，也不要复用它的连接
-- 使用相同的连接字符串，但创建独立的连接池
 
 ### 7.3 连接字符串格式错误
 
@@ -848,7 +796,7 @@ CREATE INDEX idx_vectors_embedding
 # 批量添加（推荐，自动批量处理）
 await vector_store.aadd_documents(documents)
 
-# 分批处理大量文档（建议每批 1000 条，但要注意 Embedding API 的限制）
+# 分批处理大量文档（注意 Embedding API 的限制）
 batch_size = 10  # 如果使用阿里云百炼，限制为 10
 for i in range(0, len(documents), batch_size):
     batch = documents[i:i + batch_size]
@@ -958,26 +906,7 @@ async def search(
 
 ### 9.2 PGEngine 与 SQLAlchemy 引擎的共存
 
-```python
-from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
-from langchain_postgres import PGEngine
-from core.config import settings
-
-# SQLAlchemy 引擎（业务数据）
-sqlalchemy_engine = create_async_engine(
-    settings.database_url,
-    pool_size=10,
-    max_overflow=20,
-)
-
-# PGEngine（向量存储，独立连接池）
-pg_engine = PGEngine.from_connection_string(url=settings.database_url)
-
-# 各自使用，互不干扰
-async with AsyncSession(sqlalchemy_engine) as session:
-    # 业务查询
-    result = await session.execute(query)
-```
+详见 [3.4 节 - 与 SQLAlchemy 共存的最佳实践](#34-与-sqlalchemy-共存的最佳实践)。
 
 ### 9.3 错误处理
 
