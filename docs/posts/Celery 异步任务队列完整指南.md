@@ -1015,7 +1015,7 @@ pip install flower
 celery -A myapp.celery_app flower
 ```
 
-**访问**：http://localhost:5555
+**访问**：`http://localhost:5555`
 
 #### 集成 Prometheus
 
