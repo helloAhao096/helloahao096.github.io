@@ -118,6 +118,7 @@ async function config() {
             server: {
                 host: '0.0.0.0', // 允许局域网访问
                 port: 5173, // 指定端口
+                strictPort: false, // 端口被占用时自动尝试下一个可用端口（默认值，可省略）
             },
             optimizeDeps: {
                 // Mermaid 依赖的 ESM 包需要提前预构建
