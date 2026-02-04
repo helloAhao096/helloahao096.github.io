@@ -1,14 +1,11 @@
 ---
 title: Alembic 数据库迁移完整指南
 description: 基于实际项目经验，提供 Alembic 数据库迁移的完整实战指南。涵盖从零初始化、异步模式配置、开发工作流、生产环境部署到常见坑点解决方案。
-date: 2026-02-03 14:00:00
+date: 2026-02-03 14:07:00
 tags:
   - Alembic
   - SQLAlchemy
-  - FastAPI
   - Python
-  - 数据库迁移
-  - 工程化
 ---
 
 # Alembic 数据库迁移完整指南
