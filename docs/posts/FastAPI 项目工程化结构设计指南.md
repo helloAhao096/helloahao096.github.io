@@ -60,6 +60,20 @@ tags:
 - 利用 IDE 的类型检查提升开发体验
 - 使用 mypy 进行静态类型检查
 
+#### YAGNI 原则（You Aren't Gonna Need It）
+不要实现当前不需要的功能，避免过度设计。
+
+**实践要点：**
+- 不要预先创建"可能用到"的代码
+- 先在使用的地方实现，需要时再提取
+- 保留目录结构，但保持为空，等待实际需求
+- 定期审查和删除未使用的代码
+
+**示例：**
+- ❌ 预先创建 `shared/utils/format.py`（未使用）
+- ✅ 保留 `shared/utils/` 目录，但保持为空
+- ✅ 当有实际需求时，再添加相应的工具函数
+
 ### 1.2 目录组织原则
 
 #### 两种核心设计模式
@@ -313,24 +327,39 @@ flowchart TD
 
 ```mermaid
 flowchart TD
-    A[新代码应该放在哪里?] --> B{是否被 3+ 个<br/>模块使用?}
-    B -->|是| C{是否是基础设施?<br/>数据库、工具函数、通用类型}
-    C -->|是| D[core/<br/>核心基础设施层]
-    C -->|否| E[shared/<br/>共享服务层]
-    B -->|否| F{是否属于<br/>某个业务模块?}
-    F -->|是| G["modules/[module]/<br/>业务模块层"]
-    F -->|否| E
+    A[新代码应该放在哪里?] --> B{是否已有实际使用场景?}
+    B -->|否| C[先在使用的地方实现<br/>等待实际需求]
+    B -->|是| D{是否被 3+ 个<br/>模块使用?}
+    D -->|是| E{是否是基础设施?<br/>数据库、工具函数、通用类型}
+    E -->|是| F[core/<br/>核心基础设施层]
+    E -->|否| G[shared/<br/>共享服务层]
+    D -->|否| H{是否属于<br/>某个业务模块?}
+    H -->|是| I["modules/[module]/<br/>业务模块层"]
+    H -->|否| G
     
-    style D fill:#e1f5ff
-    style E fill:#fff4e1
-    style G fill:#e8f5e9
+    style C fill:#fff9c4
+    style F fill:#e1f5ff
+    style G fill:#fff4e1
+    style I fill:#e8f5e9
 ```
+
+**关键原则：**
+- **先判断是否有实际使用场景**：不是"可能用到"，而是"正在使用"
+- **按需添加**：先在使用的地方实现，需要时再提取到共享层
+- **保留目录结构，但保持为空**：`shared/utils/` 可以存在，但不要预先填充未使用的函数
 
 #### 最佳实践建议
 
-1. **不要过度设计**：项目初期保持简单，使用扁平化结构
+1. **不要过度设计**：
+   - 项目初期保持简单，使用扁平化结构
+   - **不要预先创建未使用的框架代码**（如空的 service 类、工具函数）
+   - **按需添加**：先在使用的地方实现，需要时再提取到共享层
+   - **保留目录结构，但保持为空**：`shared/utils/` 可以存在，但不要预先填充未使用的函数
+
 2. **及时重构**：当结构成为瓶颈时（文件难以定位、协作冲突增多），及时调整
+
 3. **保持一致性**：一旦选择某种结构，全项目保持一致
+
 4. **文档先行**：为结构划分建立清晰的文档和规范，特别是"共享 vs 模块特定"的划分标准
 
 #### 约定优于配置
@@ -385,6 +414,7 @@ backend/
   - 注册中间件、异常处理器
   - 注册路由
   - 配置生命周期管理
+  - **初始化分页功能（`add_pagination(app)`）**
 
 - `config.py` - 配置管理
   - 基于 Pydantic Settings 的环境变量管理
@@ -515,19 +545,30 @@ modules/
 ```
 shared/
 ├── __init__.py
-├── storage/               # 存储服务
+├── storage/               # 存储服务（按需创建）
 │   ├── __init__.py
-│   └── minio_service.py   # MinIO 对象存储服务
-├── cache/                 # 缓存服务
-│   └── redis_service.py
-├── messaging/             # 消息服务
+│   └── minio_service.py   # 只在需要时创建
+├── cache/                 # 缓存服务（按需创建）
+│   └── redis_service.py  # 只在需要时创建
+├── messaging/             # 消息服务（按需创建）
 │   └── rabbitmq_service.py
-├── monitoring/            # 监控服务
+├── monitoring/            # 监控服务（按需创建）
 │   └── logging_service.py
-└── utils/                 # 共享工具函数
-    ├── format.py
-    └── validation.py
+└── utils/                 # 共享工具函数（按需创建）
+    ├── format.py         # 只在被多个模块使用时创建
+    └── validation.py     # 只在被多个模块使用时创建
 ```
+
+**重要原则：按需添加，避免过度设计**
+- ❌ **不要预先创建空的框架代码**（如空的 `minio_service.py`、`redis_service.py`）
+- ✅ **只在有实际需求时再创建相应的服务文件**
+- ✅ **保留目录结构，但保持为空，等待实际需求**
+- ✅ **当某个服务被 3+ 个模块使用时，再提取到 `shared/` 目录**
+
+**判断标准：**
+1. **是否有实际使用场景**（不是"可能用到"）
+2. **是否被 3+ 个模块使用**
+3. **是否是纯函数或服务接口**（不依赖业务逻辑）
 
 **设计要点：**
 - 跨模块使用的服务放在 `shared/` 目录
@@ -682,10 +723,16 @@ app/
 - ❌ 不依赖任何业务模块
 
 **shared/ 的判断标准：**
-- ✅ 被 3+ 个模块使用的服务（存储、缓存、消息等）
-- ✅ 跨模块的工具函数
-- ✅ 共享的监控和日志服务
-- ❌ 只被 1-2 个模块使用的代码（应放在模块内）
+- ✅ **实际被 3+ 个模块使用的服务**（不是"可能用到"）
+- ✅ **跨模块的工具函数**（已被多个模块实际使用）
+- ✅ **共享的监控和日志服务**（已被多个模块实际使用）
+- ❌ **只被 1-2 个模块使用的代码**（应放在模块内）
+- ❌ **未使用的框架代码**（应删除，按需添加）
+
+**关键原则：**
+- **先在使用的地方实现**：在具体使用的地方先实现功能
+- **如果被多个地方使用，再提取到 shared/**：确保函数真正被需要
+- **不要预先创建"可能用到"的代码**：遵循 YAGNI 原则
 
 **modules/ 的判断标准：**
 - ✅ 只属于某个业务领域的代码
@@ -789,31 +836,57 @@ modules/user/
 - **`dependencies.py`**：定义依赖注入函数，例如获取 `UserService`、`AsyncSession`、当前用户等，是模块对外暴露的依赖装配入口。
 - **`__init__.py`**：可选地聚合模块内对外暴露的主要类型/函数，方便其他模块通过 `app.modules.user` 等路径进行导入。
 
-**示例：最小模块代码结构**
+**示例：最小模块代码结构（包含分页）**
 ```python
 # modules/user/models.py
 class User(Base, TimestampMixin):
     __tablename__ = "users"
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid4)
     email = Column(String, unique=True, nullable=False)
+    name = Column(String, nullable=False)
 
 # modules/user/schemas.py
 class UserCreate(BaseModel):
     email: EmailStr
+    name: str
 
 class UserResponse(BaseModel):
     id: UUID
     email: EmailStr
+    name: str
+    created_at: datetime
+    
+    class Config:
+        from_attributes = True
 
 # modules/user/repositories.py
+from fastapi_pagination import Page, Params
+from fastapi_pagination.ext.asyncio import paginate as async_paginate
+
 class UserRepository(BaseRepository[User]):
     model = User
 
     async def get_by_email(self, email: str) -> User | None:
         stmt = select(User).where(User.email == email)
-        return await self.scalar(stmt)
+        result = await self.session.execute(stmt)
+        return result.scalars().first()
+
+    async def paginate(
+        self,
+        params: Params = Params(),
+        order_by: Optional[Any] = None,
+    ) -> Page[User]:
+        """分页获取用户列表"""
+        stmt = select(User)
+        if order_by is not None:
+            stmt = stmt.order_by(order_by)
+        else:
+            stmt = stmt.order_by(User.created_at.desc())
+        return await async_paginate(self.session, stmt)
 
 # modules/user/services.py
+from fastapi_pagination import Page, Params
+
 class UserService:
     def __init__(self, repo: UserRepository):
         self.repo = repo
@@ -824,7 +897,28 @@ class UserService:
         user = await self.repo.create(User(**data.model_dump()))
         return UserResponse.model_validate(user)
 
+    async def paginate_list(
+        self,
+        params: Params,
+    ) -> Page[UserResponse]:
+        """分页获取用户列表"""
+        page = await self.repo.paginate(params)
+        items = [UserResponse.model_validate(item) for item in page.items]
+        return Page[UserResponse](
+            items=items,
+            total=page.total,
+            page=page.page,
+            size=page.size,
+            pages=page.pages,
+        )
+
 # modules/user/routers.py
+from fastapi import APIRouter, Depends
+from fastapi_pagination import Page, Params
+from modules.user.schemas import UserCreate, UserResponse
+from modules.user.services import UserService
+from modules.user.dependencies import get_user_service
+
 router = APIRouter(prefix="/users", tags=["用户管理"])
 
 @router.post("/", response_model=UserResponse)
@@ -832,13 +926,34 @@ async def create_user(
     payload: UserCreate,
     service: UserService = Depends(get_user_service),
 ):
+    """创建用户"""
     return await service.create_user(payload)
 
+@router.get("/", response_model=Page[UserResponse])
+async def list_users(
+    params: Params = Depends(),
+    service: UserService = Depends(get_user_service),
+) -> Page[UserResponse]:
+    """获取用户列表（分页）"""
+    return await service.paginate_list(params)
+
 # modules/user/dependencies.py
-def get_user_service(
+from fastapi import Depends
+from sqlalchemy.ext.asyncio import AsyncSession
+from db.connection import get_async_db
+from modules.user.repositories import UserRepository
+from modules.user.services import UserService
+
+def get_user_repository(
     db: AsyncSession = Depends(get_async_db),
+) -> UserRepository:
+    """获取用户仓储实例"""
+    return UserRepository(db)
+
+def get_user_service(
+    repo: UserRepository = Depends(get_user_repository),
 ) -> UserService:
-    repo = UserRepository(db)
+    """获取用户服务实例"""
     return UserService(repo)
 ```
 
@@ -977,6 +1092,25 @@ modules/user/
 - 通过 `Depends()` 注入依赖（服务、数据库会话、认证等）
 - 使用 Pydantic 模式验证请求数据
 - 返回统一的响应格式
+- **分页端点使用 `Page[ResponseModel]` 和 `Params` 依赖**
+
+**分页路由示例：**
+```python
+from fastapi import APIRouter, Depends
+from fastapi_pagination import Page, Params
+from modules.user.schemas import UserResponse
+from modules.user.services import UserService
+
+router = APIRouter(prefix="/users", tags=["用户管理"])
+
+@router.get("/", response_model=Page[UserResponse])
+async def list_users(
+    params: Params = Depends(),  # 自动处理 page 和 size 参数
+    service: UserService = Depends(get_user_service),
+) -> Page[UserResponse]:
+    """获取用户列表（分页）"""
+    return await service.paginate_list(params)
+```
 
 ### 4.2 服务层（Services）
 
@@ -999,6 +1133,28 @@ modules/user/
 - 通过仓储层访问数据
 - 处理业务规则和验证逻辑
 - 可以调用其他服务或共享服务
+- **分页方法接收 `Params` 参数，返回 `Page[ResponseModel]`**
+
+**分页服务示例：**
+```python
+from fastapi_pagination import Page, Params
+
+class UserService:
+    async def paginate_list(
+        self,
+        params: Params,
+    ) -> Page[UserResponse]:
+        """分页获取用户列表"""
+        page = await self.repository.paginate(params)
+        items = [UserResponse.model_validate(item) for item in page.items]
+        return Page[UserResponse](
+            items=items,
+            total=page.total,
+            page=page.page,
+            size=page.size,
+            pages=page.pages,
+        )
+```
 
 ### 4.3 仓储层（Repositories）
 
@@ -1021,6 +1177,27 @@ modules/user/
 - 封装 SQLAlchemy 查询逻辑
 - 提供类型安全的查询方法
 - 支持分页和过滤
+- **推荐使用 fastapi-pagination 的 `paginate()` 方法实现分页**
+
+**分页仓储示例：**
+```python
+from fastapi_pagination import Page, Params
+from fastapi_pagination.ext.asyncio import paginate as async_paginate
+
+class UserRepository(BaseRepository[User]):
+    model = User
+    
+    async def paginate(
+        self,
+        params: Params = Params(),
+        order_by: Optional[Any] = None,
+    ) -> Page[User]:
+        """分页获取用户列表"""
+        stmt = select(User)
+        if order_by is not None:
+            stmt = stmt.order_by(order_by)
+        return await async_paginate(self.session, stmt)
+```
 
 ### 4.4 模型层（Models）
 
@@ -1095,13 +1272,131 @@ core/exceptions/
 - 统一的响应结构
 - 类型安全的响应模型
 - 支持成功和错误响应
-- 支持分页响应
+- **推荐使用 fastapi-pagination 处理分页响应**
 
 **设计要点：**
 - 使用 Pydantic 定义响应模型
 - 提供响应工具函数
 - 支持泛型响应模型
 - 包含时间戳和状态码
+- **分页响应使用 fastapi-pagination 的 `Page` 模型**
+
+#### 5.3.1 分页响应设计（推荐使用 fastapi-pagination）
+
+**为什么使用 fastapi-pagination：**
+- ✅ 自动处理分页参数（`page`、`size`）
+- ✅ 自动优化 SQL 查询（只查询需要的记录）
+- ✅ 自动生成 OpenAPI 文档
+- ✅ 类型安全，支持泛型
+- ✅ 统一的响应格式
+
+**安装依赖：**
+```bash
+uv add "fastapi-pagination[asyncio]>=0.12.0"
+```
+
+**初始化（在 `main.py` 中）：**
+```python
+from fastapi_pagination import add_pagination
+
+app = FastAPI(...)
+# ... 其他配置 ...
+add_pagination(app)  # 添加分页支持
+```
+
+**使用方式：**
+
+**1. 路由层：**
+```python
+from fastapi import APIRouter, Depends
+from fastapi_pagination import Page, Params
+from modules.user.schemas import UserResponse
+
+router = APIRouter(prefix="/users", tags=["用户管理"])
+
+@router.get("/", response_model=Page[UserResponse])
+async def list_users(
+    params: Params = Depends(),
+    service: UserService = Depends(get_user_service),
+) -> Page[UserResponse]:
+    """获取用户列表（分页）"""
+    return await service.paginate_list(params)
+```
+
+**2. 服务层：**
+```python
+from fastapi_pagination import Page, Params
+
+class UserService:
+    async def paginate_list(
+        self,
+        params: Params,
+    ) -> Page[UserResponse]:
+        """分页获取用户列表"""
+        # 从仓储获取分页数据（Page[User]）
+        page = await self.repository.paginate(params)
+        
+        # 将 ORM 模型转换为响应模型
+        items = [UserResponse.model_validate(item) for item in page.items]
+        
+        # 构造分页响应
+        return Page[UserResponse](
+            items=items,
+            total=page.total,
+            page=page.page,
+            size=page.size,
+            pages=page.pages,
+        )
+```
+
+**3. 仓储层：**
+```python
+from fastapi_pagination import Page, Params
+from fastapi_pagination.ext.asyncio import paginate as async_paginate
+
+class UserRepository(BaseRepository[User]):
+    model = User
+    
+    async def paginate(
+        self,
+        params: Params = Params(),
+        order_by: Optional[Any] = None,
+    ) -> Page[User]:
+        """分页获取用户列表"""
+        stmt = select(User)
+        if order_by is not None:
+            stmt = stmt.order_by(order_by)
+        return await async_paginate(self.session, stmt)
+```
+
+**响应格式：**
+```json
+{
+  "items": [
+    {"id": "...", "email": "user1@example.com"},
+    {"id": "...", "email": "user2@example.com"}
+  ],
+  "total": 100,
+  "page": 1,
+  "size": 10,
+  "pages": 10
+}
+```
+
+**请求参数：**
+- `page`: 页码（从 1 开始），默认 1
+- `size`: 每页记录数，默认 50，最大 100
+
+**示例请求：**
+```
+GET /api/v1/users?page=1&size=10
+```
+
+**注意事项：**
+1. 参数命名：使用 `page` 和 `size`，不是 `offset` 和 `limit`
+2. 页码从 1 开始：`page=1` 表示第一页
+3. 类型转换：需要在服务层将 ORM 模型转换为 Pydantic 响应模型
+4. 性能优化：fastapi-pagination 自动优化查询，只查询需要的记录
 
 ### 5.4 安全认证设计
 
@@ -1207,20 +1502,58 @@ class User(Base, TimestampMixin):
 - 使用类型提示，保证查询结果类型清晰，便于重构。
 
 **设计要点：**
-- 在 `db/repositories/base.py` 编写 `BaseRepository`，提供 `get() / list() / create()` 等方法；
+- 在 `db/repositories/base.py` 编写 `BaseRepository`，提供 `get() / list() / create() / paginate()` 等方法；
 - 在模块 `repositories.py` 中继承基础仓储，并实现业务特有的查询语义；
 - 在 Service 层通过依赖注入获取 Repository，保持易测性；
-- 重要查询编写单元测试，确保重构不会破坏 SQL 语义。
+- 重要查询编写单元测试，确保重构不会破坏 SQL 语义；
+- **推荐使用 fastapi-pagination 实现分页功能**。
 
-**示例代码：仓储 + Service 模板**
+**示例代码：仓储 + Service 模板（包含分页）**
 ```python
 # db/repositories/base.py
+from fastapi_pagination import Page, Params
+from fastapi_pagination.ext.asyncio import paginate as async_paginate
+
 class BaseRepository(Generic[ModelType]):
     def __init__(self, session: AsyncSession):
         self.session = session
 
     async def get(self, pk: Any) -> ModelType | None:
         return await self.session.get(self.model, pk)
+
+    async def list(
+        self,
+        skip: int = 0,
+        limit: int = 100,
+        order_by: Optional[Any] = None,
+    ) -> list[ModelType]:
+        """获取记录列表（传统方式，使用 skip/limit）"""
+        stmt = select(self.model)
+        if order_by is not None:
+            stmt = stmt.order_by(order_by)
+        stmt = stmt.offset(skip).limit(limit)
+        result = await self.session.execute(stmt)
+        return list(result.scalars().all())
+
+    async def paginate(
+        self,
+        params: Params = Params(),
+        order_by: Optional[Any] = None,
+    ) -> Page[ModelType]:
+        """
+        分页获取记录列表（推荐使用 fastapi-pagination）
+        
+        Args:
+            params: 分页参数（page, size）
+            order_by: 排序字段
+            
+        Returns:
+            分页响应（Page[ModelType]）
+        """
+        stmt = select(self.model)
+        if order_by is not None:
+            stmt = stmt.order_by(order_by)
+        return await async_paginate(self.session, stmt)
 
 # modules/user/repositories.py
 class UserRepository(BaseRepository[User]):
@@ -1232,18 +1565,37 @@ class UserRepository(BaseRepository[User]):
         return result.scalars().first()
 
 # modules/user/services.py
+from fastapi_pagination import Page, Params
+
 class UserService:
     def __init__(self, repo: UserRepository):
         self.repo = repo
 
-    async def create_user(self, data: UserCreate) -> User:
+    async def create_user(self, data: UserCreate) -> UserResponse:
         if await self.repo.get_by_email(data.email):
             raise UserAlreadyExistsError()
-        user = User(**data.model_dump())
-        self.repo.session.add(user)
-        await self.repo.session.commit()
-        await self.repo.session.refresh(user)
-        return user
+        user = await self.repo.create(User(**data.model_dump()))
+        return UserResponse.model_validate(user)
+
+    async def paginate_list(
+        self,
+        params: Params,
+    ) -> Page[UserResponse]:
+        """分页获取用户列表"""
+        # 从仓储获取分页数据（Page[User]）
+        page = await self.repo.paginate(params)
+        
+        # 将 ORM 模型转换为响应模型
+        items = [UserResponse.model_validate(item) for item in page.items]
+        
+        # 构造分页响应
+        return Page[UserResponse](
+            items=items,
+            total=page.total,
+            page=page.page,
+            size=page.size,
+            pages=page.pages,
+        )
 ```
 
 ### 6.4 多数据源设计（Multiple Data Sources）
@@ -1351,6 +1703,19 @@ class UserService:
 - 使用 `pyproject.toml` 管理项目配置和依赖
 - 定义项目元数据和依赖版本
 - 支持开发依赖和可选依赖
+
+**常用依赖示例：**
+```toml
+[project]
+dependencies = [
+    "fastapi>=0.104.1",
+    "uvicorn[standard]>=0.24.0",
+    "sqlalchemy[asyncio]>=2.0",
+    "pydantic[email]>=2.5.1",
+    "fastapi-pagination[asyncio]>=0.12.0",  # 分页支持
+    # ... 其他依赖
+]
+```
 
 #### 虚拟环境管理
 - 使用 `uv` 或 `poetry` 管理虚拟环境
@@ -1576,6 +1941,60 @@ modules/user/
 - 使用工具检查循环依赖
 - 使用代码分析工具识别问题
 
+### 10.5 过度设计问题
+
+#### 问题描述
+预先创建了大量未使用的框架代码，导致：
+- 代码库臃肿，难以维护
+- 误导开发者，以为这些代码已被使用
+- 增加认知负担，需要理解未使用的代码
+- 增加维护成本，需要维护和测试未使用的代码
+
+#### 解决方案
+
+**原则：按需添加，避免过度设计**
+
+1. **不要预先创建框架代码**
+   - ❌ 不要创建空的 `minio_service.py`、`redis_service.py`
+   - ❌ 不要创建未使用的工具函数（如 `format.py`、`validation.py`）
+   - ✅ 保留目录结构，但保持为空
+
+2. **按需添加流程**
+   - **步骤 1**：在具体使用的地方先实现
+   - **步骤 2**：如果被多个地方使用，再提取到 `shared/`
+   - **步骤 3**：确保函数真正被需要，而不是"可能用到"
+
+3. **判断标准**
+   - 是否有实际使用场景（不是"可能用到"）
+   - 是否被 3+ 个模块使用
+   - 是否是纯函数或服务接口
+
+**示例：**
+```python
+# ❌ 错误：预先创建未使用的工具函数
+# shared/utils/format.py
+def format_file_size(size: int) -> str:
+    # 未使用，属于过度设计
+    pass
+
+# ✅ 正确：按需添加
+# 1. 先在使用的模块中实现
+# modules/file/services.py
+def format_size(size: int) -> str:
+    return f"{size / 1024:.2f} KB"
+
+# 2. 如果多个模块需要，再提取到 shared/
+# shared/utils/file.py
+def format_file_size(size: int) -> str:
+    return f"{size / 1024:.2f} KB"
+```
+
+**检查清单：**
+- [ ] 是否有实际使用场景？
+- [ ] 是否被多个模块使用？
+- [ ] 是否真的需要共享？
+- [ ] 是否可以保留目录结构但保持为空？
+
 ## 十一、总结
 
 ### 工程化结构设计的核心目标
@@ -1597,10 +2016,20 @@ modules/user/
 ### 实践建议
 
 1. **渐进式演进**：从扁平化结构开始，根据项目发展逐步演进到混合模式
+
 2. **明确划分标准**：建立清晰的"core/shared/modules"划分标准，减少决策成本
-3. **团队共识**：确保团队成员理解并遵循结构规范，特别是代码放置的决策树
-4. **定期审查**：定期审查目录结构，及时重构不符合规范的部分
-5. **文档维护**：保持文档与代码同步，及时更新结构说明和划分标准
+
+3. **按需添加，避免过度设计**：
+   - 不要预先创建未使用的框架代码
+   - 先在使用的地方实现，需要时再提取到共享层
+   - 保留目录结构，但保持为空
+   - 定期审查和删除未使用的代码
+
+4. **团队共识**：确保团队成员理解并遵循结构规范，特别是代码放置的决策树
+
+5. **定期审查**：定期审查目录结构，及时删除未使用的代码，重构不符合规范的部分
+
+6. **文档维护**：保持文档与代码同步，及时更新结构说明和划分标准
 
 ### 设计模式选择总结
 
@@ -1616,7 +2045,10 @@ modules/user/
 | **可扩展性** | 中等 | 高 |
 
 **核心原则：**
-- **不要过度设计**：项目初期保持简单，使用扁平化结构
+- **不要过度设计**：
+  - 项目初期保持简单，使用扁平化结构
+  - 不要预先创建未使用的框架代码
+  - 按需添加，先在使用的地方实现，需要时再提取
 - **及时演进**：当结构成为瓶颈时（文件难以定位、协作冲突增多），及时调整
 - **保持一致性**：一旦选择某种结构，全项目保持一致
 - **文档先行**：为结构划分建立清晰的文档和规范
@@ -1629,6 +2061,7 @@ modules/user/
 1. **没有完美的结构，只有适合项目的结构**：根据项目规模、团队规模、业务复杂度选择
 2. **结构应该渐进式演进**：从简单开始，随项目发展逐步复杂化
 3. **明确的划分标准比复杂的结构更重要**：清晰的决策树能减少团队决策成本
+4. **按需添加比预先设计更合理**：遵循 YAGNI 原则，避免过度设计，保持代码库简洁
 
 根据项目的实际情况，灵活应用本文档中的原则和建议，构建属于你的工程化项目结构。记住，最好的结构是能够支持团队高效协作、代码易于维护和扩展的结构。
 
