@@ -75,6 +75,22 @@ export function normalizeDateString(date?: string | number | Date): string {
 }
 
 /**
+ * 纯数字格式：YYYY-MM-DD HH:mm:ss（用于列表等，无英文月份）
+ * 无时分秒的日期会补 00:00:00。
+ */
+export function formatDateTimeNum(date?: string | number | Date): string {
+  const parsed = parseDate(date);
+  if (!parsed) return "";
+  const y = parsed.getFullYear();
+  const m = pad(parsed.getMonth() + 1);
+  const d = pad(parsed.getDate());
+  const h = pad(parsed.getHours());
+  const min = pad(parsed.getMinutes());
+  const s = pad(parsed.getSeconds());
+  return `${y}-${m}-${d} ${h}:${min}:${s}`;
+}
+
+/**
  * 将日期字符串转换为毫秒时间戳
  */
 export function dateToTimestamp(date?: string | number | Date): number {

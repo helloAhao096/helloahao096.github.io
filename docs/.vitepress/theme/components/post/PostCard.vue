@@ -2,7 +2,16 @@
   <a :href="withBase(post.regularPath)" class="post-card">
     <div class="post-title">{{ post.frontMatter.title }}</div>
     <div class="post-right">
-      <div class="post-date">{{ formatDate(post.frontMatter.date || "") }}</div>
+      <div class="post-meta">
+        <span class="post-meta-icon">📅</span>
+        <span class="post-meta-label">发布</span>
+        <span class="post-meta-value">{{ formatDateTimeNum(post.frontMatter.date || "") }}</span>
+      </div>
+      <div class="post-meta" v-if="post.lastUpdated">
+        <span class="post-meta-icon">📝</span>
+        <span class="post-meta-label">修改</span>
+        <span class="post-meta-value">{{ formatDateTimeNum(post.lastUpdated) }}</span>
+      </div>
       <div class="post-tags" v-if="postTags.length > 0">
         <span
           v-for="tag in postTags"
@@ -19,7 +28,7 @@
 <script lang="ts" setup>
 import { computed } from "vue";
 import { withBase } from "vitepress";
-import { formatDate } from "../../utils/date";
+import { formatDateTimeNum } from "../../utils/date";
 import type { Post } from "../../types";
 
 interface Props {
@@ -92,13 +101,33 @@ const postTags = computed(() => {
   min-width: 120px;
 }
 
-.post-date {
+.post-meta {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
   font-family: var(--font-mono);
   font-size: 0.875rem;
+  line-height: 1.5;
   color: var(--color-text-gray);
-  font-weight: 500;
-  line-height: 1.6;
-  text-align: right;
+  gap: 0.5rem;
+}
+
+.post-meta-icon {
+  font-size: 1rem;
+  line-height: 1;
+  margin-right: -0.1rem;
+}
+
+.post-meta-label {
+  color: var(--color-text-muted);
+  font-size: 0.8rem;
+  margin-right: -0.2rem;
+}
+
+.post-meta-value {
+  font-variant-numeric: tabular-nums;
+  color: var(--color-text);
+  opacity: 0.9;
 }
 
 .post-tags {
@@ -149,9 +178,19 @@ const postTags = computed(() => {
     min-width: auto;
   }
   
-  .post-date {
+  .post-meta {
     font-size: 0.8rem;
-    text-align: right;
+    justify-content: flex-end;
+    gap: 0.4rem;
+  }
+  
+  .post-meta-icon {
+    font-size: 0.9rem;
+  }
+  
+  .post-meta-label {
+    font-size: 0.75rem;
+    margin-right: -0.1rem;
   }
   
   .post-tags {

@@ -139,13 +139,23 @@ const filteredPosts = computed(() => {
 
 const filteredCount = computed(() => filteredPosts.value.length);
 
+// 取 post 用于排序/分组的时间戳：优先 lastUpdated，否则 date
+const postTimestamp = (post: Post) =>
+  post.lastUpdated ?? dateToTimestamp(post.frontMatter.date);
+const postYear = (post: Post) => {
+  const ts = postTimestamp(post);
+  if (ts > 0) {
+    const y = new Date(ts).getFullYear();
+    if (Number.isFinite(y)) return `${y}`;
+  }
+  return extractYear(post.frontMatter.date);
+};
+
 const yearGroups = computed(() => {
   const buckets: Record<string, Post[]> = {};
   filteredPosts.value.forEach((post) => {
-    const year = extractYear(post.frontMatter.date);
-    if (!buckets[year]) {
-      buckets[year] = [];
-    }
+    const year = postYear(post);
+    if (!buckets[year]) buckets[year] = [];
     buckets[year].push(post);
   });
 
@@ -155,11 +165,7 @@ const yearGroups = computed(() => {
       year,
       posts: buckets[year]
         .slice()
-        .sort(
-          (a, b) =>
-            dateToTimestamp(b.frontMatter.date) -
-            dateToTimestamp(a.frontMatter.date)
-        ),
+        .sort((a, b) => postTimestamp(b) - postTimestamp(a)),
     }));
 });
 

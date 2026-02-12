@@ -8,6 +8,8 @@ export interface Post {
     description?: string;
   };
   regularPath: string;
+  /** 上次更新时间（Git 最近一次提交时间戳，毫秒），用于列表排序与展示 */
+  lastUpdated?: number;
 }
 
 export interface PageData {
