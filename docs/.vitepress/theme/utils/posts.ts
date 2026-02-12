@@ -1,5 +1,5 @@
 import path from "node:path";
-import { execFileSync } from "node:child_process";
+import { spawn } from "node:child_process";
 import globby from "globby";
 import matter from "gray-matter";
 import fs from "fs-extra";
@@ -7,32 +7,35 @@ import type { Post } from "../types";
 import { normalizeDateString, dateToTimestamp } from "./date";
 
 /**
- * 获取文件最近一次 Git 提交时间（与 VitePress 官方 lastUpdated 一致：git log -1 --pretty="%ai"）
- * 使用「仓库根 + 相对路径」调用，保证 CI/浅克隆等环境下与官方行为一致。
+ * 获取文件最近一次 Git 提交时间
+ * 与 VitePress 官方 getGitTimestamp 完全对齐：
+ *   使用异步 spawn + basename/dirname 方式调用 git log
  * @see https://vitepress.dev/reference/default-theme-last-updated
  * 返回毫秒时间戳，获取失败返回 undefined。
  */
-function getGitLastUpdated(absolutePath: string): number | undefined {
-  try {
-    const dir = path.dirname(absolutePath);
-    const gitRoot = execFileSync("git", ["rev-parse", "--show-toplevel"], {
-      cwd: dir,
-      encoding: "utf-8",
-    }).trim();
-    const relativePath = path.relative(gitRoot, absolutePath);
-    if (!relativePath || relativePath.startsWith("..")) return undefined;
-
-    const out = execFileSync(
+function getGitLastUpdated(absolutePath: string): Promise<number | undefined> {
+  return new Promise((resolve) => {
+    if (!fs.existsSync(absolutePath)) {
+      resolve(undefined);
+      return;
+    }
+    const child = spawn(
       "git",
-      ["log", "-1", '--pretty=%ai', "--", relativePath],
-      { cwd: gitRoot, encoding: "utf-8" }
-    ).trim();
-    if (!out) return undefined;
-    const parsed = new Date(out.replace(" ", "T"));
-    return Number.isNaN(parsed.getTime()) ? undefined : parsed.getTime();
-  } catch {
-    return undefined;
-  }
+      ["log", "-1", '--pretty="%ai"', path.basename(absolutePath)],
+      { cwd: path.dirname(absolutePath) }
+    );
+    let output = "";
+    child.stdout.on("data", (d: Buffer) => { output += String(d); });
+    child.on("close", () => {
+      const timestamp = +new Date(output);
+      if (Number.isNaN(timestamp) || timestamp <= 0) {
+        resolve(undefined);
+      } else {
+        resolve(timestamp);
+      }
+    });
+    child.on("error", () => resolve(undefined));
+  });
 }
 
 /** Git 取不到时用文件修改时间，保证 dev 下也能显示「上次更新」 */
@@ -55,7 +58,7 @@ export async function getPosts(): Promise<Post[]> {
       data.date = normalizeDateString(data.date);
       const absolutePath = path.resolve(process.cwd(), rawPath);
       const lastUpdated =
-        getGitLastUpdated(absolutePath) ?? (getFileMtime(absolutePath) || undefined);
+        (await getGitLastUpdated(absolutePath)) ?? (getFileMtime(absolutePath) || undefined);
       return {
         frontMatter: data,
         regularPath: `/${pathForRoute.replace(".md", ".html")}`,
