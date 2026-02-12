@@ -8,14 +8,24 @@ import { normalizeDateString, dateToTimestamp } from "./date";
 
 /**
  * 获取文件最近一次 Git 提交时间（与 VitePress 官方 lastUpdated 一致：git log -1 --pretty="%ai"）
+ * 使用「仓库根 + 相对路径」调用，保证 CI/浅克隆等环境下与官方行为一致。
+ * @see https://vitepress.dev/reference/default-theme-last-updated
  * 返回毫秒时间戳，获取失败返回 undefined。
  */
 function getGitLastUpdated(absolutePath: string): number | undefined {
   try {
+    const dir = path.dirname(absolutePath);
+    const gitRoot = execFileSync("git", ["rev-parse", "--show-toplevel"], {
+      cwd: dir,
+      encoding: "utf-8",
+    }).trim();
+    const relativePath = path.relative(gitRoot, absolutePath);
+    if (!relativePath || relativePath.startsWith("..")) return undefined;
+
     const out = execFileSync(
       "git",
-      ["log", "-1", "--pretty=%ai", "--", path.basename(absolutePath)],
-      { cwd: path.dirname(absolutePath), encoding: "utf-8" }
+      ["log", "-1", '--pretty=%ai', "--", relativePath],
+      { cwd: gitRoot, encoding: "utf-8" }
     ).trim();
     if (!out) return undefined;
     const parsed = new Date(out.replace(" ", "T"));
