@@ -4,12 +4,10 @@
     <div class="post-right">
       <div class="post-meta">
         <span class="post-meta-icon">📅</span>
-        <span class="post-meta-label">发布</span>
         <span class="post-meta-value">{{ formatDateTimeNum(post.frontMatter.date || "") }}</span>
       </div>
       <div class="post-meta" v-if="post.lastUpdated">
         <span class="post-meta-icon">📝</span>
-        <span class="post-meta-label">修改</span>
         <span class="post-meta-value">{{ formatDateTimeNum(post.lastUpdated) }}</span>
       </div>
       <div class="post-tags" v-if="postTags.length > 0">
@@ -118,12 +116,6 @@ const postTags = computed(() => {
   margin-right: -0.1rem;
 }
 
-.post-meta-label {
-  color: var(--color-text-muted);
-  font-size: 0.8rem;
-  margin-right: -0.2rem;
-}
-
 .post-meta-value {
   font-variant-numeric: tabular-nums;
   color: var(--color-text);
@@ -186,11 +178,6 @@ const postTags = computed(() => {
   
   .post-meta-icon {
     font-size: 0.9rem;
-  }
-  
-  .post-meta-label {
-    font-size: 0.75rem;
-    margin-right: -0.1rem;
   }
   
   .post-tags {
