@@ -1,30 +1,32 @@
 ---
 title: Flutter 项目架构与开发手册
-description: 面向 Flutter 初学者的完整项目架构设计指南，包含目录结构、核心工具概念（Riverpod、Dio、GoRouter、freezed 等）、分层架构与数据流，帮助你从零构建可维护的 Flutter 应用。
+description: 面向 Flutter 初学者的完整项目架构设计指南，包含生态概览、目录结构、核心工具（Riverpod、GoRouter、Dio、freezed、Cupertino 等）、分层架构与数据流，帮助你从零构建可维护的 Flutter 应用。
 date: 2025-02-06
 tags:
   - Flutter
   - Dart
-  - 移动开发
-  - 工程化
 ---
 
 > 本文面向有编程经验但 Flutter 零基础的开发者，提供结构清晰、层次分明的项目架构与开发手册。涵盖目录设计、核心工具概念、数据流与快速上手，可作为日常开发的参考手册。
 
-**适用场景**：本架构面向**中大型项目**（多人协作、功能模块较多、需长期维护）。若为个人小项目或简单 CRUD，可大幅简化：如仅保留 `lib/screens/` + `lib/services/`，或省略 Domain 层，按需裁剪。
+**适用场景**：本文采用**最健壮**的工程化设计，面向多人协作、功能模块较多、需长期维护的项目，直接按此结构落地即可。
 
-**如何评估项目规模**：可从以下维度综合判断，满足多数「小」则偏小，满足多数「大」则偏大，介于中间则偏中。
+### 生态概览（本文采用的技术栈）
 
-| 维度 | 小 | 中 | 大 |
-|------|-----|-----|-----|
-| **团队** | 1 人 | 2～5 人 | 5+ 人 / 多团队 |
-| **功能模块** | 1～3 个（如登录+列表+详情） | 4～10 个 | 10+ 个，多领域 |
-| **页面数量** | 5 屏以内 | 5～25 屏 | 25+ 屏 |
-| **业务复杂度** | 简单 CRUD，无复杂规则 | 有流程、状态机、多数据源 | 强领域逻辑、离线、同步 |
-| **维护周期** | 短期（周～月） | 数月～1 年 | 长期（年+） |
-| **数据层** | 单一 API 或本地 | API + 本地缓存 | 多源、离线优先、复杂同步 |
+以下为本文推荐并贯穿全文示例的技术选型，便于与 Flutter 生态一一对应：
 
-**架构裁剪建议**：小项目用 `screens/` + `services/` 即可；中项目采用本文完整结构；大项目可考虑将 feature 拆为独立 package，或引入更多领域划分。
+| 类别 | 选型 | 说明 |
+|------|------|------|
+| **状态管理 / 依赖注入** | Riverpod | 官方推荐，状态 + DI 一体，与 Flutter 3 生态契合 |
+| **路由** | GoRouter | 声明式、路径驱动，支持 redirect、深链、嵌套路由 |
+| **网络** | Dio | 拦截器、超时、取消，配合 Repository 使用 |
+| **数据类 / 序列化** | freezed + json_serializable | 不可变模型、`copyWith`、JSON ↔ 模型 |
+| **UI 组件** | **Cupertino** | iOS 风格组件（CupertinoButton、CupertinoListTile、CupertinoNavigationBar 等），根容器使用 `CupertinoApp` |
+| **本地存储** | shared_preferences | 键值对存储（如 Token、简单配置） |
+| **开发 / 构建** | FVM + build_runner | FVM 管理 Flutter 版本，build_runner 驱动 Riverpod/freezed/json_serializable 代码生成 |
+| **测试** | flutter_test + integration_test | 单元测试、Widget 测试、集成测试 |
+
+业务页面与 shared 组件统一使用 **Cupertino** 系组件，保持 iOS 风格一致；`core/theme` 可采用 Cupertino 配色与文字风格。
 
 ---
 
@@ -56,7 +58,28 @@ Flutter 的 UI 由 **Widget** 组成，类似于 Vue 的组件、React 的 Compo
 
 ## 二、项目目录结构（完整版）
 
-基于 **Core / Shared / Features** 混合模式 + **Data / Domain / Presentation** 分层，推荐结构如下：
+基于 **Core / Shared / Features** 混合模式 + **Data / Domain / Presentation** 分层，推荐结构如下。
+
+三层结构关系（谁依赖谁）：
+
+```mermaid
+graph TB
+  subgraph Core["core/ 核心基础设施层"]
+    C1[网络 · 路由 · 主题 · 配置 · 工具]
+  end
+  subgraph Shared["shared/ 共享层"]
+    S1[通用组件 · 模型 · 服务]
+  end
+  subgraph Features["features/ 业务模块层"]
+    F1[todo 模块]
+    F2[其他模块...]
+  end
+  Shared -.->|依赖| Core
+  Features -.->|依赖| Core
+  Features -.->|依赖| Shared
+```
+
+完整目录树（以 **Todo 模块**为例展开）：
 
 ```
 lib/
@@ -71,7 +94,7 @@ lib/
 │   │   └── api_interceptor.dart # 拦截器（Token、错误处理）
 │   ├── router/                  # 路由
 │   │   └── app_router.dart
-│   ├── theme/                   # 主题
+│   ├── theme/                   # 主题（Cupertino 风格配色与文字）
 │   │   └── app_theme.dart
 │   ├── location/                # 定位能力（设备级）
 │   │   └── location_service.dart
@@ -86,47 +109,79 @@ lib/
 │   │   ├── app_loading.dart
 │   │   └── app_error_widget.dart
 │   ├── models/                  # 通用数据模型
-│   │   └── user.dart
 │   └── services/                # 通用服务（多 Feature 共用时放入）
 │       └── storage_service.dart
 │
 └── features/                    # 业务模块（按功能领域划分）
-    ├── auth/                    # 示例：认证模块
-    │   ├── data/                # 数据层
-    │   │   ├── dtos/            # 数据传输对象（API JSON 结构）
-    │   │   │   └── login_dto.dart
-    │   │   ├── datasources/
-    │   │   │   ├── remote/      # 远程 API
-    │   │   │   │   └── auth_remote_datasource.dart
-    │   │   │   └── local/       # 本地存储（缓存、DB）
-    │   │   │       └── auth_local_datasource.dart
-    │   │   └── repositories/
-    │   │       └── auth_repository_impl.dart
-    │   │
-    │   ├── domain/              # 领域层（按需添加，见 2.1 节）
-    │   │   ├── entities/        # 业务实体
-    │   │   │   └── user_entity.dart
-    │   │   └── repositories/    # 仓储接口（抽象，简单模块可省略）
-    │   │       └── auth_repository.dart
-    │   │
-    │   └── presentation/        # 表现层
-    │       ├── providers/        # Riverpod Provider 定义
-    │       │   └── auth_providers.dart
-    │       ├── controllers/     # 状态逻辑（Notifier）
-    │       │   └── auth_controller.dart
-    │       ├── pages/            # 页面（Scaffold）
-    │       │   ├── login_page.dart
-    │       │   └── register_page.dart
-    │       └── widgets/         # 模块内私有组件
-    │           └── login_form.dart
-    │
-    └── map/                     # 示例：地图模块
-        ├── data/
-        ├── domain/
-        └── presentation/
+    └── todo/                    # 示例：待办模块
+        ├── data/                # 数据层
+        │   ├── dtos/            # 数据传输对象（API JSON 结构）
+        │   │   └── todo_item_dto.dart
+        │   ├── datasources/
+        │   │   ├── remote/      # 远程 API
+        │   │   │   └── todo_remote_datasource.dart
+        │   │   └── local/       # 本地存储（缓存、DB，按需）
+        │   │       └── todo_local_datasource.dart
+        │   └── repositories/
+        │       └── todo_repository_impl.dart
+        │
+        ├── domain/              # 领域层（按需添加，见 2.3 节）
+        │   ├── entities/        # 业务实体
+        │   │   └── todo_item.dart
+        │   └── repositories/    # 仓储接口（抽象，简单模块可省略）
+        │       └── todo_repository.dart
+        │
+        └── presentation/       # 表现层
+            ├── providers/       # Riverpod Provider 定义
+            │   └── todo_providers.dart
+            ├── controllers/     # 状态逻辑（Notifier）
+            │   └── todo_controller.dart
+            ├── pages/           # 页面（Scaffold）
+            │   └── todo_list_page.dart
+            └── widgets/         # 模块内私有组件
+                └── todo_item_tile.dart
 ```
 
-### 2.1 Domain 层何时引入（YAGNI）
+### 2.2 分层设计思路：为什么是 Data / Domain / Presentation？
+
+以 **Todo 模块**为例：列表从哪来、谁管状态、谁管 UI，各层只做一件事，改一层时其它层少动，便于长期维护和测试。
+
+**三层与依赖方向**（Domain 最内层、最稳定）：
+
+```mermaid
+graph LR
+  subgraph P["Presentation 表现层"]
+    P1[TodoListPage]
+    P2[TodoController]
+  end
+  subgraph D["Domain 领域层"]
+    D1[TodoItem 实体]
+    D2[TodoRepository 接口]
+  end
+  subgraph Data["Data 数据层"]
+    Data1[TodoRepositoryImpl]
+    Data2[DataSource]
+  end
+  P -->|依赖| D
+  Data -->|实现| D
+```
+
+- **Data**：列表从哪来（API/本地）、谁发请求、谁存数据；DTO、DataSource、Repository 实现。换 API 或加缓存只改这里。
+- **Domain**：业务里「待办」长什么样（Entity）、对外能力是什么（Repository 接口）。便于测试 Mock、以后换实现。
+- **Presentation**：谁提供依赖（Provider）、谁管列表状态和加载/错误（Controller）、谁只负责展示和点击（Page/Widget）。
+
+**Todo 数据流**（一次操作如何穿过各层）：
+
+```mermaid
+flowchart LR
+  A[用户操作] --> B[TodoListPage]
+  B --> C[TodoController]
+  C --> D[TodoRepository]
+  D --> E[DataSource]
+  E --> F[API / 本地]
+```
+
+### 2.3 Domain 层何时引入（YAGNI）
 
 | 场景 | 建议 |
 |------|------|
@@ -136,7 +191,7 @@ lib/
 
 **原则**：默认可不建 domain，仅在「需要抽象」时再引入，避免过度设计。
 
-### 2.2 目录职责速查表
+### 2.4 目录职责速查表
 
 | 目录 | 职责 | 依赖方向 |
 |------|------|----------|
@@ -166,29 +221,32 @@ lib/
 | **Notifier** | 持有状态并处理业务逻辑的类 | Vue 的 Store、Pinia store |
 | **AsyncNotifier** | 处理异步状态（加载中/成功/失败） | 带 loading/error 的 Store |
 
-**典型用法**：
+**典型用法**（以 Todo 模块为例）：
 
 ```dart
 // 1. 定义 Provider（依赖注入）
-final authRepositoryProvider = Provider((ref) {
+final todoRepositoryProvider = Provider((ref) {
   final dio = ref.watch(dioProvider);
-  return AuthRepositoryImpl(api: dio);
+  return TodoRepositoryImpl(api: dio);
 });
 
 // 2. 定义状态 Provider（状态管理）
-final authControllerProvider = NotifierProvider<AuthController, AsyncValue<User?>>(() {
-  return AuthController();
+final todoControllerProvider = NotifierProvider<TodoController, AsyncValue<List<TodoItem>>>(() {
+  return TodoController();
 });
 
 // 3. 在 Widget 中使用
-class LoginPage extends ConsumerWidget {
+class TodoListPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final authState = ref.watch(authControllerProvider);  // 自动注入 + 监听
-    return authState.when(
+    final todoState = ref.watch(todoControllerProvider);  // 自动注入 + 监听
+    return todoState.when(
       loading: () => CircularProgressIndicator(),
       error: (e, _) => Text('错误: $e'),
-      data: (user) => user != null ? HomePage() : LoginForm(),
+      data: (items) => ListView.builder(
+        itemCount: items.length,
+        itemBuilder: (_, i) => TodoItemTile(item: items[i]),
+      ),
     );
   }
 }
@@ -201,27 +259,27 @@ class LoginPage extends ConsumerWidget {
 使用 `@riverpod` 注解可自动生成 Provider，减少手写样板，是当前更流行的写法：
 
 ```dart
-// 使用 @riverpod 注解，运行 build_runner 后自动生成 authRepositoryProvider
+// 使用 @riverpod 注解，运行 build_runner 后自动生成 todoRepositoryProvider
 @riverpod
-AuthRepository authRepository(AuthRepositoryRef ref) {
+TodoRepository todoRepository(TodoRepositoryRef ref) {
   final dio = ref.watch(dioProvider);
-  return AuthRepositoryImpl(api: dio);
+  return TodoRepositoryImpl(api: dio);
 }
 
 // AsyncNotifier 自动生成 provider
 @riverpod
-class AuthController extends _$AuthController {
+class TodoController extends _$TodoController {
   @override
-  Future<User?> build() async => null;
+  Future<List<TodoItem>> build() async => ref.read(todoRepositoryProvider).fetchList();
 
-  Future<void> login(String email, String password) async {
+  Future<void> addItem(String title) async {
     state = const AsyncLoading();
-    state = await AsyncValue.guard(() => ref.read(authRepositoryProvider).login(email, password));
+    state = await AsyncValue.guard(() => ref.read(todoRepositoryProvider).add(title));
   }
 }
 ```
 
-在 Widget 中用法不变：`ref.watch(authControllerProvider)`。需在 `pubspec.yaml` 添加 `riverpod_generator`，并运行 `dart run build_runner build`。
+在 Widget 中用法不变：`ref.watch(todoControllerProvider)`。需在 `pubspec.yaml` 添加 `riverpod_generator`，并运行 `dart run build_runner build`。
 
 ---
 
@@ -246,7 +304,7 @@ final dioProvider = Provider((ref) {
 });
 ```
 
-**与 Repository 的关系**：Repository 通过 `ref.watch(dioProvider)` 获取 Dio 实例，调用 `dio.get('/users')` 等，不直接在各处 new Dio。
+**与 Repository 的关系**：Repository 通过 `ref.watch(dioProvider)` 获取 Dio 实例，调用 `dio.get('/todos')` 等，不直接在各处 new Dio。
 
 ---
 
@@ -262,23 +320,22 @@ final dioProvider = Provider((ref) {
 | **GoRouter** | 路由配置的根对象 |
 | **context.go('/path')** | 跳转并替换栈 |
 | **context.push('/path')** | 压栈跳转 |
-| **redirect** | 路由守卫，如未登录跳转登录页 |
+| **redirect** | 路由守卫，如根据登录态重定向 |
 
 **典型配置**：
 
 ```dart
 // core/router/app_router.dart
 final goRouter = GoRouter(
-  initialLocation: '/login',
+  initialLocation: '/todos',
   redirect: (context, state) {
-    final isLoggedIn = /* 从 Riverpod 读取 */;
-    final isLoginRoute = state.matchedLocation == '/login';
-    if (!isLoggedIn && !isLoginRoute) return '/login';
+    // 例如：未登录时重定向到登录页
+    // final isLoggedIn = ref.read(authStateProvider).valueOrNull != null;
+    // if (!isLoggedIn && !state.matchedLocation.startsWith('/login')) return '/login';
     return null;  // 不重定向
   },
   routes: [
-    GoRoute(path: '/login', builder: (_, __) => LoginPage()),
-    GoRoute(path: '/home', builder: (_, __) => HomePage()),
+    GoRoute(path: '/todos', builder: (_, __) => TodoListPage()),
   ],
 );
 ```
@@ -291,24 +348,24 @@ final goRouter = GoRouter(
 
 **为什么需要**：Dart 没有 data class，手写上述方法繁琐且易错。freezed 类似 Kotlin 的 `data class`、TypeScript 的 `interface` + 工具函数。
 
-**典型用法**：
+**典型用法**（以 TodoItem 为例）：
 
 ```dart
 // 定义
 @freezed
-class User with _$User {
-  const factory User({
+class TodoItem with _$TodoItem {
+  const factory TodoItem({
     required String id,
-    required String name,
-    String? avatar,
-  }) = _User;
+    required String title,
+    @Default(false) bool completed,
+  }) = _TodoItem;
 
-  factory User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);
+  factory TodoItem.fromJson(Map<String, dynamic> json) => _$TodoItemFromJson(json);
 }
 
 // 使用
-final user = User(id: '1', name: 'Alice');
-final updated = user.copyWith(name: 'Bob');  // 新对象，原对象不变
+final item = TodoItem(id: '1', title: '写文档');
+final done = item.copyWith(completed: true);  // 新对象，原对象不变
 ```
 
 ---
@@ -317,7 +374,7 @@ final updated = user.copyWith(name: 'Bob');  // 新对象，原对象不变
 
 **是什么**：配合 freezed 或单独使用，自动生成 `fromJson` / `toJson`，处理 API 返回的 JSON。
 
-**与 freezed 配合**：在 freezed 类中加 `factory User.fromJson(...)`，运行 `dart run build_runner build` 生成 `*.g.dart`、`*.freezed.dart`。
+**与 freezed 配合**：在 freezed 类中加 `factory TodoItem.fromJson(...)`，运行 `dart run build_runner build` 生成 `*.g.dart`、`*.freezed.dart`。
 
 **DTO 与 Entity**：从 API 拿到的用 DTO（字段可与后端一致），转换后得到 Entity（面向 UI 的干净模型）。转换逻辑放在 Repository。
 
@@ -327,6 +384,7 @@ final updated = user.copyWith(name: 'Bob');  // 新对象，原对象不变
 
 | 工具 | 用途 |
 |------|------|
+| **Cupertino**（flutter 内置） | iOS 风格组件库，本文业务 UI 统一使用（CupertinoApp、CupertinoButton、CupertinoListTile 等） |
 | **logger** | 统一日志格式，可过滤级别 |
 | **shared_preferences** | 键值对本地存储（类似 localStorage） |
 | **geolocator** | 定位（GPS） |
@@ -340,16 +398,15 @@ final updated = user.copyWith(name: 'Bob');  // 新对象，原对象不变
 
 ### 4.1 数据流向图
 
-```
-用户操作 → Page/Widget
-            ↓
-        Controller (Notifier)  ← ref.watch(controllerProvider)
-            ↓ 调用
-        Repository (接口)
-            ↓ 实现
-        RemoteDataSource / LocalDataSource
-            ↓
-        API (Dio) / 本地 DB
+以 Todo 为例：用户操作（拉列表、新增、勾选、删除）经 Page 调用 Controller，Controller 调 Repository，Repository 调 DataSource，最终到达 API 或本地存储。
+
+```mermaid
+flowchart TB
+  A[用户操作] --> B[Page / Widget]
+  B --> C[Controller]
+  C --> D[Repository]
+  D --> E[RemoteDataSource / LocalDataSource]
+  E --> F[API · Dio / 本地 DB]
 ```
 
 ### 4.2 各层职责
@@ -363,10 +420,19 @@ final updated = user.copyWith(name: 'Bob');  // 新对象，原对象不变
 
 ### 4.3 依赖方向（Clean Architecture）
 
-```
-Presentation → Domain ← Data
-     ↓            ↑
-   (依赖)      (实现接口)
+```mermaid
+graph LR
+  subgraph Presentation["Presentation 表现层"]
+    P[Page · Controller · Provider]
+  end
+  subgraph Domain["Domain 领域层"]
+    E[Entity · Repository 接口]
+  end
+  subgraph Data["Data 数据层"]
+    R[Repository 实现 · DataSource]
+  end
+  Presentation -->|依赖| Domain
+  Data -->|实现接口| Domain
 ```
 
 - **Domain**：最内层，无外部依赖，只有实体和接口
@@ -380,7 +446,7 @@ Presentation → Domain ← Data
 | **全局** | Dio 拦截器统一捕获网络错误，可弹 SnackBar 或记录日志 | 401 自动跳转登录、500 统一提示 |
 | **局部** | Controller 用 `AsyncValue` 持有 error，Page 用 `state.when(error: ...)` 展示 | 列表加载失败显示重试按钮 |
 | **重试** | 在 Repository 或 DataSource 层封装重试逻辑（如 `dio_retry` 包） | 网络抖动时自动重试 1～2 次 |
-| **业务异常** | 定义 `AppException`（如 `AuthException`、`NetworkException`），在 Repository 抛出，Controller 捕获后转为用户友好文案 | 密码错误 →「账号或密码不正确」 |
+| **业务异常** | 定义 `AppException`（如 `NetworkException`），在 Repository 抛出，Controller 捕获后转为用户友好文案 | 删除失败 →「操作失败，请重试」 |
 
 **原则**：全局拦截器处理「通用」错误（如 Token 过期）；业务相关错误在 Controller 层处理，便于针对不同页面做差异化展示。
 
@@ -459,17 +525,17 @@ dev_dependencies:
 
 ### 6.2 创建目录结构
 
-按第二节的目录结构，先创建 `core/`、`shared/`、`features/auth/` 等空目录和占位文件，再逐步实现。
+按第二节的目录结构，先创建 `core/`、`shared/`、`features/todo/` 等空目录和占位文件，再逐步实现。
 
-### 6.3 最小闭环：登录流程
+### 6.3 最小闭环：Todo 列表流程
 
 1. **core/network**：封装 Dio，配置 baseUrl
-2. **features/auth/data**：定义 `LoginDto`、`AuthRemoteDataSource`、`AuthRepositoryImpl`
-3. **features/auth/domain**：定义 `User` 实体、`AuthRepository` 接口
-4. **features/auth/presentation**：`AuthController`（调用 Repository）、`LoginPage`（表单 + 调用 Controller）
-5. **core/router**：配置 `/login`、`/home`，在 `main.dart` 中挂载 `ProviderScope` 和 `MaterialApp.router`
+2. **features/todo/data**：定义 `TodoItemDto`、`TodoRemoteDataSource`、`TodoRepositoryImpl`
+3. **features/todo/domain**：定义 `TodoItem` 实体、`TodoRepository` 接口
+4. **features/todo/presentation**：`TodoController`（调用 Repository）、`TodoListPage`（列表 + 调用 Controller）
+5. **core/router**：配置 `/todos`，在 `main.dart` 中挂载 `ProviderScope` 与 `CupertinoApp`（`routerConfig: goRouter`），业务页面使用 Cupertino 组件（如 `CupertinoListTile`、`CupertinoButton`）
 
-完成上述步骤，即可跑通「输入账号密码 → 调 API → 跳转首页」的完整流程。
+完成上述步骤，即可跑通「拉列表 → 新增 → 勾选完成 → 删除」的完整流程。
 
 ### 6.4 代码生成命令
 
@@ -492,7 +558,7 @@ test/
 ├── core/
 ├── shared/
 └── features/
-    └── auth/
+    └── todo/
         ├── data/
         ├── domain/
         └── presentation/
@@ -500,7 +566,7 @@ test/
 
 - **单元测试**：Repository、Controller、工具函数
 - **Widget 测试**：单个 Widget 的渲染与交互
-- **集成测试**：完整流程（如登录到首页）
+- **集成测试**：完整流程（如从列表页到勾选完成）
 
 ---
 
@@ -508,7 +574,7 @@ test/
 
 | 原则 | 实践 |
 |------|------|
-| **YAGNI** | 不预先创建空模块，Domain 层按需引入，小项目可简化结构 |
+| **YAGNI** | 不预先创建空模块，Domain 层按需引入 |
 | **单一职责** | 每层、每文件职责明确 |
 | **依赖倒置** | Presentation 依赖 Domain 接口（若有），不依赖 Data 实现 |
 | **模块内聚** | 一个 Feature 内的代码尽量自包含 |
@@ -516,7 +582,7 @@ test/
 
 ---
 
-## 八、延伸阅读
+## 九、延伸阅读
 
 - [Riverpod 官方文档](https://riverpod.dev)
 - [GoRouter 官方文档](https://pub.dev/packages/go_router)
