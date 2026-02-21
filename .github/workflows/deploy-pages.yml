@@ -25,6 +25,17 @@ jobs:
           cache: pnpm
       - run: pnpm install --frozen-lockfile
 
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v4
+
+      - name: Render resume
+        run: uv sync && uv run rendercv render resume/cv.yaml --html-path docs/public/resume/index.html --pdf-path docs/public/resume/resume.pdf
+
       - name: Build
         run: pnpm run docs:build
 

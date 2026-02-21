@@ -27,3 +27,10 @@ lib/
 
 # Obsidian configuration
 .obsidian/
+
+# resume 目录仅保留 cv.yaml，其余均忽略
+resume/*
+!resume/cv.yaml
+
+# 简历渲染结果（HTML/PDF），由 CI 或本地 rendercv render 生成，不提交
+docs/public/resume/

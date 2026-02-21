@@ -1,0 +1,96 @@
+# yaml-language-server: $schema=https://github.com/rendercv/rendercv/blob/main/schema.json?raw=true
+design:
+  theme: classic
+  page:
+    show_footer: false
+    show_top_note: false
+
+cv:
+  name: 张智伟
+  location: 江苏省无锡市
+  email: helloahao@icloud.com
+  phone: "+86 130 1363 6500"
+  website: https://blog.mapin.net/
+
+  sections:
+    核心能力:
+      - bullet: "工作能力：全栈工程师，能独立扛起从需求到上线的全链路交付，有可验证结果（如产线分析 4h→10min 约 24 倍提效）；善于把目标拆成可执行小步、按节奏推进，结果导向。"
+      - bullet: "架构与规划设计：用 OpenSpec 做方案与设计，先规划再执行；多智能体意图路由、RAG 解耦与分层、LangGraph 工作流编排；类型与接口清晰，Docker/脚本闭环交付。"
+      - bullet: "学习与工具：了解当前 AI 生态与智能体等先进技术，全面拥抱 vibe coding、善用 AI 工具提效；博客与开源沉淀实战，能快速把新技术落到项目，与团队把系统做稳、做可扩展。"
+
+    项目经历:
+      - name: IFA（立讯智造 AI 搜索引擎）
+        start_date: 2025-10
+        end_date: present
+        summary: 面向立讯嘉善手表制造 FA 场景的 AI 搜索引擎；负责前后端与智能体。系统将相关性分析从约 4 小时缩短至 10 分钟（约 24 倍）。
+        highlights:
+          - 负责前后端与智能体设计实现，支撑产线失效分析 4h→10min（约 24 倍提效）
+          - 设计智能体支撑层：意图路由、RAG 知识问答、NL2SQL 智能问数、报告生成
+          - 落地 RAG 知识库（Qwen+Rerank），万级 FACA 报告与 SOP 精准检索与问答
+          - 集成 FunASR 语音识别，支持中英文多模态交互；前后端模块化
+
+      - name: ProjMg（AI 驱动的智能项目计划书管理系统）
+        start_date: 2025-08
+        end_date: present
+        summary: 独立完成前后端与 AI 工作流；LangGraph+智谱 GLM 自动生成计划书，多租户 RAG、Keycloak。
+        highlights:
+          - 从 0 设计 LangGraph 三阶段工作流，需求→大纲→内容，支持阶段内反馈与持久化
+          - 多租户 RAG（智谱+pgvector）+ Keycloak 认证与数据隔离
+          - SSE 流式输出、Docker Compose 一键部署；前端 Vue3 与后端工作流联动
+
+      - name: 北京特警总队全频全向天线信号侦测（中交遥感）
+        start_date: 2023-12
+        end_date: 2025-08
+        summary: 面向公安与安防：特警全频侦测与波形展示、无人机 Wi-Fi 嗅探与干扰管控。
+        highlights:
+          - 从 0 搭 FastAPI+硬件（HackRF/天线）架构，多场景复用
+          - 2.4/5.8GHz 实时采集与波形展示，WebSocket 推前端
+          - 无人机 Wi-Fi 嗅探与白名单比对、干扰帧管控；Docker+脚本一键部署
+
+      - name: Neumix（ERP / 知识图谱平台）
+        start_date: 2021-09
+        end_date: 2022-12
+        summary: 公司内部 ERP 与知识图谱后端，负责鉴权、核心接口与部署脚本。FastAPI/JWT/Redis/MySQL/Docker。
+        highlights:
+          - JWT 无感刷新鉴权与 Shell 脚本一键部署，统一多套服务架构
+
+    工作经历:
+      - company: 广州智用人工智能应用研究院
+        position: Python 开发工程师
+        start_date: 2025-08
+        end_date: present
+        location: 广州
+        summary: ""
+        highlights: []
+
+      - company: 无锡中交遥感天域科技有限公司
+        position: Python 开发工程师
+        start_date: 2023-12
+        end_date: 2025-08
+        location: 无锡
+        summary: ""
+        highlights: []
+
+      # - company: 无锡天思团创科技有限公司
+      #   position: Python 开发工程师
+      #   start_date: 2023-04
+      #   end_date: 2023-10
+      #   location: 无锡
+      #   summary: ""
+      #   highlights: []
+
+      - company: 无锡沃爱思科技有限公司
+        position: 后端开发工程师
+        start_date: 2021-07
+        end_date: 2022-12
+        location: 无锡
+        summary: ""
+        highlights: []
+
+    教育背景:
+      - institution: 南京理工大学
+        area: 软件工程
+        degree: 本科
+
+locale:
+  language: mandarin_chineese

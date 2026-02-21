@@ -1,0 +1,9 @@
+[project]
+name = "helloahao096-github-io"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "rendercv[full]>=2.0.0",
+]
