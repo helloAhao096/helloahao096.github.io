@@ -28,13 +28,20 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
-          python-version: "3.12"
+          python-version: "3.13"
 
       - name: Install uv
         uses: astral-sh/setup-uv@v4
 
+      - name: Install WeasyPrint system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            libcairo2 libpango-1.0-0 libpangocairo-1.0-0 \
+            libgdk-pixbuf2.0-0 libffi-dev shared-mime-info
+
       - name: Render resume
-        run: uv sync && uv run rendercv render resume/cv.yaml --html-path docs/public/resume/index.html --pdf-path docs/public/resume/resume.pdf
+        run: uv sync && uv run rendercv render resume/cv.yaml --html-path ../docs/public/resume/index.html --pdf-path ../docs/public/resume/resume.pdf
 
       - name: Build
         run: pnpm run docs:build
