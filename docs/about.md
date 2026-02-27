@@ -139,30 +139,8 @@ Hi，互联网上的朋友，欢迎你来到这里，我是千帆
 
 ---
 
-## 🧋喝口奶茶
-捐助的任意金额都会成为搭建这个网站的一份力量，如果对任何东西感兴趣，或者对网站的建设等有建议或意见，都欢迎通过我的联系方式和我交流讨论
+## [🧋喝口奶茶](/sponsor)
 
-<div class="donation-grid">
-  <div class="donation-card">
-    <p class="donation-title">支付宝</p>
-    <img
-      src="/image/AliPay.jpeg"
-      alt="支付宝转账二维码"
-      class="donation-qr"
-      loading="lazy"
-    />
-    <p class="donation-tip">长按保存后使用支付宝扫描</p>
-  </div>
-  <div class="donation-card">
-    <p class="donation-title">微信</p>
-    <img
-      src="/image/WeChatPay.jpeg"
-      alt="微信支付转账二维码"
-      class="donation-qr"
-      loading="lazy"
-    />
-    <p class="donation-tip">长按保存后使用微信扫描</p>
-  </div>
-</div>
+<Sponsor :showHeading="false" />
 
 ---

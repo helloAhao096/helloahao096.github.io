@@ -95,8 +95,11 @@ async function config() {
                 // },
                 {
                     text: "👤 关于",
-                    link: "/about",
-                    activeMatch: "^/about",
+                    activeMatch: "^/(about|sponsor)",
+                    items: [
+                        { text: "👤 关于我", link: "/about" },
+                        { text: "🧋 赞助", link: "/sponsor" },
+                    ],
                 },
             ],
             socialLinks: [

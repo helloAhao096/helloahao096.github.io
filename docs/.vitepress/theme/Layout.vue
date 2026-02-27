@@ -9,9 +9,12 @@
         <PostOutline />
       </template>
 
-      <!--  github评论   -->
+      <!--  github评论；Sponsor 仅在文章页底部展示，about 页面在正文中有自己的章节 -->
       <template #doc-after>
         <!-- <PostPager /> -->
+        <div v-if="isPostPage" class="sponsor-divider-wrap">
+          <Sponsor />
+        </div>
         <Comments />
       </template>
     </Layout>
@@ -23,9 +26,17 @@
   </div>
 </template>
 <script lang="ts" setup>
+import { computed } from "vue";
 import DefaultTheme from "vitepress/theme";
+import { useData } from "vitepress";
 
 import Footer from "./components/layout/Footer.vue";
+
+const { page } = useData();
+const isPostPage = computed(() =>
+  (page.value.relativePath || "").startsWith("posts/")
+);
+import Sponsor from "./components/Sponsor.vue";
 import Comments from "./components/plugin/Comments.vue";
 import PostTitle from "./components/post/PostTitle.vue";
 import PostOutline from "./components/post/PostOutline.vue";
@@ -36,6 +47,12 @@ import BackToTop from "./components/effect/BackToTop.vue";
 const {Layout} = DefaultTheme;
 </script>
 <style scoped>
+.sponsor-divider-wrap {
+  padding-top: 2rem;
+  margin-top: 2rem;
+  border-top: 1px solid var(--color-border);
+}
+
 .layout-wrapper {
   display: flex;
   flex-direction: column;
