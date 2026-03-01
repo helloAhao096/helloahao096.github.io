@@ -1,12 +1,12 @@
 import {resolve} from "node:path";
-import {getPosts, getPostLength, generateSidebarFromPosts} from "./theme/utils/posts";
+import { getPosts, getPostLength, generateSidebarFromPosts } from "./theme/modules/post/utils/posts";
 import type {UserConfig} from "vitepress";
 // import {buildBlogRSS} from "./theme/rss";
 
 
 async function config() {
     // 动态导入 ESM 插件，避免 esbuild 在加载配置时使用 require
-    const {withMermaid} = await import("vitepress-plugin-mermaid");
+    const { withMermaid } = await import("vitepress-plugin-mermaid");
 
     // 获取所有文章数据
     const posts = await getPosts();

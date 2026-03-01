@@ -6,7 +6,7 @@
 </template>
 
 <script lang="ts" setup>
-import PageContainer from "../../components/layout/PageContainer.vue";
+import PageContainer from "../../shared/components/layout/PageContainer.vue";
 </script>
 
 <style scoped>

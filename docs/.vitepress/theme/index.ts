@@ -1,13 +1,15 @@
 import DefaultTheme from "vitepress/theme";
-import Layout from "./Layout.vue";
-import Sponsor from "./components/Sponsor.vue";
-import SponsorStats from "./components/SponsorStats.vue";
-import SponsorList from "./components/SponsorList.vue";
-import ExpenseList from "./components/ExpenseList.vue";
-import Home from "./views/home/Home.vue";
+import Layout from "./shared/components/layout/Layout.vue";
+import {
+  Sponsor,
+  SponsorStats,
+  SponsorList,
+  ExpenseList,
+} from "./modules/sponsor";
+import Home from "./modules/home/views/Home.vue";
 import Gallery from "./views/gallery/Gallery.vue";
 import Tools from "./views/tools/Tools.vue";
-import PostsOverview from "./views/posts/PostsOverview.vue";
+import PostsOverview from "./modules/post/views/PostsOverview.vue";
 import "./custom.css";
 
 export default {

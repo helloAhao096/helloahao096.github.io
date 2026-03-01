@@ -9,6 +9,7 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     env:
+      VITE_GISCUS_DISCUSSIONS_TOKEN: ${{ secrets.VITE_GISCUS_DISCUSSIONS_TOKEN }}
       VITE_GISCUS_REPO: ${{ secrets.VITE_GISCUS_REPO }}
       VITE_GISCUS_REPO_ID: ${{ secrets.VITE_GISCUS_REPO_ID }}
       VITE_GISCUS_CATEGORY: ${{ secrets.VITE_GISCUS_CATEGORY }}
