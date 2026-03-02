@@ -10,7 +10,7 @@
         <span class="post-meta-icon">📝</span>
         <span class="post-meta-value">{{ formatDateTimeNum(post.lastUpdated) }}</span>
       </div>
-      <div class="post-meta" v-if="commentCount > 0">
+      <div class="post-meta">
         <span class="post-meta-icon">💬</span>
         <span class="post-meta-value">{{ commentCount }}</span>
       </div>
@@ -28,7 +28,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, ref, onMounted } from "vue";
+import { computed } from "vue";
 import { withBase } from "vitepress";
 import { formatDateTimeNum } from "../../../core/utils/date";
 import type { Post } from "../../../core/types";
@@ -40,13 +40,11 @@ interface Props {
 
 const props = defineProps<Props>();
 
-const { getCount, ensureLoaded } = useCommentCount();
-const commentCount = ref(0);
-
-onMounted(() => {
-  ensureLoaded().then(() => {
-    commentCount.value = getCount(props.post.regularPath);
-  });
+const { getCount, store } = useCommentCount();
+/** 从 store 响应式获取评论数；显式依赖 store.counts，确保异步加载完成后 UI 更新 */
+const commentCount = computed(() => {
+  void store.counts;
+  return getCount(props.post.regularPath);
 });
 
 // 获取文章标签

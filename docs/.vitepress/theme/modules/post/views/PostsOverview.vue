@@ -73,8 +73,8 @@ import { computed, ref, onMounted, onUnmounted } from "vue";
 import { useData } from "vitepress";
 import PageContainer from "../../../shared/components/layout/PageContainer.vue";
 import PostCard from "../components/PostCard.vue";
-import type { Post } from "../../../core/types";
 import { dateToTimestamp } from "../../../core/utils/date";
+import type { Post } from "../../../core/types";
 
 const { theme } = useData();
 

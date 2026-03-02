@@ -1,4 +1,6 @@
 import { normalizePath } from "../../core/utils/path";
+import { useCommentCountStore } from "../../modules/comment/store/commentCount";
+import { GISCUS_CONFIG } from "../../modules/comment/constants";
 
 const GITHUB_GRAPHQL = "https://api.github.com/graphql";
 
@@ -19,37 +21,39 @@ interface DiscussionsResponse {
   errors?: Array<{ message: string }>;
 }
 
-/** 运行时缓存：路径 -> 评论数 */
-let cache: Record<string, number> | null = null;
+/** 防止重复请求 */
 let fetchPromise: Promise<Record<string, number>> | null = null;
 
 /**
- * 运行时通过 GitHub GraphQL 拉取 Discussions 评论数，供 post 模块按 pathname 查评论数
- * 需配置 VITE_GISCUS_DISCUSSIONS_TOKEN（仅读 Discussions 权限的细粒度 token）
+ * 评论数 composable：统一数据口径，通过 store 存取
+ * 请求 API 后更新 store，组件通过 getCount 从 store 获取
  */
 export function useCommentCount() {
+  const store = useCommentCountStore();
+
   const ensureLoaded = (): Promise<Record<string, number>> => {
-    if (cache !== null) {
-      return Promise.resolve(cache);
+    if (store.loaded) {
+      return Promise.resolve(store.counts);
     }
     if (fetchPromise !== null) {
       return fetchPromise;
     }
 
-    const env = (import.meta as ImportMeta & { env?: Record<string, string> }).env ?? {};
-    const token = env.VITE_GISCUS_DISCUSSIONS_TOKEN;
-    const repo = env.VITE_GISCUS_REPO;
-    const categoryId = env.VITE_GISCUS_CATEGORY_ID ?? "";
+    // 与 Comments.vue 共用 GISCUS_CONFIG，保证配置一致；token 敏感信息单独从 env 读取
+    const token =
+      ((import.meta as ImportMeta & { env?: Record<string, string> }).env?.VITE_GISCUS_DISCUSSIONS_TOKEN) ?? "";
+    const repo = GISCUS_CONFIG.repo ?? "";
+    const categoryId = GISCUS_CONFIG.categoryId ?? "";
 
-    if (!token || !repo || !repo.includes("/")) {
-      cache = {};
-      return Promise.resolve(cache);
+    if (!repo || !repo.includes("/")) {
+      store.setCounts({});
+      return Promise.resolve({});
     }
 
     const [owner, name] = repo.split("/").map((s) => s.trim());
     if (!owner || !name) {
-      cache = {};
-      return Promise.resolve(cache);
+      store.setCounts({});
+      return Promise.resolve({});
     }
 
     const counts: Record<string, number> = {};
@@ -70,12 +74,18 @@ export function useCommentCount() {
         }
       `;
 
+      const headers: Record<string, string> = {
+        "Content-Type": "application/json",
+        Accept: "application/vnd.github+json",
+        "User-Agent": "VitePress-Giscus-CommentCount/1.0",
+      };
+      if (token) {
+        headers.Authorization = `Bearer ${token}`;
+      }
+
       return fetch(GITHUB_GRAPHQL, {
         method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
+        headers,
         body: JSON.stringify({
           query,
           variables: {
@@ -98,7 +108,13 @@ export function useCommentCount() {
           if (!discussions) return counts;
 
           for (const node of discussions.nodes) {
-            const key = normalizePath(node.title);
+            let decodedTitle = node.title;
+            try {
+              decodedTitle = decodeURIComponent(node.title);
+            } catch {
+              // title 含畸形 % 编码时保留原值
+            }
+            const key = normalizePath(decodedTitle);
             const total = node.comments?.totalCount ?? 0;
             counts[key] = (counts[key] ?? 0) + total;
           }
@@ -113,32 +129,27 @@ export function useCommentCount() {
 
     fetchPromise = fetchPage()
       .then((data) => {
-        cache = data;
-        return cache;
+        store.setCounts(data);
+        return data;
       })
       .catch(() => {
-        cache = {};
-        return cache;
+        store.setCounts({});
+        return {};
       });
 
     return fetchPromise;
   };
 
   /**
-   * 根据 regularPath 获取评论数
-   * @param regularPath 文章路径，如 /posts/xxx
-   * @returns 评论数，无数据时返回 0
+   * 根据 regularPath 获取评论数（从 store 读取，响应式）
    */
   const getCount = (regularPath: string): number => {
-    const key = normalizePath(regularPath);
-    if (cache !== null) {
-      return cache[key] ?? 0;
-    }
-    return 0;
+    return store.getCount(regularPath);
   };
 
   return {
     getCount,
     ensureLoaded,
+    store,
   };
 }

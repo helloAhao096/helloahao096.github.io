@@ -1,4 +1,5 @@
 import DefaultTheme from "vitepress/theme";
+import { createPinia } from "pinia";
 import Layout from "./shared/components/layout/Layout.vue";
 import {
   Sponsor,
@@ -16,6 +17,21 @@ export default {
   ...DefaultTheme,
   Layout,
   enhanceApp({ app }) {
+    app.use(createPinia());
+
+    // 应用启动时立即触发评论数请求（首个组件 mount 时执行一次）
+    let commentLoadTriggered = false;
+    app.mixin({
+      mounted() {
+        if (!commentLoadTriggered) {
+          commentLoadTriggered = true;
+          import("./shared/composables/useCommentCount").then(({ useCommentCount }) => {
+            useCommentCount().ensureLoaded();
+          });
+        }
+      },
+    });
+
     // 注册全局组件（Sponsor、SponsorStats、SponsorList、ExpenseList 可在 markdown 中使用）
     app.component("Sponsor", Sponsor);
     app.component("SponsorStats", SponsorStats);
