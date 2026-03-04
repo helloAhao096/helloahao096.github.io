@@ -1,5 +1,7 @@
 import {resolve} from "node:path";
 import { getPosts, getPostLength, generateSidebarFromPosts } from "./theme/modules/post/utils/posts";
+import { getInvestEntries } from "./theme/modules/invest/utils/invest";
+import { getProjectEntries } from "./theme/modules/projects/utils/projects";
 import type {UserConfig} from "vitepress";
 // import {buildBlogRSS} from "./theme/rss";
 
@@ -10,6 +12,10 @@ async function config() {
 
     // 获取所有文章数据
     const posts = await getPosts();
+    // 获取投资内容数据（预留给投资模块使用）
+    const invest = await getInvestEntries();
+    // 获取项目内容数据（预留给项目模块使用）
+    const projects = await getProjectEntries();
     
     // 生成 sidebar 配置
     const sidebarConfig = generateSidebarFromPosts(posts);
@@ -69,6 +75,8 @@ async function config() {
             // docsBranch: "master",
             // 这里配置的数据通过useData获取，等于是全局的变量
             posts: posts,
+            invest: invest,
+            projects: projects,
             pageSize: 5,
             postLength: await getPostLength(),
             // search: true,
@@ -80,9 +88,19 @@ async function config() {
                 },
                 {
                     text: "📚 博客",
-                    link: "/posts/",
+                    link: "/posts",
                     activeMatch: "^/posts/",
                 },
+                // {
+                //     text: "💰 投资",
+                //     link: "/invest",
+                //     activeMatch: "^/invest",
+                // },
+                // {
+                //     text: "📦 项目",
+                //     link: "/projects",
+                //     activeMatch: "^/projects",
+                // },
                 // {
                 //     text: "📸 照片",
                 //     link: "/gallery",

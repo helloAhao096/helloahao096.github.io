@@ -1,71 +1,13 @@
-import path from "node:path";
-import { spawn } from "node:child_process";
-import globby from "globby";
-import matter from "gray-matter";
-import fs from "fs-extra";
 import type { Post } from "../../../core/types";
 import { normalizeDateString, dateToTimestamp } from "../../../core/utils/date";
-
-/**
- * 获取文件最近一次 Git 提交时间
- * 与 VitePress 官方 getGitTimestamp 完全对齐：
- *   使用异步 spawn + basename/dirname 方式调用 git log
- * @see https://vitepress.dev/reference/default-theme-last-updated
- * 返回毫秒时间戳，获取失败返回 undefined。
- */
-function getGitLastUpdated(absolutePath: string): Promise<number | undefined> {
-  return new Promise((resolve) => {
-    if (!fs.existsSync(absolutePath)) {
-      resolve(undefined);
-      return;
-    }
-    const child = spawn(
-      "git",
-      ["log", "-1", '--pretty="%ai"', path.basename(absolutePath)],
-      { cwd: path.dirname(absolutePath) }
-    );
-    let output = "";
-    child.stdout.on("data", (d: Buffer) => { output += String(d); });
-    child.on("close", () => {
-      const timestamp = +new Date(output);
-      if (Number.isNaN(timestamp) || timestamp <= 0) {
-        resolve(undefined);
-      } else {
-        resolve(timestamp);
-      }
-    });
-    child.on("error", () => resolve(undefined));
-  });
-}
-
-/** Git 取不到时用文件修改时间，保证 dev 下也能显示「上次更新」 */
-function getFileMtime(absolutePath: string): number {
-  try {
-    const stat = fs.statSync(absolutePath);
-    return stat.mtimeMs;
-  } catch {
-    return 0;
-  }
-}
+import { getMarkdownEntriesByDir } from "../../../core/content/entries";
 
 export async function getPosts(): Promise<Post[]> {
-  const paths = await getPostMDFilePaths();
-  const posts = await Promise.all(
-    paths.map(async (rawPath) => {
-      const content = await fs.readFile(rawPath, "utf-8");
-      const pathForRoute = rawPath.substring(5);
-      const { data } = matter(content);
-      data.date = normalizeDateString(data.date);
-      const absolutePath = path.resolve(process.cwd(), rawPath);
-      const lastUpdated =
-        (await getGitLastUpdated(absolutePath)) ?? (getFileMtime(absolutePath) || undefined);
-      return {
-        frontMatter: data,
-        regularPath: `/${pathForRoute.replace(".md", ".html")}`,
-        ...(lastUpdated !== undefined && lastUpdated > 0 && { lastUpdated }),
-      };
-    })
-  );
+  const posts = await getMarkdownEntriesByDir({
+    dirName: "posts",
+    excludeIndex: true,
+  });
+  // 由于公用方法已按时间降序排序，这里仅保留与旧逻辑等价的排序调用
   posts.sort(_compareDate);
   return posts;
 }
@@ -77,20 +19,12 @@ function _compareDate(obj1: Post, obj2: Post): number {
   return t2 - t1;
 }
 
-async function getPostMDFilePaths(): Promise<string[]> {
-  let paths = await globby(["**.md"], {
-    ignore: ["node_modules", "README.md"],
-  });
-  return paths.filter((item) => {
-    if (!item.includes("posts/")) {
-      return false;
-    }
-    return !item.endsWith("posts/index.md");
-  });
-}
-
 export async function getPostLength(): Promise<number> {
-  return [...(await getPostMDFilePaths())].length;
+  const posts = await getMarkdownEntriesByDir({
+    dirName: "posts",
+    excludeIndex: true,
+  });
+  return posts.length;
 }
 
 /** 取 post 用于排序/分组的时间戳：优先 lastUpdated，否则 date */
