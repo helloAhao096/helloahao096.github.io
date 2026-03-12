@@ -2125,6 +2125,18 @@ def format_file_size(size: int) -> str:
   - 支持异步数据库操作
 - **适用场景**：数据库密集型应用
 
+#### 6. fastapi-backend-template（与本文工程化结构一致）
+- **GitHub**：[helloAhao096/fastapi-backend-template](https://github.com/helloAhao096/fastapi-backend-template)
+- **技术栈**：FastAPI + SQLAlchemy 2 (async) + asyncpg + PostgreSQL + Pydantic + uv
+- **特点**：
+  - 按本文「混合模式」组织：`core/`、`db/`、`api/`、`modules/`（无独立 `shared/`，按需可扩展）
+  - 自带认证模块：手机号+验证码登录、JWT、refresh token
+  - 统一异常与响应体、limit/offset 分页（fastapi-pagination）
+  - 仓储基类（含软删、分页）、DB 连接与生命周期
+  - Docker Compose 一键拉起 PostgreSQL + 后端
+- **适用场景**：希望直接沿用本文混合模式、快速落地的中小型后端项目；可复制后按业务扩展新模块
+- **推荐指数**：⭐⭐⭐⭐
+
 ### 模板选择指南
 
 ```mermaid
@@ -2135,12 +2147,14 @@ flowchart TD
     B -->|企业级应用| E[FastAPI Project Template<br/>tiangolo/fastapi-project-template]
     B -->|需要缓存| F[FastAPI Boilerplate]
     B -->|数据库密集型| G[FastAPI SQLAlchemy Template]
+    B -->|按本文混合模式落地| H[fastapi-backend-template<br/>helloAhao096/fastapi-backend-template]
     
     style C fill:#e1f5ff
     style D fill:#e8f5e9
     style E fill:#e8f5e9
     style F fill:#fff4e1
     style G fill:#fff4e1
+    style H fill:#e8f5e9
 ```
 
 ### 推荐使用方式
@@ -2151,6 +2165,7 @@ flowchart TD
 
 2. **快速开发**：
    - 使用社区成熟模板（如 `fastapi-project-template`）
+   - 若希望**与本文混合模式一致**、带认证与 Docker：可直接用 [fastapi-backend-template](https://github.com/helloAhao096/fastapi-backend-template) 复制后按业务扩展
    - 快速搭建项目，专注于业务开发
 
 3. **自定义需求**：
@@ -2167,6 +2182,7 @@ flowchart TD
 | **FastAPI Project Template** | FastAPI + SQLAlchemy | 中大型 | 企业级应用 | ⭐⭐⭐⭐⭐ |
 | **FastAPI Boilerplate** | FastAPI + Redis | 中大型 | 需要缓存的应用 | ⭐⭐⭐⭐ |
 | **FastAPI SQLAlchemy Template** | FastAPI + SQLAlchemy | 中大型 | 数据库密集型 | ⭐⭐⭐⭐ |
+| **fastapi-backend-template** | FastAPI + SQLAlchemy 2 async + PostgreSQL | 中小型 | 与本文混合模式一致、带认证 | ⭐⭐⭐⭐ |
 
 ### 使用模板的注意事项
 
